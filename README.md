@@ -2,6 +2,21 @@
 
 A completely free, responsive Photograpy site allowed for general use under CC-BA 4.0
 
+
+To Setup
+--
+
+Run: 
+
+    npm install 
+
+Followed by: 
+
+    npm start (for dev)
+    npm build (for prod)
+    
+License
+-- 
 See here for more details as well: https://creativecommons.org/licenses/by/4.0/
 
 You are free to:
@@ -14,8 +29,7 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 Under the following terms:
 
 1. Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-
-No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+2. No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
 Notices:
 
