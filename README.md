@@ -3,6 +3,8 @@
 A completely free, responsive Photograpy site allowed for general use under CC-BA 4.0
 
 
+
+
 To Setup
 --
 
@@ -28,7 +30,7 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 
 Under the following terms:
 
-1. Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+1. Attribution — Attribution must be in the form of retaing the Github link in the bottom right of the page, and you must indicate if changes were made. You may not suggest that I, the licensor endorses you or your use.
 2. No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
 Notices:
