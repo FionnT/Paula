@@ -15,7 +15,7 @@ Run:
 Followed by: 
 
     npm start (for dev)
-    npm build (for prod)
+    npm run build (for prod)
     
 License
 -- 
