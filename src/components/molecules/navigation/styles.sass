@@ -1,0 +1,138 @@
+$hmobile: 35vh
+$hnav: $hmobile + 15vh
+
+#root nav  
+  transition: 0.35s ease
+  margin: 0 auto
+  width: 90%
+  max-width: 1200px
+  height: 14vh
+  display: block
+  padding: 0
+  position: fixed 
+  left: 50%
+  top: 0
+  z-index: 99
+  background-color: #F3F3F3
+  @media only screen and (min-width: 1200px) 
+    margin-left: -600px
+  @media only screen and (max-width: 1200px) 
+    left: 5%
+    width: 90%
+  a
+    height: 25px
+    display: inline-block
+    text-decoration: none
+    &:visited
+      color: #000
+    h1 
+      width: 150px
+      font-size: 40px
+      font-family: 'Lato', sans-serif
+      font-weight: 100
+      letter-spacing: 1.67px
+      padding: 50px 0 0
+      @media only screen and (max-height: 700px) 
+        padding-top: 5vh
+        font-size: 2em
+  .mobile
+    z-index: 99
+    cursor: pointer
+    border: none
+    background: transparent
+    display: none
+    position: absolute
+    float: right
+    right: 68px
+    top: 55px
+    width: 35px
+    height: 35px
+    box-shadow: none
+    &:focus
+      outline: none
+    div 
+      transition: 0.45s cubic-bezier(0, 1.35, 0.99, 1.44)
+      width: 50%
+      height: 4px
+      top: 0%
+      margin-top: calc(50% - 2px)
+      right: 0
+      border-radius: 4px
+      background: #b2b2b2
+      position: relative
+      box-shadow: none
+      &:last-of-type
+        top: 100%
+        width: 100%
+        margin-top: calc(-72% + 2px)
+  .opened ul 
+    margin-top: 0
+  ul 
+    padding: 65px 0 0
+    display: inline-block
+    float: right
+    @media only screen and (max-height: 700px) 
+      font-size: 1em
+      padding-top: 7vh
+    li 
+      padding: 0 0 0 60px
+      color: #000
+      width: auto
+      height: 25px
+      float: left
+      font-family: 'Open Sans Condensed', sans-serif
+      font-size: 18px
+      letter-spacing: 0.75px
+      font-weight: 300
+      a 
+        color: #000
+        text-decoration: none
+        &:visited
+          color: #000
+    a h1 
+      padding: 25px 0 0 40px
+      font-size: 25px
+  @media only screen and (max-width: 700px) 
+    margin: 0
+    width: 100%
+    a h1 
+      padding-left: 60px
+    ul 
+      position: relative
+      width: 100%
+      height: $hmobile
+      left: 0
+      padding: 0
+      margin-top: -35vh
+    .mobile 
+      display: inline-block
+    &.closed 
+      ul 
+        margin-top: -$hnav
+        background: #F8F8F8
+        box-shadow: #e7e8ea 2px -9px 20px 14px
+        li a
+          display: none
+    &.opened
+      margin-top: $hmobile
+      .mobile div 
+        width: 100%
+        margin-top: calc(60% - 2px)
+        transform: rotate(-45deg)
+        &:last-of-type
+          transform: rotate(45deg)
+          margin-top: calc(-30% + 2px)
+      ul 
+        margin-top: -$hnav
+        background: #F8F8F8
+        box-shadow: #e7e8ea 2px -9px 20px 14px
+        li 
+          width: 100%
+          font-size: 18px
+          letter-spacing: 0.75px
+          font-weight: 300
+          text-align: center
+          padding: 5vh 0 0 0
+          &:first-of-type
+            padding-top: 10vh
+    

@@ -1,0 +1,62 @@
+#arrows 
+  
+  &.disabled
+    display: none
+  &.uponly 
+    .up 
+      transform: translatex(65px)
+      transition: 0.25s cubic-bezier(1, 0.68, 0, 0.88)
+    .down 
+      display: none 
+  &.downonly
+    .up
+      display: none   
+  overflow: hidden
+  pointer-events: none
+  z-index: 99
+  width: 110px
+  position: fixed
+  bottom: 50px
+  right: 50px
+  float: right
+  @media only screen and (max-width: 700px) 
+    width: 100%
+    right: 0
+    bottom: 50px
+  .up, .down 
+    pointer-events: all
+  button
+    @media only screen and (max-width: 700px) 
+      display: none
+    &:focus
+      outline: none
+    &:hover
+      color: #4c4c4c
+      border-color: black
+      box-shadow: #dedede 1px 1px 1px 0px
+    transition: all 0.35s ease
+    display: inline-block
+    background: white
+    cursor: pointer
+    border-radius: 100% 
+    height: 45px
+    width: 45px
+    border: none
+    font-size: 1.2em
+    color: #b2b2b2;
+    &.down
+      left: unset
+      float: right
+  p 
+    @media only screen and (max-width: 700px) 
+      display: block
+    font-size: 2em
+    display: none
+    width: 20px
+    height: 20px
+    text-align: center
+    position: absolute
+    left: 50%
+    bottom: 0 
+    margin-left: -15px
+    color: #b2b2b2
