@@ -1,5 +1,4 @@
 #arrows 
-  
   &.disabled
     display: none
   &.uponly 
@@ -19,15 +18,9 @@
   bottom: 50px
   right: 50px
   float: right
-  @media only screen and (max-width: 700px) 
-    width: 100%
-    right: 0
-    bottom: 50px
   .up, .down 
     pointer-events: all
   button
-    @media only screen and (max-width: 700px) 
-      display: none
     &:focus
       outline: none
     &:hover
@@ -48,8 +41,6 @@
       left: unset
       float: right
   p 
-    @media only screen and (max-width: 700px) 
-      display: block
     font-size: 2em
     display: none
     width: 20px
@@ -60,3 +51,12 @@
     bottom: 0 
     margin-left: -15px
     color: #b2b2b2
+  // Phones
+  @media only screen and (max-width: 700px) 
+    button
+      display: none
+    p 
+      display: block
+  // allows room for older, smaller screens, but should still catch iPads  
+  @media only screen and (max-width: 1000px) 
+    display: none

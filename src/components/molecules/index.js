@@ -1,7 +1,4 @@
-import Navigation from './navigation'
-import Gallery from './gallery'
+import Navigation from "./navigation"
+import Gallery from "./gallery"
 
-export {
-  Navigation,
-  Gallery
-}
+export { Navigation, Gallery }

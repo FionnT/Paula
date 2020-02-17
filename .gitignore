@@ -1,3 +1,7 @@
+#
+
+/public/galleries/*
+
 # Logs
 logs
 *.log

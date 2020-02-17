@@ -8,7 +8,13 @@ A completely free, responsive Photograpy site allowed for general use under CC-B
 To Setup
 --
 
-Run: 
+First amend models.js in server/models to point to your MongoDB instance, then start MongoDB
+
+Start the Server: 
+
+  cd server && npm install && npm start
+
+Next install the front end: 
 
     npm install 
 
@@ -16,6 +22,7 @@ Followed by:
 
     npm start (for dev)
     npm run build (for prod)
+
     
 License
 -- 

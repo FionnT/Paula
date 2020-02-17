@@ -1,8 +1,24 @@
 #gallery
+  transition: padding 450ms linear
   width: 100vw
   max-width: 1200px
   height: 86vh 
   margin: 14vh auto 0
   overflow: visible
+  // phones
+  @media only screen and (max-width: 700px)
+    height: 90vh
+    margin: 12vh auto 0
+  &.opened 
+    // phones
+    @media only screen and (max-width: 700px)
+      padding-left: 60px
+    // tablets
+    @media only screen and (min-width: 701px) and (max-width: 1200px)
+      padding-left: 5vw
+      height: 81.2vh
+    // desktop
+    @media only screen and (min-width: 1270px)
+      padding-left: 0
   #animationbox
     transition: 0.35s linear
