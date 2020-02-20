@@ -1,4 +1,4 @@
 import Navigation from "./navigation"
-import Gallery from "./gallery"
+import Photoshoot from "./photoshoot"
 
-export { Navigation, Gallery }
+export { Navigation, Photoshoot }

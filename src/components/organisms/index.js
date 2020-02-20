@@ -1,5 +1,3 @@
-import Home from './home'
+import Gallery from "./gallery"
 
-export {
-  Home
-}
+export { Gallery }
