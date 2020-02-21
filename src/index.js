@@ -5,7 +5,7 @@
 import React from "react"
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import ReactDOM from "react-dom"
-import { Home } from "./components/pages"
+import { Home, About } from "./components/pages"
 import * as serviceWorker from "./serviceWorker"
 import "./components/styles/global.sass"
 
@@ -20,6 +20,7 @@ const App = () => {
           <Redirect to="/"></Redirect>
         </Route>
         <Route path="/shoot/:shootname" component={Home} />
+        <Route path="/about" component={About} />
       </Switch>
     </BrowserRouter>
   )

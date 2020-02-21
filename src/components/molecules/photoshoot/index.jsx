@@ -40,6 +40,14 @@ class Photoshoot extends Component {
   }
 
   handleActivate() {
+    //
+    // Firefox and Webkit handle grid layouts differently
+    // Webkit assigns margins to center, but Firefox just positions them pseudo-absolutely
+    // Don't rewrite to calculate based on margins
+    // Left offset for the first item is = (container width/2 * -1) + (item width/2)
+    // Each child tags the next image with it's current offset, and it's width
+    // For images that are bigger, or smaller than the previous image +- 20, we need to do some additional computation
+    //
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
 
     for (let i = 0; i < images.length; i++) {
@@ -51,19 +59,12 @@ class Photoshoot extends Component {
       let prevWidth = parseInt(image.attributes.prevwidth) || undefined
       image.style.opacity = 1
       image.style.transition = "transform 0.5s ease"
-
-      // Left offset for the first item is = (container width/2 * -1) + (item width/2)
-      // Each child tags the next image with it's current offset, and it's width
-      // For images that are bigger, or smaller than the previous image +- 20, we need to do some additional computation
       if (i === 0) {
-        // Firefox and Webkit handle grid layouts differently
-        // Webkit assigns margins to center, but Firefox just positions them pseudo-absolutely
-        // Don't rewrite to calculate based on margins
         let containerWidth = parseInt(window.getComputedStyle(document.querySelector("#gallery")).width)
-        const bump = window.innerWidth > 1200 ? 0 : 25
+        let bump = window.innerWidth > 1200 ? 0 : 25
         myOffset = containerWidth / -2 + myWidth / 2 - bump
       } else if (myWidth - prevWidth > 50 || myWidth - prevWidth < -50) {
-        // The following is spaghetti - but formulas work, okay...?
+        // yay responsiveness
         if (window.innerWidth > 1200) {
           myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + 20) : (myOffset = prevOffset - myWidth / 2 + prevWidth - 25)
         } else if (window.innerWidth < 1200 && window.innerWidth > 500) {
@@ -83,8 +84,8 @@ class Photoshoot extends Component {
     }
 
     setTimeout(() => {
-      // When loading a direct link gallery, the scripts above and from the Gallery component complete before the images have loaded
-      // We therefore need to force a rerender after at least a partial load of those images, so that they will render correctly
+      // When loading a gallery via a direct link, the scripts above and from the Gallery component complete before the images have loaded
+      // We therefore need to force a rerender after at least a partial load of those images, so that there computed styles are correct
       this.setState({ forceRerender: true })
     }, 500)
   }

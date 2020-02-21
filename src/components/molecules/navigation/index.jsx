@@ -43,13 +43,13 @@ const Navigation = () => {
         </button>
         <ul>
           <li>
-            <Link to="/">About</Link>
-          </li>
-          <li>
-            <Link to="/">Shop</Link>
+            <Link to="/about">About</Link>
           </li>
           <li>
             <Link to="/">Contact</Link>
+          </li>
+          <li>
+            <Link to="/">Shop</Link>
           </li>
         </ul>
       </nav>
