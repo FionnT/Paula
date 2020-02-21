@@ -1,6 +1,7 @@
 #about
   max-width: 1200px
   margin: 12vh auto 0 
+  transition: padding 0.35s ease
   div 
     margin-top: 15vh
     display: inline-block
@@ -45,3 +46,28 @@
             font-size: 1.25em
           &:visited
             color: black  
+  
+  @media only screen and (max-width: 1270px)
+    width: 90vw
+  @media only screen and (max-width: 1100px)
+    div
+      margin-top: 8vh
+  @media only screen and (max-width: 900px)
+    div
+      margin-top: 5vh
+  @media only screen and (max-width: 800px)
+    width: 100%
+    div
+      margin: 8vh 0 0 5vw
+      width: 90vw
+      float: left
+      padding-bottom: 5vh
+      &.portrait
+        margin: 5vh auto
+        padding: 0
+        left: 50%
+        margin-left: -150px
+        float: none
+        right: unset
+        .socialmedia
+          margin: 110% 0 0 0

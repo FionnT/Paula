@@ -4,14 +4,15 @@ import "./styles.sass"
 
 const Navigation = () => {
   const [enabled, toggle] = useState("")
-  let gallery = document.getElementById("gallery")
+
   const toggler = () => {
+    const item = document.getElementById("root").children[1]
     const slideOut = () => {
       toggle("opened")
-      gallery.style.paddingTop = "36vh"
+      item.style.paddingTop = "36vh"
     }
     const slideIn = () => {
-      gallery.style.paddingTop = "0vh"
+      item.style.paddingTop = "0vh"
       toggle("closed")
       setTimeout(() => {
         toggle("")
@@ -19,13 +20,14 @@ const Navigation = () => {
     }
     enabled === "opened" ? slideIn() : slideOut()
   }
+
   const scrollArrow = enable => {
     let arrow = document.getElementById("mobileindicator")
-    if (window.innerWidth < 1200) window.scrollY > 0 ? (arrow.style.display = "none") : (arrow.style.display = "block")
+    if (window.innerWidth < 1200 && document.location.pathname === "/") window.scrollY > 0 ? (arrow.style.display = "none") : (arrow.style.display = "block")
   }
 
   window.addEventListener("scroll", scrollArrow)
-
+  const displayfix = document.location.href.pathname !== "/" ? { display: "none" } : null
   return (
     <div className="wrapper">
       <nav className={enabled}>
@@ -53,7 +55,7 @@ const Navigation = () => {
           </li>
         </ul>
       </nav>
-      <div id="mobileindicator">
+      <div id="mobileindicator" style={displayfix}>
         <i className="las la-long-arrow-alt-down"></i>
       </div>
     </div>

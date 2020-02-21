@@ -82,19 +82,6 @@ class Gallery extends Component {
     // set shootCount max to correct after fetching from backend -> currently hardcoded
   }
 
-  renderShoots() {
-    let result = []
-    const { shoots } = this.state
-    if (shoots) {
-      for (let shoot in shoots) {
-        shoots[shoot].index = shoot
-        let photoshoot = <Photoshoot key={shoot} data={shoots[shoot]} onTrigger={this.handlePageNavigation} />
-        result.push(photoshoot)
-      }
-      this.setState({ rendered: result })
-    } else this.setState({ rendered: <Redirect to="/"></Redirect> })
-  }
-
   handlePageNavigation(shootname) {
     const { shoots } = this.state
 
@@ -118,46 +105,62 @@ class Gallery extends Component {
     }
     element.addEventListener("wheel", handleScrollWheel, { passive: false })
 
+    // enables or disables scrolling depending on device size & state
+    const handleScrollAbility = enteringShootPage => {
+      const setting = enteringShootPage ? "on" : "off"
+      const settings = {
+        on: {
+          big: { html: "visible", body: "visible hidden", root: "visible" },
+          small: { html: "visible hidden", body: "visible hidden", root: undefined, rootX: "visible", rootY: "hidden" }
+        },
+        off: {
+          big: { html: "hidden", body: "hidden", root: "unset" },
+          small: { html: "hidden visible", body: "hidden visible", root: "unset" }
+        }
+      }
+
+      if (window.innerWidth > 1200) {
+        document.documentElement.style.overflow = settings[setting].big.html
+        document.body.style.overflow = settings[setting].big.body
+        document.getElementById("root").style.overflow = settings[setting].big.root
+      } else {
+        document.documentElement.style.overflow = settings[setting].small.html
+        document.body.style.overflow = settings[setting].small.body
+        if (settings[setting].small.root) {
+          document.getElementById("root").style.overflow = settings[setting].small.root
+        } else {
+          document.getElementById("root").style.overflow = settings[setting].small.root
+          document.getElementById("root").style.overflow = settings[setting].small.root
+        }
+      }
+    }
     // handling of page open/close
     if (shootname) {
       this.updateHistory(shootname)
+      handleScrollAbility(true)
       document.getElementById("mobileindicator").style.display = "none"
 
-      // prevents scrollbars from appearing according to device size
-      if (window.innerWidth > 1200) {
-        document.documentElement.style.overflow = "visible"
-        document.body.style.overflow = "visible hidden"
-      } else {
-        document.documentElement.style.overflow = "visible hidden"
-        document.body.style.overflow = "visible hidden"
-      }
-
       // Parsing pretty URL from :param into the selected shoot
-      for (let shoot in shoots)
+      for (let shoot in shoots) {
         if (shoots[shoot].url === shootname) {
           shoots[shoot].activated = "activated"
           // fix for mobile devices entering a gallery mid scroll
           // Navigation is 14vh
+          // iOS Safari ignores this
           let offset = window.innerHeight * 0.86 * (shoot - 1)
           if (window.innerWidth < 1200) {
             document.documentElement.scrollTo(0, offset)
             document.body.scrollTo(0, offset)
           }
         } else shoots[shoot].activated = "hidden"
+      }
 
       this.setState({ shoots: shoots, chevronState: "disabled", mobilestate: "opened" }, () => {
         this.renderShoots()
       })
     } else {
       this.updateHistory("/")
-
-      if (window.innerWidth > 1200) {
-        document.documentElement.style.overflow = "hidden"
-        document.body.style.overflow = "hidden"
-      } else {
-        document.documentElement.style.overflow = "hidden visible"
-        document.body.style.overflow = "hidden visible"
-      }
+      handleScrollAbility(false)
 
       // determining what type of chevron to show
       let chevronCalc = "full" // default
@@ -201,6 +204,19 @@ class Gallery extends Component {
       style: { marginTop: newHeading + "vh" } // react style prop takes a JSON object
     }
     if (scrollable) this.setState({ animation: newAnimation })
+  }
+
+  renderShoots() {
+    let result = []
+    const { shoots } = this.state
+    if (shoots) {
+      for (let shoot in shoots) {
+        shoots[shoot].index = shoot
+        let photoshoot = <Photoshoot key={shoot} data={shoots[shoot]} handlePageNavigation={this.handlePageNavigation} />
+        result.push(photoshoot)
+      }
+      this.setState({ rendered: result })
+    } else this.setState({ rendered: <Redirect to="/"></Redirect> })
   }
 
   render() {
