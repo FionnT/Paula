@@ -16,6 +16,7 @@ class Photoshoot extends Component {
   }
 
   handleActivate() {
+    // alert(window.innerWidth)
     //
     // Firefox and Webkit handle grid layouts differently
     // Webkit assigns margins to center, but Firefox just positions them pseudo-absolutely
@@ -27,28 +28,34 @@ class Photoshoot extends Component {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
 
     for (let i = 0; i < images.length; i++) {
-      let myOffset
       let image = images[i]
+      let myOffset
       let myStyles = window.getComputedStyle(image) // returns rendered styles, not those spec'd in css
       let myWidth = parseInt(myStyles.width) * 0.8
       let prevOffset = parseInt(image.attributes.prevoffset) || undefined
       let prevWidth = parseInt(image.attributes.prevwidth) || undefined
+      let windowWidth = window.innerWidth
       image.style.opacity = 1
       image.style.transition = "transform 0.5s ease"
       if (i === 0) {
-        let windowWidth = window.innerWidth
-        let bump = windowWidth > 1200 ? 0 : windowWidth > 800 ? 5 : windowWidth > 700 ? 0 : windowWidth > 425 ? 22 : windowWidth > 800 ? 25 : 0
+        let bump = windowWidth > 1200 ? 0 : windowWidth > 800 ? 5 : windowWidth > 700 ? 0 : windowWidth > 425 ? 22 : window.innerHeight > 800 ? 40 : 0
         let containerWidth = parseInt(window.getComputedStyle(document.querySelector("#gallery")).width)
         myOffset = containerWidth / -2 + myWidth / 2 - bump
       } else if (myWidth - prevWidth > 50 || myWidth - prevWidth < -50) {
         // yay responsiveness
-        if (window.innerWidth > 1200) {
+        if (windowWidth > 1200) {
           myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + 20) : (myOffset = prevOffset - myWidth / 2 + prevWidth - 15)
-        } else if (window.innerWidth < 1200 && window.innerWidth > 810) {
+        } else if (windowWidth < 1200 && windowWidth > 1050) {
+          // iPad Pro, landscape, or other large'ish device
           myWidth > prevWidth ? (myOffset = prevWidth + myWidth / 3 + prevOffset - 20) : (myOffset = prevOffset + myWidth * 0.6 + prevWidth / 2 - 10)
-        } else if (window.innerWidth < 810 && window.innerWidth > 500) {
+        } else if (windowWidth < 1050 && windowWidth > 810) {
+          // Normal iPad or other tablets
+          myWidth > prevWidth ? (myOffset = prevWidth / 3 + myWidth / 3 + prevOffset + 15) : (myOffset = prevOffset + myWidth + prevWidth * 0.6 - 60)
+        } else if (windowWidth < 810 && windowWidth > 500) {
+          // landscape phone, or medium portrait tablets
           myWidth > prevWidth ? (myOffset = prevWidth + myWidth / 10 + prevOffset - 40) : (myOffset = prevOffset + myWidth * 1.1 + prevWidth / 2 + 15)
-        } else if (window.innerWidth < 500) {
+        } else if (windowWidth < 500) {
+          // mobile phones in general
           myWidth > prevWidth ? (myOffset = prevOffset + myWidth / 2 - prevWidth / 3 + 40) : (myOffset = prevOffset + myWidth / 3 + prevWidth - 25)
         }
       } else myOffset = prevOffset + 20 + myWidth
@@ -76,6 +83,8 @@ class Photoshoot extends Component {
       let image = images[i]
       image.style.transition = "all .35s ease"
       image.style.transform = "none"
+      // eslint-disable-next-line eqeqeq
+      if (i == 1 || i == 2) image.style.transform = "scale(0.9)"
     }
   }
 
@@ -102,6 +111,8 @@ class Photoshoot extends Component {
         for (let image in images) {
           images[image].style.boxShadow = "none"
           images[image].style.transform = "unset"
+          // eslint-disable-next-line eqeqeq
+          if (image == 1 || image == 2) images[image].style.transform = "scale(0.9)"
         }
       }
     }
@@ -134,6 +145,7 @@ class Photoshoot extends Component {
         >
           {this.handleRender()}
         </div>
+        <p onMouseDown={() => this.handlePageNavigation()}>Go Back</p>
       </div>
     )
   }

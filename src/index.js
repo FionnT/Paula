@@ -5,9 +5,9 @@
 import React from "react"
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import ReactDOM from "react-dom"
-import { Home, About } from "./components/pages"
+import { Home, About } from "./pages"
 import * as serviceWorker from "./serviceWorker"
-import "./components/styles/global.sass"
+import "./styles/global.sass"
 
 // import * as serviceWorker from './serviceWorker'
 
@@ -28,4 +28,4 @@ const App = () => {
 
 ReactDOM.render(<App />, document.getElementById("root"))
 
-serviceWorker.unregister()
+serviceWorker.register()

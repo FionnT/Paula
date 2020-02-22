@@ -1,5 +1,5 @@
 import React from "react"
-import { Navigation } from "../../molecules"
+import { Navigation } from "../../components/molecules"
 import { Link } from "react-router-dom"
 import "./styles.sass"
 

@@ -16,14 +16,23 @@ Start the Server:
 
 Next install the front end: 
 
-    npm install 
+    cd ../ && npm install 
 
 Followed by: 
 
     npm start (for dev)
     npm run build (for prod)
 
-    
+For production you may then serve it with a static server:
+
+    npm i -g serve
+    serve -s ./build -p 9000
+
+Find out more about deployment here:
+
+  bit.ly/CRA-deploy
+
+
 License
 -- 
 See here for more details as well: https://creativecommons.org/licenses/by/4.0/

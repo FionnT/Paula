@@ -1,6 +1,6 @@
 import React from "react"
-import { Navigation } from "../../molecules"
-import { Gallery } from "../../organisms"
+import { Navigation } from "../../components/molecules"
+import { Gallery } from "../../components/organisms"
 
 class Home extends React.Component {
   constructor(props) {

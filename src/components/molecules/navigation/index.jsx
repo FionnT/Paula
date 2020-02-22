@@ -21,13 +21,21 @@ const Navigation = () => {
     enabled === "opened" ? slideIn() : slideOut()
   }
 
-  const scrollArrow = enable => {
-    let arrow = document.getElementById("mobileindicator")
-    if (window.innerWidth < 1200 && document.location.pathname === "/") window.scrollY > 0 ? (arrow.style.display = "none") : (arrow.style.display = "block")
+  const scrollArrow = () => {
+    if (document.location.pathname === "/")
+      return (
+        <div id="mobileindicator">
+          <i className="las la-long-arrow-alt-down"></i>
+        </div>
+      )
   }
-
-  window.addEventListener("scroll", scrollArrow)
-  const displayfix = document.location.href.pathname !== "/" ? { display: "none" } : null
+  const scrollOfArrow = enable => {
+    let arrow = document.getElementById("mobileindicator")
+    if (window.innerWidth < 1200 && document.location.pathname === "/")
+      document.body.scrollTop > 0 ? (arrow.style.display = "none") : (arrow.style.display = "block")
+  }
+  // if (document.location.pathname !== "/") document.getElementById("mobileindicator").style.display = "none"
+  document.body.addEventListener("scroll", scrollOfArrow)
   return (
     <div className="wrapper">
       <nav className={enabled}>
@@ -55,9 +63,7 @@ const Navigation = () => {
           </li>
         </ul>
       </nav>
-      <div id="mobileindicator" style={displayfix}>
-        <i className="las la-long-arrow-alt-down"></i>
-      </div>
+      {scrollArrow()}
     </div>
   )
 }
