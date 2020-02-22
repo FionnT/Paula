@@ -121,7 +121,7 @@ class Gallery extends Component {
     if (shootname) {
       this.updateHistory(shootname)
       this.handleScrollAbility(true)
-      document.getElementById("mobileindicator").style.display = "none"
+      if (document.getElementById("mobileindicator")) document.getElementById("mobileindicator").style.display = "none"
 
       // Parsing pretty URL from :param into the selected shoot
       for (let shoot in shoots) {
