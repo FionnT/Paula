@@ -12,7 +12,7 @@ First amend models.js in server/models to point to your MongoDB instance, then s
 
 Start the Server: 
 
-  cd server && npm install && npm start
+    cd server && npm install && npm start
 
 Next install the front end: 
 
