@@ -1,6 +1,10 @@
 #
 
 /public/galleries/*
+!/public/galleries/.gitkeep 
+
+/server/db/*
+!/server/db/.gitkeep 
 
 # Logs
 logs

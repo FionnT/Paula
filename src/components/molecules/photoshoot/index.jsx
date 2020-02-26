@@ -74,7 +74,7 @@ class Photoshoot extends Component {
       // When loading a gallery via a direct link, the scripts above and from the Gallery component complete before the images have loaded
       // We therefore need to force a rerender after at least a partial load of those images, so that their computed styles are correct
       this.setState({ forceRerender: true })
-    }, 350)
+    }, 3000)
   }
 
   handleClosure() {
@@ -119,11 +119,12 @@ class Photoshoot extends Component {
   }
 
   handleRender() {
-    const { length } = this.state
+    const { itemOrder } = this.state
+    const { length } = itemOrder
     let result = []
     for (let i = 0; i < length; i++) {
       const divStyle = { zIndex: length - i }
-      const photoURL = i === 0 ? "../galleries/" + this.state.url + "/cover.jpg" : "../galleries/" + this.state.url + "/" + i + ".jpg"
+      const photoURL = "../galleries/" + this.state.url + "/" + itemOrder[i] + ".jpg"
       // const fullURL = i === 0 ? "../galleries/" + this.state.url + "/full/cover.jpg" : "../galleries/" + this.state.url + "/full/" + i + ".jpg"
       let photo = <img key={i} className={"image-" + i} src={photoURL} alt="" style={divStyle} />
       result.push(photo)

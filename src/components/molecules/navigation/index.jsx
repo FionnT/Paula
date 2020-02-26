@@ -25,7 +25,7 @@ const Navigation = () => {
     if (document.location.pathname === "/")
       return (
         <div id="mobileindicator">
-          <i className="las la-long-arrow-alt-down"></i>
+          <i className="las la-angle-down"></i>
         </div>
       )
   }

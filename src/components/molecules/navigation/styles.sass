@@ -10,16 +10,26 @@
     height: 12vh 
     background-color: #F3F3F3
     #mobileindicator    
-      display: none
-      position: fixed
-      z-index: 102
-      bottom: 8vh
-      width: 100%
-      height: 3vh
-      text-align: center
-      text-shadow: rgb(90, 90, 90) 0px 0px 5px
-      font-size: 3em
-      color: white
+      transition: all .35s ease;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 100%;
+      height: 30px;
+      width: 31px;
+      border: none;
+      font-size: 1.2em;
+      color: #8e7e7e;
+      position: fixed;
+      z-index: 102;
+      bottom: 0;
+      display: none;
+      float: left;
+      left: 50%;
+      bottom: 25px;
+      margin-left: -18px;
+      text-align: center;
+      i 
+        padding-top: 5px
       @media only screen and (max-width: 1200px)
         display: block
     nav  

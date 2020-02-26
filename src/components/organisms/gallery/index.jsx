@@ -4,44 +4,6 @@ import { Photoshoot } from "../../molecules"
 import { Redirect } from "react-router-dom"
 import "./styles.sass"
 
-const photoshoots = {
-  1: {
-    title: "Cailín",
-    url: "cailin",
-    length: 7
-  },
-  2: {
-    title: "DÁTH BEÍS",
-    url: "dath-beis",
-    length: 7
-  },
-  3: {
-    title: "Diosco",
-    url: "diosco",
-    length: 8
-  },
-  4: {
-    title: "Reibiliunach",
-    url: "reibiliunach",
-    length: 7
-  },
-  5: {
-    title: "Ríoga",
-    url: "rioga",
-    length: 9
-  },
-  6: {
-    title: "Tréighte",
-    url: "treighte",
-    length: 10
-  },
-  7: {
-    title: "Mini Shoots",
-    url: "mini-shoots",
-    length: 18
-  }
-}
-
 class Gallery extends Component {
   constructor(props) {
     super(props)
@@ -57,19 +19,24 @@ class Gallery extends Component {
         style: undefined
       },
       chevronState: this.props.chevronState, // should chevron navigation display?
-      shootCount: 7, // how many galleries to create
+      shootCount: undefined, // how many galleries to create
       rendered: undefined, // the updated, processed galleries, i.e. if one should be open
-      shoots: photoshoots,
+      shoots: undefined,
       mobilestate: "", // adds padding to gallery on smaller devices
-      scrolling: false
+      scrolling: false,
+      forceRerender: false
     }
   }
 
   componentDidMount() {
     let element = document.scrollingElement || document.documentElement
     element.addEventListener("wheel", this.handleScrollWheel, { passive: false })
-    if (this.props.shootname) this.handlePageNavigation(this.props.shootname)
-    else this.handlePageNavigation()
+    this.fetchAllShoots().then(shoots => {
+      this.setState({ shoots }, () => {
+        if (this.props.shootname) this.handlePageNavigation(this.props.shootname)
+        else this.handlePageNavigation()
+      })
+    })
   }
 
   componentDidUpdate(prevProps) {
@@ -81,6 +48,10 @@ class Gallery extends Component {
   }
 
   fetchAllShoots = () => {
+    return new Promise(resolve => {
+      let url = "http://localhost:9001/photoshoots/home"
+      fetch(url).then(res => resolve(res.json()))
+    })
     // set shootCount max to correct after fetching from backend -> currently hardcoded
   }
 
@@ -126,14 +97,19 @@ class Gallery extends Component {
       // Parsing pretty URL from :param into the selected shoot
       for (let shoot in shoots) {
         if (shoots[shoot].url === shootname) {
-          shoots[shoot].activated = "activated"
+          const photoshoot = shoots[shoot]
+          photoshoot.activated = "activated"
           // fix for mobile devices entering a gallery mid scroll - Navigation is 14vh
           // iOS Safari ignores this
           let offset = window.innerHeight * 0.86 * (shoot - 1)
           if (window.innerWidth < 1200) {
             document.documentElement.scrollTo(0, offset)
             document.body.scrollTo(0, offset)
-          } else document.getElementById("animationbox").style.marginTop = (shoot - 1) * -86 + "vh"
+          } else {
+            const margin = (photoshoot.isInHomePosition - 1) * -86 + "vh"
+            console.log(margin, shoot)
+            document.getElementById("animationbox").style.marginTop = margin
+          }
         } else shoots[shoot].activated = "hidden"
       }
 
@@ -198,16 +174,31 @@ class Gallery extends Component {
     }
   }
 
+  // renderShoots() {
+  //   let result = []
+  //   const { shoots } = this.state
+  //   if (shoots) {
+  //     for (let shoot in shoots) {
+  //       shoots[shoot].index = shoot
+  //       let photoshoot = <Photoshoot key={shoot} data={shoots[shoot]} handlePageNavigation={this.handlePageNavigation} />
+  //       result.push(photoshoot)
+  //     }
+  //     this.setState({ rendered: result })
+  //   } else this.setState({ rendered: <Redirect to="/"></Redirect> })
+  // }
+
   renderShoots() {
     let result = []
     const { shoots } = this.state
     if (shoots) {
       for (let shoot in shoots) {
-        shoots[shoot].index = shoot
-        let photoshoot = <Photoshoot key={shoot} data={shoots[shoot]} handlePageNavigation={this.handlePageNavigation} />
-        result.push(photoshoot)
+        const currentShoot = shoots[shoot]
+        const position = Number(currentShoot.isInHomePosition) - 1
+        let photoshoot = <Photoshoot key={position} data={currentShoot} handlePageNavigation={this.handlePageNavigation} />
+        result[position] = photoshoot
       }
-      this.setState({ rendered: result })
+      console.log(result)
+      this.setState({ rendered: result, shootCount: shoots.length })
     } else this.setState({ rendered: <Redirect to="/"></Redirect> })
   }
 
