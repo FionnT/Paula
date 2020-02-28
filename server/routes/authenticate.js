@@ -14,7 +14,7 @@ const store = new MongoDBStore(
     if (err) console.log(err)
   }
 )
-const { Admin, Person, Session } = require("../models/index")
+const { Admin, Person } = require("../models/index")
 
 server.use(cookieParser())
 

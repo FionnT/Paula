@@ -32,7 +32,7 @@ class Gallery extends Component {
     let element = document.scrollingElement || document.documentElement
     element.addEventListener("wheel", this.handleScrollWheel, { passive: false })
     this.fetchAllShoots().then(shoots => {
-      this.setState({ shoots }, () => {
+      this.setState({ shoots, shootCount: shoots.length }, () => {
         if (this.props.shootname) this.handlePageNavigation(this.props.shootname)
         else this.handlePageNavigation()
       })
@@ -48,11 +48,12 @@ class Gallery extends Component {
   }
 
   fetchAllShoots = () => {
-    return new Promise(resolve => {
-      let url = "http://localhost:9001/photoshoots/home"
-      fetch(url).then(res => resolve(res.json()))
-    })
-    // set shootCount max to correct after fetching from backend -> currently hardcoded
+    if (!this.state.shoots) {
+      return new Promise(resolve => {
+        let url = "http://localhost:9001/photoshoots/home"
+        fetch(url).then(res => resolve(res.json()))
+      })
+    } else return
   }
 
   handleGalleryScroll(down) {
@@ -163,29 +164,17 @@ class Gallery extends Component {
     if (!deltaY || this.state.scrolling || window.innerWidth < 1200) return
     else if (this.state.chevronState !== "disabled") {
       // i.e. not in a gallery
-      this.setState({ scrolling: true })
-      deltaY > 0 ? this.handleGalleryScroll(true) : this.handleGalleryScroll(false) // down = true
-      setTimeout(() => {
-        this.setState({ scrolling: false })
-      }, 450)
+      this.setState({ scrolling: true }, () => {
+        deltaY > 0 ? this.handleGalleryScroll(true) : this.handleGalleryScroll(false) // down = true
+        setTimeout(() => {
+          this.setState({ scrolling: false })
+        }, 450)
+      })
     } else {
       event.currentTarget.scrollLeft += (event.deltaY + event.deltaX) * 0.8
       event.preventDefault()
     }
   }
-
-  // renderShoots() {
-  //   let result = []
-  //   const { shoots } = this.state
-  //   if (shoots) {
-  //     for (let shoot in shoots) {
-  //       shoots[shoot].index = shoot
-  //       let photoshoot = <Photoshoot key={shoot} data={shoots[shoot]} handlePageNavigation={this.handlePageNavigation} />
-  //       result.push(photoshoot)
-  //     }
-  //     this.setState({ rendered: result })
-  //   } else this.setState({ rendered: <Redirect to="/"></Redirect> })
-  // }
 
   renderShoots() {
     let result = []
@@ -197,7 +186,6 @@ class Gallery extends Component {
         let photoshoot = <Photoshoot key={position} data={currentShoot} handlePageNavigation={this.handlePageNavigation} />
         result[position] = photoshoot
       }
-      console.log(result)
       this.setState({ rendered: result, shootCount: shoots.length })
     } else this.setState({ rendered: <Redirect to="/"></Redirect> })
   }
@@ -205,7 +193,7 @@ class Gallery extends Component {
   render() {
     return (
       <div id="gallery" className={this.state.mobilestate}>
-        <div id="animationbox" key={"animation helper"} style={this.state.animation.style}></div>
+        <div id="animationbox" key={"animation helper"} data-motion={this.state.scrolling} style={this.state.animation.style}></div>
         {this.state.rendered}
         <ChevronNavigation handleGalleryScroll={this.handleGalleryScroll} chevronState={this.state.chevronState} />
       </div>

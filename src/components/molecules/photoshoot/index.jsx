@@ -11,8 +11,13 @@ class Photoshoot extends Component {
 
   componentDidUpdate() {
     if (this.props && this.props.data.activated !== this.state.activated) this.setState({ activated: this.props.data.activated })
+    if (this.props && this.props.scrolling !== this.state.scrolling) this.setState({ scrolling: this.props.scrolling })
     if (this.props.data.activated === "activated") this.handleActivate()
     else if (this.props.data.activated === "") this.handleClosure()
+  }
+
+  componentDidMount() {
+    if (this.state.activated === "activated") this.handleActivate()
   }
 
   handleActivate() {
@@ -74,7 +79,7 @@ class Photoshoot extends Component {
       // When loading a gallery via a direct link, the scripts above and from the Gallery component complete before the images have loaded
       // We therefore need to force a rerender after at least a partial load of those images, so that their computed styles are correct
       this.setState({ forceRerender: true })
-    }, 3000)
+    }, 500)
   }
 
   handleClosure() {
@@ -94,6 +99,8 @@ class Photoshoot extends Component {
 
   handleHover(enable) {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
+    // const galleryInMotion =
+    console.log(document.getElementById("animationbox").dataset.motion)
     if (this.state.activated !== "activated") {
       if (enable) {
         for (let i = 0; i < images.length - 1; i++) {

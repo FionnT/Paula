@@ -1,7 +1,7 @@
 
 
   {
-    "itemOrder": [1, 2, 4, 3, 5, 6, 7],
+    "itemOrder": [1, 2, 3, 4, 5, 6, 7],
     "length": 7,
     "isOnHomeScreen": true,
     "isInHomePosition": 1,
@@ -9,6 +9,7 @@
     "title": "DÁTH BEÍS",
     "url": "dath-beis"
   }
+  
   {
     "itemOrder": [1, 2, 3, 4, 5, 6, 7],
     "length": 7,

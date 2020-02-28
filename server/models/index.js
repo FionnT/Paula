@@ -6,7 +6,8 @@ mongoose.Promise = global.Promise
 
 mongoose.connect("mongodb://localhost:27017/paula", {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useFindAndModify: false
 })
 
 const Schema = mongoose.Schema
@@ -85,7 +86,15 @@ const orderSchema = new Schema(
   { collection: "orders" }
 )
 
-const sessionSchema = new Schema({ _id: String, cookie: Object }, { collection: "sessions" })
+const sessionSchema = new Schema(
+  {
+    _email: String,
+    _id: String,
+    expires: Date,
+    Session: Object
+  },
+  { collection: "sessions" }
+)
 
 const Admin = mongoose.model("Admin", adminSchema)
 const Photoshoots = mongoose.model("Photoshoots", photoshootSchema)

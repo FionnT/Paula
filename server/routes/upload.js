@@ -3,7 +3,7 @@ const jsonParser = require("body-parser").json()
 const busboy = require("connect-busboy")()
 
 const privileged = require("./middleware/privileged")
-const authenticated = require("./middleware/authenticated")
+const authenticated = require("./middleware/authenticated")()
 const { Photoshoots } = require("../models/index")
 
 server.post("/upload/json", authenticated, privileged(2), jsonParser, (req, res) => {
@@ -12,7 +12,7 @@ server.post("/upload/json", authenticated, privileged(2), jsonParser, (req, res)
     const url = req.body.url
     Photoshoots.findOne({ url }, (err, result) => {
       if (err) res.send(502)
-      if (!result.length) {
+      if (result) {
         Photoshoot.save()
           .then(res.sendStatus(200))
           .then(resolve())
@@ -26,7 +26,7 @@ server.post("/upload/json/update", authenticated, privileged(2), jsonParser, (re
     const url = req.body.url
     Photoshoots.findOne({ url }, (err, result) => {
       if (err) res.send(502)
-      if (result.length === 1) {
+      if (result) {
         Object.assign(result, req.body)
         result
           .save()
@@ -43,15 +43,13 @@ server.post("/upload/images", authenticated, privileged(2), busboy, (req, res) =
   let url
   return new Promise(resolve => {
     const Photoshoot = new Photoshoots(req.body)
-    Photoshoots.find({ url }, (err, result) => {
+    Photoshoots.findOne({ url }, (err, result) => {
       if (err) res.sendStatus(502)
-      if (!result.length) {
+      if (result) {
         Photoshoot.save()
           .then(res.sendStatus(200))
           .then(resolve())
-      } else {
-        res.sendStatus(403)
-      }
+      } else res.sendStatus(403)
     })
   })
   // req.busboy.on("field")

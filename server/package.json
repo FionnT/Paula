@@ -1,22 +1,27 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "author": "http://github.com/fionnt",
   "description": "Backend of the Paula website, handling authentication, contact, and data fetching",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js"
   },
-  "author": "Fionn Tolster",
   "license": "CC-BA-4.0",
   "dependencies": {
+    "aws-sdk": "^2.628.0",
+    "aws-smtp-credentials": "^1.0.0",
     "bcrypt": "^4.0.0",
     "body-parser": "^1.19.0",
     "connect-busboy": "0.0.2",
     "connect-mongodb-session": "^2.3.1",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
-    "mongoose": "^5.9.2"
+    "mongoose": "^5.9.2",
+    "nodemailer": "^6.4.3",
+    "nodemailer-ses-transport": "^1.5.1"
   }
 }
