@@ -1,4 +1,9 @@
 import Navigation from "./navigation"
 import Photoshoot from "./photoshoot"
+import Form from "./form"
 
-export { Navigation, Photoshoot }
+export {
+  Form,
+  Navigation,
+  Photoshoot
+}

@@ -5,7 +5,7 @@
 import React from "react"
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import ReactDOM from "react-dom"
-import { Home, About } from "./pages"
+import { About, Contact, Home } from "./pages"
 import * as serviceWorker from "./serviceWorker"
 import "./styles/global.sass"
 
@@ -21,6 +21,7 @@ const App = () => {
         </Route>
         <Route path="/shoot/:shootname" component={Home} />
         <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
       </Switch>
     </BrowserRouter>
   )
