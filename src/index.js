@@ -3,10 +3,10 @@
 // Learn more about service workers: https://bit.ly/CRA-PWA
 
 import React from "react"
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import ReactDOM from "react-dom"
-import { About, Contact, Home } from "./pages"
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import * as serviceWorker from "./serviceWorker"
+import { About, Contact, Home, Checkout } from "./pages"
 import "./styles/global.sass"
 
 // import * as serviceWorker from './serviceWorker'
@@ -16,12 +16,13 @@ const App = () => {
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route path="/about" component={About} />
+        <Route path="/contact" component={Contact} />
+        <Route exact path="/shop/checkout" component={Checkout} />
         <Route exact path="/shoot/">
           <Redirect to="/"></Redirect>
         </Route>
         <Route path="/shoot/:shootname" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/contact" component={Contact} />
       </Switch>
     </BrowserRouter>
   )

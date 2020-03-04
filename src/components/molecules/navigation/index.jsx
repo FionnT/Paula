@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import "./styles.sass"
 
@@ -21,6 +21,7 @@ const Navigation = () => {
     enabled === "opened" ? slideIn() : slideOut()
   }
 
+  // only display the arrow on the homepage
   const scrollArrow = () => {
     if (document.location.pathname === "/")
       return (
@@ -29,15 +30,26 @@ const Navigation = () => {
         </div>
       )
   }
+
+  // handles mobile arrow visibility after scrolling
   const scrollOfArrow = enable => {
     let arrow = document.getElementById("mobileindicator")
     if (window.innerWidth < 1200 && document.location.pathname === "/")
       document.body.scrollTop > 0 ? (arrow.style.display = "none") : (arrow.style.display = "block")
   }
-  // if (document.location.pathname !== "/") document.getElementById("mobileindicator").style.display = "none"
   document.body.addEventListener("scroll", scrollOfArrow)
+
+  useEffect(() => {
+    const links = Array.from(document.getElementById("navigation").getElementsByTagName("a"))
+    links.forEach(link => {
+      const linkPath = link.attributes.href.value
+      const currentPath = document.location.pathname
+      if (linkPath === currentPath && currentPath !== "/") link.style.color = "#FF7F50"
+    })
+  })
+
   return (
-    <div className="wrapper">
+    <div id="navigation" className="wrapper">
       <nav className={enabled}>
         <Link
           to={{

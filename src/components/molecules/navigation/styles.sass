@@ -49,8 +49,11 @@
         height: 12vh
         display: inline-block
         text-decoration: none
-        &:visited
-          color: #000
+        transition: color 0.15s linear
+        &:visited, &:active
+          color: initial
+        &:hover
+          color: #FF7F50
         h1 
           width: 150px
           font-size: 40px
@@ -77,8 +80,11 @@
             text-decoration: none
             width: 100%
             height: auto
-            &:visited
+            transition: color 0.15s linear
+            &:visited, &:active
               color: #000
+            &:hover
+             color: #FF7F50
         a h1 
           padding: 25px 0 0 40px
           font-size: 25px

@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Input } from "../../atoms"
+import { Input, Button } from "../../atoms"
 
 class Form extends Component {
   state = {
@@ -10,20 +10,33 @@ class Form extends Component {
   submit = () => {
     for (let item in this.state) {
       let textEntry = this.state[item]
-      if (textEntry && textEntry !== "") {
-        //continue
-      } else if (item === "name") continue
+      if ((textEntry && textEntry !== "") || item === "name") continue
       else return false
     }
-    console.log(this.state)
+    console.log(this.state) // TODO: add message posting
+  }
+
+  onTextAreaInput = () => {
+    this.style.height = "auto"
+    this.style.height = this.scrollHeight + "px"
   }
 
   textChange = event => {
-    const update = {}
-    let text = event.target.value
-    let field = event.target.attributes.type.value
-    update[field] = text
-    if (this.state[field] !== text) this.setState(update)
+    const submitted = {}
+    let input = event.target.value
+    let area = event.target.attributes.type.value
+    submitted[area] = input
+    if (this.state[area] !== input) this.setState(submitted)
+    if (area === "text") {
+      const textarea = event.target
+      const onTextAreaInput = () => {
+        textarea.style.height = "auto"
+        textarea.style.height = textarea.scrollHeight + "px"
+      }
+      textarea.style.height = textarea.scrollHeight
+      textarea.style.overflowY = "hidden"
+      textarea.addEventListener("input", onTextAreaInput)
+    }
   }
 
   render() {
@@ -32,7 +45,7 @@ class Form extends Component {
         <Input type="email" textController={this.textChange} placeholder="Your email address *" />
         <Input type="name" textController={this.textChange} placeholder="Your name" />
         <Input type="text" textController={this.textChange} placeholder="Your message *" />
-        <button onClick={this.submit}>Submit Your message</button>
+        <Button onClick={this.submit}>Submit Your message</Button>
       </React.Fragment>
     )
   }

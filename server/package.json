@@ -22,6 +22,7 @@
     "express-session": "^1.17.0",
     "mongoose": "^5.9.2",
     "nodemailer": "^6.4.3",
-    "nodemailer-ses-transport": "^1.5.1"
+    "nodemailer-ses-transport": "^1.5.1",
+    "sharp": "^0.24.1"
   }
 }
