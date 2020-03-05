@@ -7,22 +7,32 @@ class Form extends Component {
     name: undefined,
     text: undefined
   }
-  submit = () => {
-    for (let item in this.state) {
-      let textEntry = this.state[item]
-      if ((textEntry && textEntry !== "") || item === "name") continue
-      else return false
-    }
-    console.log(this.state) // TODO: add message posting
-  }
 
-  onTextAreaInput = () => {
-    this.style.height = "auto"
-    this.style.height = this.scrollHeight + "px"
+  submit = () => {
+    const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    for (let item in this.state) {
+      let text = this.state[item]
+      if (item === "name") continue
+      else {
+        if (item === "email" && isValidEmail.test(text)) continue
+        if (item === "text" && text?.length > 1) continue
+      }
+      // we won't get here unless something hasn't been entered correctly
+      let faultingElement = document.getElementById("contact").querySelectorAll("." + item)[0].children[1]
+      faultingElement.style.borderBottom = "1px solid red"
+    }
+    fetch("https://localhost:9001/contact", {
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(this.state)
+    })
   }
 
   textChange = event => {
     const submitted = {}
+    event.target.style.border = "" // css rule takes over again, in case we had to highlight a fault previously
     let input = event.target.value
     let area = event.target.attributes.type.value
     submitted[area] = input
