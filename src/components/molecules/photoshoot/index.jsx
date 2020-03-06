@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import "./styles.sass"
-
+const isFirefox = typeof InstallTrigger !== "undefined"
 class Photoshoot extends Component {
   constructor(props) {
     super(props)
@@ -49,7 +49,9 @@ class Photoshoot extends Component {
       } else if (myWidth - prevWidth > 50 || myWidth - prevWidth < -50) {
         // yay responsiveness
         if (windowWidth > 1200) {
-          myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + 20) : (myOffset = prevOffset - myWidth / 2 + prevWidth - 15)
+          let bigbool = isFirefox ? -10 : 10
+          let smallbool = isFirefox ? 0 : -15
+          myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + bigbool) : (myOffset = prevOffset - myWidth / 2 + prevWidth + smallbool)
         } else if (windowWidth < 1200 && windowWidth > 1050) {
           // iPad Pro, landscape, or other large'ish device
           myWidth > prevWidth ? (myOffset = prevWidth + myWidth / 3 + prevOffset - 20) : (myOffset = prevOffset + myWidth * 0.6 + prevWidth / 2 - 10)

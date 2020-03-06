@@ -171,7 +171,11 @@ class Gallery extends Component {
         }, 450)
       })
     } else {
-      event.currentTarget.scrollLeft += (event.deltaY + event.deltaX) * 0.8
+      let multiplier = 1
+      const isFirefox = typeof InstallTrigger !== "undefined"
+      // firefox doesn't like
+      if (isFirefox) multiplier = 50
+      event.currentTarget.scrollLeft += (event.deltaY + event.deltaX) * multiplier
       event.preventDefault()
     }
   }

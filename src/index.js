@@ -14,6 +14,7 @@ import "./styles/global.sass"
 const App = () => {
   return (
     <BrowserRouter>
+      <p id="notifier"> </p>
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/about" component={About} />

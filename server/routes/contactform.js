@@ -4,15 +4,18 @@ const nodemailer = require("nodemailer")
 const sesTransport = require("nodemailer-ses-transport")
 
 server.post("/contact", jsonParser, (req, res) => {
-  const { subject, text, replyTo } = req.body
+  const { email, name, text } = req.body
+  const replyTo = () => {
+    if (name) return name + " <" + email + ">"
+    else return email
+  }
   const mailOptions = {
     to: process.env.CONTACTABLE_EMAIL,
     from: process.env.CONTACT_FORM_EMAIL,
-    replyTo,
-    subject,
+    replyTo: replyTo().toString(),
+    subject: "Contact form submission",
     text
   }
-  // sesTransporter.sendMail(mailOptions, callback)
   sesTransporter.sendMail(mailOptions, err => {
     if (err) console.log(err)
     else res.sendStatus(200)
