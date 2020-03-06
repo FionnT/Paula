@@ -2,9 +2,12 @@ const server = require("express")()
 const jsonParser = require("body-parser").json()
 const bcrypt = require("bcrypt")
 const saltRounds = 10
+
+const privileged = require("./middleware/privileged")
+const authenticated = require("./middleware/authenticated")()
 const { Admin, Person } = require("../models/index")
 
-server.post("/admin/register", jsonParser, async (req, res) => {
+server.post("/admin/register", jsonParser, authenticated, privileged(2), async (req, res) => {
   const { email, password } = req.body
   await Admin.findOne({ email }, (err, result) => {
     if (err) res.sendStatus(502)
@@ -33,7 +36,7 @@ server.post("/admin/register", jsonParser, async (req, res) => {
   })
 })
 
-server.post("/shop/register", jsonParser, async (req, res) => {
+server.post("/shop/register", jsonParser, authenticated, privileged(2), async (req, res) => {
   const { email, password } = req.body
   await Person.findOne({ email }, (err, result) => {
     if (err) res.sendStatus(502)

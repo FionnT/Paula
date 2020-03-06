@@ -5,14 +5,14 @@ const busboy = require("connect-busboy")()
 const privileged = require("./middleware/privileged")
 const authenticated = require("./middleware/authenticated")()
 const { Photoshoots } = require("../models/index")
-
-server.post("/upload/json", authenticated, privileged(2), jsonParser, (req, res) => {
+//, authenticated, privileged(2)
+server.post("/upload/json", jsonParser, authenticated, privileged(2), (req, res) => {
   return new Promise(resolve => {
     const Photoshoot = new Photoshoots(req.body)
     const url = req.body.url
     Photoshoots.findOne({ url }, (err, result) => {
       if (err) res.send(502)
-      if (result) {
+      if (!result) {
         Photoshoot.save()
           .then(res.sendStatus(200))
           .then(resolve())
