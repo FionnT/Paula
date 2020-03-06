@@ -1,6 +1,9 @@
 import React, { Component } from "react"
 import "./styles.sass"
 const isFirefox = typeof InstallTrigger !== "undefined"
+const isIE = /*@cc_on!@*/ false || !!document.documentMode
+const isEdge = !isIE && !!window.StyleMedia
+
 class Photoshoot extends Component {
   constructor(props) {
     super(props)
@@ -21,15 +24,13 @@ class Photoshoot extends Component {
   }
 
   handleActivate() {
-    // alert(window.innerWidth)
     //
-    // Firefox and Webkit handle grid layouts differently
+    // All browsers handle grid layouts differently
     // Webkit assigns margins to center, but Firefox just positions them pseudo-absolutely
+    // Edge just makes stuff up basically
     // Don't rewrite to calculate based on margins
-    // Left offset for the first item is = (container width/2 * -1) + (item width/2)
-    // Each child tags the next image with it's current offset, and it's width
-    // For images that are bigger, or smaller than the previous image +- 20, we need to do some additional computation
     //
+
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
 
     for (let i = 0; i < images.length; i++) {
@@ -40,18 +41,29 @@ class Photoshoot extends Component {
       let prevOffset = parseInt(image.attributes.prevoffset) || undefined
       let prevWidth = parseInt(image.attributes.prevwidth) || undefined
       let windowWidth = window.innerWidth
+      if (isEdge) {
+        document.body.style.overflow = "visible"
+        document.documentElement.style.overflowY = "hidden"
+      }
       image.style.opacity = 1
       image.style.transition = "transform 0.5s ease"
+      //
+      // yay responsiveness
+      // Left offset for the first item is = (container width/2 * -1) + (item width/2)
+      // Each child tags the next image with it's current offset, and it's width
+      // For images that are bigger, or smaller than the previous image +- 20, we need to do some additional computation
+      //
       if (i === 0) {
         let bump = windowWidth > 1200 ? 0 : windowWidth > 800 ? 5 : windowWidth > 700 ? 0 : windowWidth > 425 ? 22 : window.innerHeight > 800 ? 40 : 0
         let containerWidth = parseInt(window.getComputedStyle(document.querySelector("#gallery")).width)
         myOffset = containerWidth / -2 + myWidth / 2 - bump
       } else if (myWidth - prevWidth > 50 || myWidth - prevWidth < -50) {
-        // yay responsiveness
         if (windowWidth > 1200) {
-          let bigbool = isFirefox ? -10 : 10
-          let smallbool = isFirefox ? 0 : -15
-          myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + bigbool) : (myOffset = prevOffset - myWidth / 2 + prevWidth + smallbool)
+          let biggerImageBump = isFirefox ? -10 : isEdge ? -5 : 10
+          let smallerImageBump = isFirefox ? 0 : isEdge ? 0 : -15
+          myWidth > prevWidth
+            ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + biggerImageBump)
+            : (myOffset = prevOffset - myWidth / 2 + prevWidth + smallerImageBump)
         } else if (windowWidth < 1200 && windowWidth > 1050) {
           // iPad Pro, landscape, or other large'ish device
           myWidth > prevWidth ? (myOffset = prevWidth + myWidth / 3 + prevOffset - 20) : (myOffset = prevOffset + myWidth * 0.6 + prevWidth / 2 - 10)
@@ -86,6 +98,10 @@ class Photoshoot extends Component {
 
   handleClosure() {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
+    if (isEdge) {
+      document.body.style.overflow = ""
+      document.documentElement.style.overflowY = ""
+    }
     for (let i in images) {
       let image = images[i]
       image.style.transition = "all .35s ease"

@@ -60,6 +60,8 @@
       margin: 0 auto
       grid-column: 1
       grid-row: 1
+      @supports (-ms-ime-align:auto) // fix for Microsoft Edge grid height issue
+        max-height: 84vh !important
       &:last-of-type
         width: 1vw
       &.image-0
@@ -80,9 +82,9 @@
       cursor: pointer
     h2
       display: block
-  // Phones and tablets
 
 
+// Phones and tablets
 @media only screen and (max-width: 1200px)
   .photoshoot
     .photo-wrapper
