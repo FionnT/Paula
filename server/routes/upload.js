@@ -21,7 +21,7 @@ server.post("/upload/json", authenticated, privileged(2), jsonParser, (req, res)
   })
 })
 
-server.post("/upload/json/update", jsonParser, (req, res) => {
+server.post("/upload/json/update", authenticated, privileged(2), jsonParser, (req, res) => {
   return new Promise(resolve => {
     const url = req.body.url
     Photoshoots.findOne({ url }, (err, result) => {
