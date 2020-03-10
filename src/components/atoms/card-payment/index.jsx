@@ -24,7 +24,8 @@ const CARD_ELEMENT_OPTIONS = {
 
 // POST the token ID to your backend.
 async function stripeTokenHandler(token) {
-  const response = await fetch(process.env.REACT_APP_API_URL + "/shop/charge", {
+  let x = process.env.REACT_APP_API_URL + "/shop/charge"
+  const response = await fetch(x, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

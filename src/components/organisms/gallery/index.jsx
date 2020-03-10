@@ -50,7 +50,8 @@ class Gallery extends Component {
   fetchAllShoots = () => {
     if (!this.state.shoots) {
       return new Promise(resolve => {
-        fetch(process.env.REACT_APP_API_URL + "/photoshoots/home").then(res => resolve(res.json()))
+        let x = process.env.REACT_APP_API_URL + "/photoshoots/home"
+        fetch(x).then(res => resolve(res.json()))
       })
     } else return
   }

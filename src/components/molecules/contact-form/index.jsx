@@ -23,7 +23,8 @@ class ContactForm extends Component {
       return false
     }
     // we won't get here unless everything was entererd correctly
-    fetch(process.env.REACT_APP_API_URL + "/contact", {
+    let x = process.env.REACT_APP_API_URL + "/contact"
+    fetch(x, {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json"
