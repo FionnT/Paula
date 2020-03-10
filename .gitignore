@@ -3,6 +3,8 @@
 /public/galleries/*
 !/public/galleries/.gitkeep 
 
+/db
+/db/*
 /server/db/*
 !/server/db/.gitkeep 
 
