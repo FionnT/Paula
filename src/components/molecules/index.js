@@ -1,5 +1,6 @@
 import Navigation from "./navigation"
 import Photoshoot from "./photoshoot"
 import ContactForm from "./contact-form"
+import Login from "./login"
 
-export { ContactForm, Navigation, Photoshoot }
+export { ContactForm, Login, Navigation, Photoshoot }

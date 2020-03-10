@@ -30,7 +30,7 @@ const photoshootSchema = new Schema(
   {
     itemOrder: Array,
     length: String,
-    isInHomePosition: Number, // -1 indicates false
+    isInHomePosition: Number,
     isOnHomeScreen: {
       type: Boolean,
       default: false

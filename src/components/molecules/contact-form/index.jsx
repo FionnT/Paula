@@ -23,7 +23,7 @@ class ContactForm extends Component {
       return false
     }
     // we won't get here unless everything was entererd correctly
-    fetch("http://localhost:9001/contact", {
+    fetch("http://paulatrojner.com:8080/contact", {
       method: "POST", // or 'PUT'
       headers: {
         "Content-Type": "application/json"
@@ -58,7 +58,6 @@ class ContactForm extends Component {
   }
 
   emailNotification = message => {
-    console.log(message)
     const messages = {
       200: [true, "We'll be in touch soon!"],
       403: [false, "Sending that email was forbidden."],
@@ -66,7 +65,6 @@ class ContactForm extends Component {
       // etc.
     }
     const notifier = document.getElementById("notifier")
-    console.log(notifier)
     notifier.className = messages[message][0]
     notifier.innerHTML = messages[message][1]
     notifier.style.opacity = 1
@@ -81,7 +79,7 @@ class ContactForm extends Component {
         <Input type="email" textController={this.textChange} placeholder="Your email address *" />
         <Input type="name" textController={this.textChange} placeholder="Your name" />
         <Input type="text" textController={this.textChange} placeholder="Your message *" />
-        <Button onClick={this.submit}>Submit Your message</Button>
+        <Button onSubmit={this.submit}>Submit Your message</Button>
       </React.Fragment>
     )
   }

@@ -6,7 +6,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import * as serviceWorker from "./serviceWorker"
-import { About, Checkout, Contact, Home, Shop } from "./pages"
+import { About, Authentication, Checkout, Contact, Home, Shop } from "./pages"
 import "./styles/global.sass"
 
 // import * as serviceWorker from './serviceWorker'
@@ -19,6 +19,7 @@ const App = () => {
         <Route exact path="/" component={Home} />
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
+        <Route exact path="/admin/login" component={Authentication} />
         <Route path="/shop" component={Shop} />
         {/* <Route exact path="/shop/checkout" component={Checkout} /> */}
         <Route exact path="/shoot/">

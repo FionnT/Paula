@@ -24,7 +24,7 @@ const CARD_ELEMENT_OPTIONS = {
 
 // POST the token ID to your backend.
 async function stripeTokenHandler(token) {
-  const response = await fetch("http://localhost:9001/shop/charge", {
+  const response = await fetch("http://paulatrojner.com:8080/shop/charge", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
