@@ -4,7 +4,7 @@ const dotenv = require("dotenv").config()
 const cors = require("cors")
 
 server.use(cors())
-server.get("/", res => res.sendStatus(200))
+server.get("/", (req, res) => res.sendStatus(200))
 server.use("/", require("./routes/register"))
 server.use("/", require("./routes/authenticate"))
 server.use("/", require("./routes/upload"))
