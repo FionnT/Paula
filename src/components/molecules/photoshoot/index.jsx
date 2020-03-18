@@ -61,9 +61,7 @@ class Photoshoot extends Component {
         if (windowWidth > 1200) {
           let biggerImageBump = isFirefox ? -10 : isEdge ? -5 : 10
           let smallerImageBump = isFirefox ? 0 : isEdge ? 0 : -15
-          myWidth > prevWidth
-            ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + biggerImageBump)
-            : (myOffset = prevOffset - myWidth / 2 + prevWidth + smallerImageBump)
+          myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + biggerImageBump) : (myOffset = prevOffset - myWidth / 2 + prevWidth + smallerImageBump)
         } else if (windowWidth < 1200 && windowWidth > 1050) {
           // iPad Pro, landscape, or other large'ish device
           myWidth > prevWidth ? (myOffset = prevWidth + myWidth / 3 + prevOffset - 20) : (myOffset = prevOffset + myWidth * 0.6 + prevWidth / 2 - 10)
@@ -117,8 +115,6 @@ class Photoshoot extends Component {
 
   handleHover(enable) {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
-    // const galleryInMotion =
-    console.log(document.getElementById("animationbox").dataset.motion)
     if (this.state.activated !== "activated") {
       if (enable) {
         for (let i = 0; i < images.length - 1; i++) {

@@ -7,7 +7,8 @@ const privileged = require("./middleware/privileged")
 const authenticated = require("./middleware/authenticated")()
 const { Admin, Person } = require("../models/index")
 
-server.post("/admin/register", jsonParser, authenticated, privileged(2), async (req, res) => {
+// authenticated, privileged(2),
+server.post("/admin/register", jsonParser, async (req, res) => {
   const { email, password } = req.body
   await Admin.findOne({ email }, (err, result) => {
     if (err) res.sendStatus(502)
@@ -36,7 +37,7 @@ server.post("/admin/register", jsonParser, authenticated, privileged(2), async (
   })
 })
 
-server.post("/shop/register", jsonParser, authenticated, privileged(2), async (req, res) => {
+server.post("/shop/register", jsonParser, async (req, res) => {
   const { email, password } = req.body
   await Person.findOne({ email }, (err, result) => {
     if (err) res.sendStatus(502)

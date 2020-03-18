@@ -10,7 +10,6 @@ const stripePromise = loadStripe("pk_test_ewYXsxzBelAK67VpC4LVJhbt000ScbJFsp")
 function Checkout() {
   const [payment, updatePaymentType] = useState(<CardPayment />)
   const toggle = () => {
-    console.log(payment)
     if (payment.type.name == "CardPayment") updatePaymentType(<IDealPayment />)
     else updatePaymentType(<CardPayment />)
   }

@@ -50,8 +50,8 @@ class Gallery extends Component {
   fetchAllShoots = () => {
     if (!this.state.shoots) {
       return new Promise(resolve => {
-        let x = process.env.REACT_APP_API_URL + "/photoshoots/home"
-        fetch(x).then(res => resolve(res.json()))
+        let server = process.env.REACT_APP_API_URL + "/photoshoots/home"
+        fetch(server, { credentials: "include", mode: "cors" }).then(res => resolve(res.json()))
       })
     } else return
   }
@@ -108,7 +108,6 @@ class Gallery extends Component {
             document.body.scrollTo(0, offset)
           } else {
             const margin = (photoshoot.isInHomePosition - 1) * -86 + "vh"
-            console.log(margin, shoot)
             document.getElementById("animationbox").style.marginTop = margin
           }
         } else shoots[shoot].activated = "hidden"

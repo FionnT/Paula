@@ -6,8 +6,11 @@ const authenticated = level => {
       .lean() // converts mongoose document to JSON
       .exec((err, result) => {
         if (err) console.log(err)
-        else if (result && req.session.email === result.session.email) next()
-        else res.sendStatus(403)
+        else if (result) {
+          res.locals.email = result.session.email
+          res.locals.privileges = result.session.privileges
+          next()
+        } else res.sendStatus(403)
       })
   }
 }
