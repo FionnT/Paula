@@ -1,6 +1,5 @@
 import React from "react"
-import { Navigation } from "../../components/molecules"
-import { Gallery } from "../../components/organisms"
+import { Gallery, Navigation } from "../../components/organisms"
 
 class Home extends React.Component {
   constructor(props) {
@@ -28,8 +27,7 @@ class Home extends React.Component {
     if (this.props.match.params && this.props.match.params.shootname !== this.state.shootname) this.setState({ shootname: this.props.match.params.shootname })
   }
   componentDidUpdate(prevProps) {
-    if (this.props.location.state && this.props.location.state.shootname !== this.state.shootname)
-      this.setState({ shootname: this.props.location.state.shootname })
+    if (this.props.location.state && this.props.location.state.shootname !== this.state.shootname) this.setState({ shootname: this.props.location.state.shootname })
   }
   render() {
     return (

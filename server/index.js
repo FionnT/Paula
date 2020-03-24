@@ -3,8 +3,8 @@ const port = 9001
 const dotenv = require("dotenv").config()
 const cors = require("cors")
 
-var corsOptions = {
-  origin: process.env.REACT_REQUEST_DOMAIN,
+const corsOptions = {
+  origin: process.env.REACT_ORIGIN_DOMAIN,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   credentials: true
 }

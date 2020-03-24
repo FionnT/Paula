@@ -6,7 +6,8 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import * as serviceWorker from "./serviceWorker"
-import { About, Authentication, Checkout, Contact, Home, Shop } from "./pages"
+import { About, Authentication, Checkout, Contact, GalleriesAdmin, Home, Shop } from "./pages"
+import { ProtectedRoute } from "./components/atoms"
 import { UserProvider } from "./context-providers"
 import "./styles/global.sass"
 
@@ -14,8 +15,8 @@ import "./styles/global.sass"
 
 const App = () => {
   return (
-    <UserProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <UserProvider>
         <p id="notifier"> </p>
         <Switch>
           <Route exact path="/" component={Home} />
@@ -28,9 +29,12 @@ const App = () => {
             <Redirect to="/"></Redirect>
           </Route>
           <Route path="/shoot/:shootname" component={Home} />
+          <ProtectedRoute privilege="3">
+            <Route exact path="/admin/galleries" component={GalleriesAdmin}></Route>
+          </ProtectedRoute>
         </Switch>
-      </BrowserRouter>
-    </UserProvider>
+      </UserProvider>
+    </BrowserRouter>
   )
 }
 

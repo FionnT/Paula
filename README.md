@@ -8,7 +8,9 @@ A completely free, responsive Photograpy site allowed for general use under CC-B
 To Setup
 --
 
-First amend models.js in server/models to point to your MongoDB instance, then start MongoDB
+First rename .env.example in root, and ./server to .env, and fill in your version of those keys/data
+
+Next amend models.js in server/models to point to your MongoDB instance, then start MongoDB
 
 Start the Server: 
 

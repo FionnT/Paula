@@ -10,7 +10,7 @@ const authenticated = level => {
           res.locals.email = result.session.email
           res.locals.privileges = result.session.privileges
           next()
-        } else res.sendStatus(403)
+        } else res.sendStatus(401)
       })
   }
 }

@@ -1,5 +1,6 @@
 import React from "react"
-import { Navigation, ContactForm } from "../../components/molecules"
+import { ContactForm } from "../../components/molecules"
+import { Navigation } from "../../components/organisms"
 
 import "./styles.sass"
 

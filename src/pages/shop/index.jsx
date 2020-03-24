@@ -1,5 +1,5 @@
 import React from "react"
-import { Navigation } from "../../components/molecules"
+import { Navigation } from "../../components/organisms"
 import "./styles.sass"
 
 export default function Shop() {

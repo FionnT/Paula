@@ -15,7 +15,7 @@ const store = new MongoDBStore(
 )
 
 const authenticated = require("./middleware/authenticated")()
-const { Admin, Person } = require("../models/index")
+const { Admin, Person, Session } = require("../models/index")
 const maxSessionLength = 1000 * 60 * 60 * 8 // 8 hours
 const public_metadata = {
   email: undefined,
@@ -58,7 +58,6 @@ server.post("/shop/login", jsonParser, async (req, res) => {
           req.session.privileges = user.privileges
           req.session.save()
           res.json(public_metadata)
-          res.end()
         }
       })
     }
@@ -66,7 +65,6 @@ server.post("/shop/login", jsonParser, async (req, res) => {
 })
 
 server.post("/admin/login", jsonParser, async (req, res) => {
-  // console.log(req.sessionID)
   const { email, password } = req.body
   await Admin.findOne({ email }, (err, user) => {
     if (err) console.log(err)
@@ -83,7 +81,6 @@ server.post("/admin/login", jsonParser, async (req, res) => {
           req.session.privileges = user.privileges
           req.session.save()
           res.json(public_metadata)
-          res.end()
         }
       })
     }
@@ -93,6 +90,7 @@ server.post("/admin/login", jsonParser, async (req, res) => {
 // The authenticated middleware will tell us if we have an active session for this connectSID
 // If we do, we will assign the res.locals object with the email relating to that SID
 // We then send a response containing the public metadata of the email address tied to that connectSID
+// If we can't find a user registered with that email, such as if they've just been deleted, we send a blank response
 // This ensures that you need two keys at all times to access an account
 // 1. Password verified session per above
 // 2. ConnectSID matching that of the veririfed session
@@ -102,7 +100,7 @@ server.get("/verify_session", jsonParser, authenticated, async (req, res) => {
   if (privileges) {
     await Admin.findOne({ email }, (err, user) => {
       if (err) res.sendStatus(503)
-      else if (!user) res.sendStatus(403)
+      else if (!user) res.sendStatus(401)
       else {
         for (let key in public_metadata) {
           public_metadata[key] = user[key]
@@ -113,7 +111,7 @@ server.get("/verify_session", jsonParser, authenticated, async (req, res) => {
   } else if (!privileges) {
     await Person.findOne({ email }, (err, user) => {
       if (err) res.sendStatus(503)
-      else if (!user) res.sendStatus(403)
+      else if (!user) res.sendStatus(401)
       else {
         for (let key in public_metadata) {
           public_metadata[key] = user[key]
@@ -121,34 +119,12 @@ server.get("/verify_session", jsonParser, authenticated, async (req, res) => {
         res.json(public_metadata)
       }
     })
-  } else res.sendStatus(403)
+  } else res.sendStatus(401)
 })
 
-server.get("/logout", jsonParser, authenticated, async (req, res) => {
-  const { email, privileges } = res.locals
-  if (privileges) {
-    await Admin.findOne({ email }, (err, user) => {
-      if (err) res.sendStatus(503)
-      else if (!user) res.sendStatus(403)
-      else {
-        for (let key in public_metadata) {
-          public_metadata[key] = user[key]
-        }
-        res.json(public_metadata)
-      }
-    })
-  } else if (!privileges) {
-    await Person.findOne({ email }, (err, user) => {
-      if (err) res.sendStatus(503)
-      else if (!user) res.sendStatus(403)
-      else {
-        for (let key in public_metadata) {
-          public_metadata[key] = user[key]
-        }
-        res.json(public_metadata)
-      }
-    })
-  } else res.sendStatus(403)
+server.get("/logout", (req, res) => {
+  req.session.destroy()
+  res.end()
 })
 
 module.exports = server
