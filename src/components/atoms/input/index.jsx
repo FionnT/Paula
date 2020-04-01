@@ -22,10 +22,11 @@ class Input extends Component {
   }
 
   render() {
-    const { type, placeholder } = this.props
+    const { immutable, immutableWidth, mutableWidth, type, placeholder } = this.props
     return (
       <div className={"inputField " + type}>
         <p>{placeholder}</p>
+        {immutable ? <input className="fixedValue" style={{ width: immutableWidth }} value={immutable} disabled /> : null}
         {type !== "text" ? (
           <input
             onInput={this.textController}
@@ -35,6 +36,8 @@ class Input extends Component {
               this.userIsInputting = true
               this.setState({ value: e.target.value }, () => (this.userIsInputting = false))
             }}
+            className={immutable ? "immutable" : ""}
+            style={{ width: mutableWidth }}
           />
         ) : (
           <textarea type={type} onInput={this.textController}></textarea>

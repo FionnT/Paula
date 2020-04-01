@@ -1,9 +1,8 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { UserConsumer } from "../../../context-providers"
-import { UserProfile } from "../../molecules"
+import { UserConsumer, CartProvider, CartConsumer } from "../../../context-providers"
+import { UserProfileButton, CartButton } from "../../molecules"
 import "./styles.sass"
-import UserProfileButton from "../../molecules/user-profile-button"
 
 class Navigation extends Component {
   constructor(props) {
@@ -83,6 +82,18 @@ class Navigation extends Component {
             <li>
               <Link to="/shop">Shop</Link>
             </li>
+            <CartProvider>
+              <CartConsumer>
+                {({ cart }) => {
+                  if (cart.items.length || document.location.pathname.match("shop"))
+                    return (
+                      <li className="cart">
+                        <CartButton />
+                      </li>
+                    )
+                }}
+              </CartConsumer>
+            </CartProvider>
             <UserConsumer>
               {({ user, updateUser }) => {
                 if (user.filename)

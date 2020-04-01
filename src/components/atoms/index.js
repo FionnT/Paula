@@ -1,5 +1,6 @@
 import Button from "./button"
 import CardPayment from "./card-payment"
+import Cart from "./cart"
 import ChevronNavigation from "./chevron-navigation"
 import DropZoneImage from "./drop-zone-image"
 import GallerySelection from "./gallery-selection"
@@ -8,4 +9,4 @@ import IDealPayment from "./ideal-payment"
 import ProtectedRoute from "./protected-route"
 import UserMenu from "./user-menu"
 
-export { Button, CardPayment, ChevronNavigation, DropZoneImage, GallerySelection, IDealPayment, Input, ProtectedRoute, UserMenu }
+export { Button, CardPayment, Cart, ChevronNavigation, DropZoneImage, GallerySelection, IDealPayment, Input, ProtectedRoute, UserMenu }

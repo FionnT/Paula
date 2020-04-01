@@ -5,11 +5,9 @@
     width: 165px
     margin: 12px 6px
     box-sizing: border-box
-    // border: 1px solid rgba(0,0,0,0.05)
-    border-radius: 5px
     overflow: hidden
-    background-color: #FFFFFF
-    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) 
+    background-color: transparent
+    // box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) 
     &:nth-child(1), &:nth-child(4n+1) 
       margin-left: 25px    
     .dropzone-image 
@@ -22,10 +20,10 @@
       background-size: 100%
       background-repeat: no-repeat
     span 
-      display: block
+      display: inline-block
       height: 9%
       padding: 2.5% 0
-      width: 100% 
+      width: 33% 
       background: white
       opacity: 0.5
       color: #000000
@@ -36,6 +34,8 @@
       line-height: 17px
       text-align: center
       cursor: pointer 
+      &.delete 
+        width: 34%
       &:hover 
         color: #FF7F50
         opacity: 1

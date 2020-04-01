@@ -1,0 +1,119 @@
+#store-container 
+  .store-item 
+    height: 375px
+    width: 250px
+    margin: 50px 40px 50px 0
+    display: inline-block
+    float: left
+    &:first-of-type
+      margin-left: 40px
+    &:nth-child(4n+1)
+      margin-left: 40px
+    .item-image 
+      width: 250px
+      height: 300px
+      margin-bottom: 20px
+      background-position: center 
+      background-size: auto 100%
+      background-repeat: no-repeat
+      div 
+        transition: all 0.35s ease
+        opacity: 0
+        height: 100%
+        width: 100%  
+        background: rgba(243, 243, 243, 0.6)
+        span
+          height: calc(100% - 100px)
+          width: 100%
+        p 
+          width: auto 
+          height: 100px
+          text-align: center
+          margin: 0 auto 
+          vertical-align: middle
+          font-family: 'Open Sans Condensed', sans-serif
+          font-weight: 700
+      &:hover 
+        div
+          opacity: 1
+          cursor: pointer
+    .item-details 
+      width: 55% 
+      height: 55px 
+      margin-left: 10px
+      h3, p 
+        line-height: 22px
+        font-family: 'Lato', sans-serif
+        display: inline-block 
+        float: left
+      h3
+        font-size: 18px
+        margin-bottom: 10px
+        font-weight: 700
+        width: 100%
+      p 
+        font-size: 18px
+        font-weight: 500
+    span 
+      float: right
+      display: inline-block
+      margin-top: -45px
+      font-size: 30px
+      margin-right: 10px
+      color: rgb(255, 127, 80)
+      cursor: pointer
+  @media only screen and (max-width: 1200px)
+    .store-item
+      margin-right: 20px
+      &:first-of-type
+        margin-left: 20px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 40px
+  @media only screen and (max-width: 925px)
+    .store-item
+      margin-right: 20px
+      &:first-of-type
+        margin-left: 20px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 0px
+      &:nth-child(2n+1)
+        margin-left: 40px
+  @media only screen and (max-width: 907px)
+    .store-item
+      margin-right: 20px
+      &:nth-child(2n+1)
+        margin-left: 0px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 40px
+      &:first-of-type
+        margin-left: 40px
+  @media only screen and (max-width: 850px)
+    .store-item
+      margin-right: 20px
+      &:first-of-type
+        margin-left: 20px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 0px
+      &:nth-child(2n+1)
+        margin-left: 40px
+  @media only screen and (max-width: 580px)
+    .store-item
+      margin: 50px auto 50px
+      float: unset 
+      display: block
+      &:nth-child(2n+1)
+        margin-left: 0px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 0px
+      &:first-of-type
+        margin-left: 0px
