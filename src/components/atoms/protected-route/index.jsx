@@ -6,7 +6,7 @@ export default function ProtectedRoute(props) {
   const privileges = parseInt(props.privilege)
   return (
     <UserConsumer>
-      {({ user, updateUser }) => {
+      {({ user }) => {
         const rendered = user.privileges <= Number(privileges) ? props.children : <Redirect to="/admin/login"></Redirect>
         return rendered
       }}

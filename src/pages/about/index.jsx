@@ -6,7 +6,7 @@ import "./styles.sass"
 const About = () => {
   const portrait = { backgroundImage: "url('../paula_temp.jpg')" }
   return (
-    <React.Fragment>
+    <>
       <Navigation />
       <div id="about">
         <div className="portrait" style={portrait}>
@@ -38,7 +38,7 @@ const About = () => {
           </p>
         </div>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 

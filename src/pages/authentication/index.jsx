@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Login, Registration } from "../../components/molecules"
+import { Login } from "../../components/molecules"
 import { Navigation } from "../../components/organisms"
 import { validateText, pageNotification } from "../../utilities"
 import { Redirect } from "react-router-dom"

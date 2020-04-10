@@ -119,7 +119,7 @@ server.get("/verify_session", jsonParser, authenticated, async (req, res) => {
         res.json(public_metadata)
       }
     })
-  } else res.sendStatus(401)
+  } else res.send(401).json({ Reason: "User unauthorised" })
 })
 
 server.get("/logout", (req, res) => {

@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import { Link } from "react-router-dom"
-import { UserConsumer, CartProvider, CartConsumer } from "../../../context-providers"
+import { UserConsumer, CartConsumer } from "../../../context-providers"
 import { UserProfileButton, CartButton } from "../../molecules"
 import "./styles.sass"
 
@@ -82,18 +82,21 @@ class Navigation extends Component {
             <li>
               <Link to="/shop">Shop</Link>
             </li>
-            <CartProvider>
-              <CartConsumer>
-                {({ cart }) => {
-                  if (cart.items.length || document.location.pathname.match("shop"))
-                    return (
-                      <li className="cart">
-                        <CartButton />
-                      </li>
-                    )
-                }}
-              </CartConsumer>
-            </CartProvider>
+            <CartConsumer>
+              {methods => {
+                if (
+                  // Display in shop root, and only shop root
+                  // Display outside the ship if we have items in cart, but not if we're already reviewing our order
+                  (document.location.pathname.match("shop") && !document.location.pathname.match("/shop/")) ||
+                  (methods.cart.items.length && !document.location.pathname.match("shop"))
+                )
+                  return (
+                    <li className="cart">
+                      <CartButton methods={methods} />
+                    </li>
+                  )
+              }}
+            </CartConsumer>
             <UserConsumer>
               {({ user, updateUser }) => {
                 if (user.filename)

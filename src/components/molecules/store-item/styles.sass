@@ -9,51 +9,52 @@
       margin-left: 40px
     &:nth-child(4n+1)
       margin-left: 40px
+    &:hover
+      .item-options 
+        height: 25px  
     .item-image 
       width: 250px
       height: 300px
-      margin-bottom: 20px
       background-position: center 
       background-size: auto 100%
       background-repeat: no-repeat
-      div 
-        transition: all 0.35s ease
-        opacity: 0
-        height: 100%
-        width: 100%  
-        background: rgba(243, 243, 243, 0.6)
-        span
-          height: calc(100% - 100px)
-          width: 100%
-        p 
-          width: auto 
-          height: 100px
-          text-align: center
-          margin: 0 auto 
-          vertical-align: middle
-          font-family: 'Open Sans Condensed', sans-serif
-          font-weight: 700
-      &:hover 
-        div
-          opacity: 1
-          cursor: pointer
+    .item-options 
+      transition: all 0.25s ease
+      width: 100% 
+      height: 0 
+      font-weight: 400
+      margin: 10px auto 15px
+      display: flex 
+      justify-content: space-around
+      overflow: hidden
+      p 
+        line-height: 25px
+        width: auto
+        text-align: center
+        font-size: 14px
+        cursor: pointer
+        &.active 
+          border-bottom: 1px solid coral 
+          color: coral
     .item-details 
       width: 55% 
       height: 55px 
       margin-left: 10px
       h3, p 
         line-height: 22px
-        font-family: 'Lato', sans-serif
         display: inline-block 
         float: left
       h3
         font-size: 18px
         margin-bottom: 10px
-        font-weight: 700
+        font-weight: 400
         width: 100%
       p 
         font-size: 18px
-        font-weight: 500
+        font-weight: 300
+        &:first-of-type
+          padding-right: 5px
+          text-transform: capitalize  
     span 
       float: right
       display: inline-block

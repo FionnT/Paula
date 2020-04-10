@@ -45,12 +45,12 @@ class ContactForm extends Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <Input type="email" textController={this.textUpdater} placeholder="Your email address *" />
         <Input type="name" textController={this.textUpdater} placeholder="Your name" />
         <Input type="text" textController={this.textUpdater} placeholder="Your message *" />
         <Button onSubmit={this.submit}>Submit Your message</Button>
-      </React.Fragment>
+      </>
     )
   }
 }

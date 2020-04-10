@@ -3,6 +3,7 @@
 
 const validateText = (event, state, _callback) => {
   // The below isn't foolproof, but it's a close enough approximation
+  // eslint-disable-next-line
   const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   const area = event.target
   const input = area.value

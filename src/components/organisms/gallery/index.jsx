@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { ChevronNavigation } from "../../atoms"
 import { Photoshoot } from "../../molecules"
 import { Redirect } from "react-router-dom"
+import { isMobile, isFirefox } from "react-device-detect"
 import "./styles.sass"
 
 class Gallery extends Component {
@@ -94,27 +95,31 @@ class Gallery extends Component {
       this.updateHistory(shootname)
       this.handleScrollAbility(true)
       if (document.getElementById("mobileindicator")) document.getElementById("mobileindicator").style.display = "none"
-
+      let shootIndex
       // Parsing pretty URL from :param into the selected shoot
-      for (let shoot in shoots) {
-        if (shoots[shoot].url === shootname) {
-          const photoshoot = shoots[shoot]
-          photoshoot.activated = "activated"
-          // fix for mobile devices entering a gallery mid scroll - Navigation is 14vh
-          // iOS Safari ignores this
-          let offset = window.innerHeight * 0.86 * (shoot - 1)
-          if (window.innerWidth < 1200) {
-            document.documentElement.scrollTo(0, offset)
-            document.body.scrollTo(0, offset)
-          } else {
-            const margin = (photoshoot.isInHomePosition - 1) * -86 + "vh"
-            document.getElementById("animationbox").style.marginTop = margin
-          }
-        } else shoots[shoot].activated = "hidden"
+      if (shoots) {
+        for (let shoot = 0; shoot < shoots.length; shoot++) {
+          if (shoots[shoot].url === shootname) {
+            shootIndex = shoot
+            const photoshoot = shoots[shoot]
+            photoshoot.activated = "activated"
+            // fix for mobile devices entering a gallery mid scroll - Navigation is 14vh
+            // iOS Safari ignores this
+            let offset = window.innerHeight * 0.86 * (shoot - 1)
+            if (window.innerWidth < 1200) {
+              document.documentElement.scrollTo(0, offset)
+              document.body.scrollTo(0, offset)
+            } else {
+              const margin = (photoshoot.isInHomePosition - 1) * -86 + "vh"
+              document.getElementById("animationbox").style.marginTop = margin
+            }
+          } else shoots[shoot].activated = "hidden"
+        }
       }
-
-      this.setState({ shoots: shoots, chevronState: "disabled", mobilestate: "opened" }, () => {
-        this.renderShoots()
+      const newIndex = { index: shootIndex + 1, heading: shootIndex * -86 }
+      const animation = Object.assign(this.state.animation, newIndex)
+      this.setState({ shoots: shoots, chevronState: "disabled", mobilestate: "opened", animation: animation }, () => {
+        this.handleRender()
       })
     } else {
       this.updateHistory("/")
@@ -127,7 +132,7 @@ class Gallery extends Component {
       else if (this.state.animation.index === 1) chevronCalc = "downonly"
 
       this.setState({ shoots: shoots, chevronState: chevronCalc, mobilestate: "" }, () => {
-        this.renderShoots()
+        this.handleRender()
       })
     }
   }
@@ -171,33 +176,34 @@ class Gallery extends Component {
       })
     } else {
       let multiplier = 1
-      const isFirefox = typeof InstallTrigger !== "undefined"
-      // firefox doesn't like
+      // firefox doesn't like this hack
       if (isFirefox) multiplier = 50
       event.currentTarget.scrollLeft += (event.deltaY + event.deltaX) * multiplier
       event.preventDefault()
     }
   }
 
-  renderShoots() {
-    let result = []
-    const { shoots } = this.state
+  handleRender() {
+    let rendered = []
+    const { shoots, animation } = this.state
     if (shoots) {
-      for (let shoot in shoots) {
+      gallery - back
+      const maxAllowableLoad = isMobile ? shoots.length : animation.index !== shoots.length ? animation.index + 1 : shoots.length
+      for (let shoot = 0; shoot < maxAllowableLoad; shoot++) {
         const currentShoot = shoots[shoot]
         const position = Number(currentShoot.isInHomePosition) - 1
         let photoshoot = <Photoshoot key={position} data={currentShoot} handlePageNavigation={this.handlePageNavigation} />
-        result[position] = photoshoot
+        rendered[position] = photoshoot
       }
-      this.setState({ rendered: result, shootCount: shoots.length })
-    } else this.setState({ rendered: <Redirect to="/"></Redirect> })
+      return rendered
+    } else return <Redirect to="/"></Redirect>
   }
 
   render() {
     return (
       <div id="gallery" className={this.state.mobilestate}>
         <div id="animationbox" key={"animation helper"} data-motion={this.state.scrolling} style={this.state.animation.style}></div>
-        {this.state.rendered}
+        {this.handleRender()}
         <ChevronNavigation handleGalleryScroll={this.handleGalleryScroll} chevronState={this.state.chevronState} />
       </div>
     )

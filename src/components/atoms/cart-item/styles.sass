@@ -1,0 +1,102 @@
+#root nav ul li.cart div
+  #cart-container
+    display: none
+    p 
+      height: 12px
+      overflow: hidden
+      color:  rgba(255, 255, 255, 0.6)
+      text-align: center
+      width: auto
+      margin: 0 auto -10px
+      text-shadow: none
+      i 
+        height: 17px
+        transform: rotate(45deg)
+    #cart-menu
+      position: absolute
+      right: 0
+      margin: 10px 0 0 0
+      background: rgba(255, 255, 255, 1)
+      border-radius: 2px
+      width: 250px
+      height: auto
+      overflow: auto 
+      box-shadow: 0px 3px 10px -8px black
+      .after 
+        width: calc(100% - 30px)
+        height: 2px 
+        background: rgba(0,0,0,0.1)
+        margin: 10px auto 
+      .empty-cart 
+        height: 200px
+        img 
+          width: auto
+          height: 60%
+          margin: 0 auto
+          display: block
+          margin-top: 40px
+        p
+          width: 70%
+          cursor: default
+          height: auto
+          text-align: center
+          color: black
+          font-size: 0.85em
+          overflow: auto
+          margin-top: 20px
+      .cart-item 
+        width: calc(100% - 30px)
+        height: auto
+        overflow: auto
+        margin: 20px 20px
+        border-radius: 2px
+        .item-image 
+          display: inline-block
+          float: left
+          width: 60px 
+          height: 60px
+          background-image: url(/galleries/dath-beis/1.jpg)
+          background-size: cover
+          background-repeat: no-repeat
+          background-position: center
+          margin-right: 5px
+          border-radius: 100%
+          p 
+            margin-top: calc(100% - 20px)
+            font-size: 12px 
+            text-align: center
+            line-height: 20px 
+            height: 20px
+            font-weight: 400
+            color: black
+            background: rgba(255,255,255, 0.6)
+        .item-description
+          cursor: context-menu // default cursor
+          width: auto
+          display: inline-block
+          float: left
+          height: calc(100% - 6px)
+          margin-top: 2px
+          h3 
+            font-size: 16px
+            font-weight: 400
+            padding: 5px 0 0 5px
+          p 
+            font-size: 14px
+            height: auto
+            text-align: left
+            color: black
+            text-shadow: none
+            padding: 5px 0 0 5px
+            letter-spacing: 0px
+            font-weight: 300
+            text-transform: capitalize
+        span 
+          float: right
+          float: right
+          padding: 22px 10px 0 0px
+          color: black
+          font-size: 1em
+          transition: all 0.25s ease
+          &:hover 
+            color: coral

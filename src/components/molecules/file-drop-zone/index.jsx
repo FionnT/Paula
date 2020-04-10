@@ -37,7 +37,6 @@ class FileDropZone extends Component {
       let { index } = this.state
       let rendered = []
       if (existing) {
-        console.log(existing)
         existing.forEach((file, index) => {
           index += 1
           const file_src = "/galleries/" + url + "/" + file + ".jpg"

@@ -1,8 +1,7 @@
 import React, { Component } from "react"
 import Async from "react-async"
-import { Navigation } from "../../../components/organisms"
 import { GallerySelection } from "../../../components/atoms"
-import { GalleryConfiguration } from "../../../components/organisms"
+import { GalleryConfiguration, Navigation } from "../../../components/organisms"
 import "./styles.sass"
 
 const defaultSettings = { title: "Add a new gallery", files: null }
@@ -15,10 +14,6 @@ class GalleriesAdmin extends Component {
       selectedGallery: defaultSettings
     }
   }
-
-  // activateOption = gallery => {
-  //   this.setState({ selectedGallery: gallery })
-  // }
 
   fetchGalleries = () => {
     let server = process.env.REACT_APP_API_URL + "/photoshoots/home"

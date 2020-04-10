@@ -1,5 +1,5 @@
 import React, { createContext } from "react"
-import Async from "react-async"
+import Async, { IfRejected } from "react-async"
 
 const public_metadata = {
   name: undefined,
@@ -30,12 +30,12 @@ export class UserProvider extends React.Component {
   }
 
   verifySession = () => {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       let server = process.env.REACT_APP_API_URL + "/verify_session"
       fetch(server, { credentials: "include" })
         .then(res => (res.ok ? res.json() : res))
         .then(res => {
-          this.setState({ user: res, lastVerified: Date.now }, resolve(res))
+          res.status !== 401 ? this.setState({ user: res, lastVerified: Date.now }, resolve(res)) : resolve(res)
         })
     })
   }

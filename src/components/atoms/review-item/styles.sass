@@ -1,0 +1,100 @@
+#store-container
+  &.review-order 
+    #items-container 
+      display: block
+      height: auto
+      width: 100%
+      margin: 40px 0 0 0
+      overflow: auto
+      -webkit-touch-callout: none // iOS Safari 
+      -webkit-user-select: none // Safari 
+      -khtml-user-select: none // Konqueror HTML 
+      -moz-user-select: none // Old versions of Firefox 
+      -ms-user-select: none // Internet Explorer/Edge 
+      user-select: none // Non-prefixed version, currently supported by Chrome, Opera and Firefox 
+      .item 
+        width: 100% 
+        height: 100px 
+        margin-bottom: 25px
+        .item-image 
+          float: left 
+          display: inline-block
+          width: 15% 
+          background-position: left
+          background-repeat: no-repeat 
+          background-size: auto 100% 
+          height: 100%
+        h2 
+          float: left
+          display: inline-block
+          height: 20px
+          margin: 40px 0 0 12.5%
+          text-align: center
+          width: 50px
+          line-height: 22px
+        .item-description
+          width: 31% 
+          height: 100% 
+          float: left
+          h3, p
+            text-transform: none
+            width: 100% 
+            height: 20px 
+            float: left 
+            text-align: left 
+            display: inline-block
+            font-weight: 300
+          h3 
+            text-transform: uppercase
+            font-size: 1.25em
+            font-weight: 400
+            padding: 22.5px 0 15px
+        .quantity-selector
+          width: 16%
+          height: 100% 
+          float: left 
+          // background: red
+          input::-webkit-outer-spin-button,
+          input::-webkit-inner-spin-button 
+            -webkit-appearance: none
+            margin: 0
+          /* Firefox */
+          input[type=number] 
+            -moz-appearance: textfield
+          div 
+            line-height: 22px
+          div, input
+            height: 20px
+            width: 32% 
+            color: coral 
+            text-align: center 
+            margin: 40px 0 0 0
+            display: inline-block
+            float: left
+            cursor: pointer
+            border: none
+            background: transparent
+            &:active, &:focus 
+              color: black
+              outline: none
+            // background: transparent
+            &:nth-child(2)
+              color: black
+          input
+            width: 34%
+            font-size: 1.25em
+        .remove-item 
+          display: inline-block
+          float: left
+          height: 20px
+          width: 20px
+          float: left
+          margin: 40px 0 0 10%
+          text-align: center
+          width: auto
+          line-height: 23px
+          color: black
+          font-size: 1.25em
+          cursor: pointer
+          &:hover 
+            color: coral

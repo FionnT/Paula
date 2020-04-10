@@ -1,7 +1,7 @@
-import React from "react"
+import React, { Component } from "react"
 import { Gallery, Navigation } from "../../components/organisms"
 
-class Home extends React.Component {
+class Home extends Component {
   constructor(props) {
     super(props)
     this.updateHistory = this.updateHistory.bind(this)
@@ -29,15 +29,15 @@ class Home extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.location.state && this.props.location.state.shootname !== this.state.shootname) this.setState({ shootname: this.props.location.state.shootname })
   }
+
   render() {
     return (
-      <React.Fragment>
+      <>
         <Navigation />
         <Gallery shootname={this.state.shootname} updateHistory={this.updateHistory} chevronState={this.state.chevronState} />
-      </React.Fragment>
+      </>
     )
   }
 }
 
 export default Home
-//

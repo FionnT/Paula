@@ -1,8 +1,6 @@
 import React, { Component } from "react"
 import "./styles.sass"
-const isFirefox = typeof InstallTrigger !== "undefined"
-const isIE = /*@cc_on!@*/ false || !!document.documentMode
-const isEdge = !isIE && !!window.StyleMedia
+import { isEdge, isFirefox } from "react-device-detect"
 
 class Photoshoot extends Component {
   constructor(props) {
@@ -51,7 +49,7 @@ class Photoshoot extends Component {
       // yay responsiveness
       // Left offset for the first item is = (container width/2 * -1) + (item width/2)
       // Each child tags the next image with it's current offset, and it's width
-      // For images that are bigger, or smaller than the previous image +- 20, we need to do some additional computation
+      // For images that are bigger, or smaller than the previous image +- 50, we need to do some additional computation
       //
       if (i === 0) {
         let bump = windowWidth > 1200 ? 0 : windowWidth > 800 ? 5 : windowWidth > 700 ? 0 : windowWidth > 425 ? 22 : window.innerHeight > 800 ? 40 : 0
@@ -59,8 +57,8 @@ class Photoshoot extends Component {
         myOffset = containerWidth / -2 + myWidth / 2 - bump
       } else if (myWidth - prevWidth > 50 || myWidth - prevWidth < -50) {
         if (windowWidth > 1200) {
-          let biggerImageBump = isFirefox ? -10 : isEdge ? -5 : 10
-          let smallerImageBump = isFirefox ? 0 : isEdge ? 0 : -15
+          let biggerImageBump = isFirefox ? -10 : isEdge ? -5 : window.innerHeight > 990 ? -15 : 15
+          let smallerImageBump = isFirefox ? 0 : isEdge ? 0 : window.innerHeight > 990 ? 10 : -20
           myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + biggerImageBump) : (myOffset = prevOffset - myWidth / 2 + prevWidth + smallerImageBump)
         } else if (windowWidth < 1200 && windowWidth > 1050) {
           // iPad Pro, landscape, or other large'ish device
@@ -142,10 +140,11 @@ class Photoshoot extends Component {
   handleRender() {
     const { itemOrder } = this.state
     const { length } = itemOrder
+    const maxAllowableLoad = this.props.data.activated === "activated" ? length : 3
     let result = []
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < maxAllowableLoad; i++) {
       const divStyle = { zIndex: length - i }
-      const photoURL = "../galleries/" + this.state.url + "/" + itemOrder[i] + ".jpg"
+      const photoURL = "/galleries/" + this.state.url + "/" + itemOrder[i] + ".jpg"
       // const fullURL = i === 0 ? "../galleries/" + this.state.url + "/full/cover.jpg" : "../galleries/" + this.state.url + "/full/" + i + ".jpg"
       let photo = <img key={i} className={"image-" + i} src={photoURL} alt="" style={divStyle} />
       result.push(photo)
@@ -167,7 +166,10 @@ class Photoshoot extends Component {
         >
           {this.handleRender()}
         </div>
-        <p onMouseDown={() => this.handlePageNavigation()}>Go Back</p>
+        <div className="gallery-back">
+          <p onClick={() => this.handlePageNavigation()}>Go Back</p>
+          <span></span>
+        </div>
       </div>
     )
   }

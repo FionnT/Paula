@@ -26,6 +26,49 @@ const adminSchema = new Schema(
   { collection: "admins" }
 )
 
+const orderSchema = new Schema(
+  {
+    orderingUserEmail: String,
+    addressOne: String,
+    addressTwo: String,
+    city: String,
+    postCode: String,
+    country: String,
+    orderCost: String,
+    orderItems: Array
+  },
+  { collection: "orders" }
+)
+
+const sessionSchema = new Schema(
+  {
+    _email: String,
+    _id: String,
+    expires: Date,
+    Session: Object
+  },
+  { collection: "sessions" }
+)
+
+const storeItemSchema = new Schema(
+  {
+    UUID: String, // names are not unique here, so we need a GUID to avoid duplicates
+    image: String,
+    isPublished: Boolean,
+    name: String,
+    sizes: Array
+  },
+  { collection: "StoreItems" }
+)
+
+const storeItemCostSchema = new Schema(
+  {
+    tiles: Object,
+    prints: Object
+  },
+  { collection: "StoreItems" }
+)
+
 const photoshootSchema = new Schema(
   {
     itemOrder: Array,
@@ -40,11 +83,6 @@ const photoshootSchema = new Schema(
       default: false
     },
     title: String,
-    printAvailable: {
-      type: Boolean,
-      default: false
-    },
-    printItems: Array,
     passwordProtected: {
       type: Boolean,
       default: false
@@ -73,39 +111,20 @@ const userSchema = new Schema(
   { collection: "users" }
 )
 
-const orderSchema = new Schema(
-  {
-    orderingUser: String,
-    addressOne: String,
-    addressTwo: String,
-    city: String,
-    postCode: String,
-    country: String,
-    orderItems: Array
-  },
-  { collection: "orders" }
-)
-
-const sessionSchema = new Schema(
-  {
-    _email: String,
-    _id: String,
-    expires: Date,
-    Session: Object
-  },
-  { collection: "sessions" }
-)
-
 const Admin = mongoose.model("Admin", adminSchema)
+const Order = mongoose.model("Order", orderSchema)
 const Photoshoots = mongoose.model("Photoshoots", photoshootSchema)
 const Person = mongoose.model("Person", userSchema)
-const Order = mongoose.model("Order", orderSchema)
 const Session = mongoose.model("Session", sessionSchema)
+const StoreItems = mongoose.model("StoreItem", storeItemSchema)
+const StoreItemCost = mongoose.model("StoreItemCost", storeItemCostSchema)
 
 module.exports = {
   Admin,
+  Order,
   Photoshoots,
   Person,
-  Order,
-  Session
+  Session,
+  StoreItems,
+  StoreItemCost
 }

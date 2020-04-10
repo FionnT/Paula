@@ -8,10 +8,12 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^1.0.3",
     "@stripe/stripe-js": "^1.0.2",
+    "minimist": "^1.2.5",
     "node-sass": "^4.13.0",
     "react": "^16.12.0",
     "react-async": "^10.0.0",
     "react-beautiful-dnd": "^13.0.0",
+    "react-device-detect": "^1.11.14",
     "react-dom": "^16.12.0",
     "react-dropzone": "^10.2.1",
     "react-router-dom": "^5.1.2",
