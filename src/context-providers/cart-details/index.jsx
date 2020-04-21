@@ -7,13 +7,14 @@ const cookies = new Cookies()
 
 const required_details = {
   items: [],
-  purchaseCost: undefined,
-  email: undefined,
-  addressOne: undefined,
-  addressTwo: undefined,
-  postCode: undefined,
+  streetAddress: undefined,
   city: undefined,
-  country: undefined
+  state: undefined,
+  country: undefined,
+  zip: undefined,
+  purchaseCost: undefined,
+  paymentSecret: undefined,
+  email: undefined
 }
 
 export const CartContext = createContext({
@@ -38,9 +39,11 @@ export class CartProvider extends React.Component {
           }
         })
       })
-
-      newDetails.items = existingItems.concat(newDetails.items)
     }
+
+    // Assign stored items to request we're processing, or merge with existing if we are adding new items
+    if (newDetails.hasOwnProperty("items")) newDetails.items = existingItems.concat(newDetails.items)
+    else newDetails.items = this.state.cart.items
 
     // Parse a deletion request
     if (newDetails.hasOwnProperty("removeID")) {
@@ -101,7 +104,7 @@ export class CartProvider extends React.Component {
     return (
       <Async promiseFn={this.fetchStoreItems}>
         {({ data, err, isLoading }) => {
-          if (isLoading) return "Loading..."
+          if (isLoading) return <img src="/loading.gif" className="loading-image" alt="Page is loading" />
           if (err) return <CartContext.Provider value={this.state}>{this.props.children}</CartContext.Provider> // defaults to empty
           if (data) return <CartContext.Provider value={this.state}>{this.props.children}</CartContext.Provider>
         }}

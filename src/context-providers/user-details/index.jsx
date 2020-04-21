@@ -1,5 +1,5 @@
 import React, { createContext } from "react"
-import Async, { IfRejected } from "react-async"
+import Async from "react-async"
 
 const public_metadata = {
   name: undefined,
@@ -44,7 +44,7 @@ export class UserProvider extends React.Component {
     return (
       <Async promiseFn={this.verifySession}>
         {({ data, err, isLoading }) => {
-          if (isLoading) return "Loading..."
+          if (isLoading) return <img src="/loading.gif" className="loading-image" alt="Page is loading" />
           if (err) return <UserContext.Provider value={this.state}>{this.props.children}</UserContext.Provider> // defaults to empty
           if (data) return <UserContext.Provider value={this.state}>{this.props.children}</UserContext.Provider>
         }}

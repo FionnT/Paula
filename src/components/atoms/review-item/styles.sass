@@ -32,6 +32,7 @@
           text-align: center
           width: 50px
           line-height: 22px
+          font-size: 19px
         .item-description
           width: 31% 
           height: 100% 
@@ -83,6 +84,13 @@
           input
             width: 34%
             font-size: 1.25em
+            &:disabled
+              display: block
+              margin: 0 auto 
+              padding-top: 40px
+              float: unset
+              color: black // ?? 
+              cursor: auto
         .remove-item 
           display: inline-block
           float: left
@@ -98,3 +106,23 @@
           cursor: pointer
           &:hover 
             color: coral
+
+@media only screen and (max-width: 925px)
+  #store-container
+    &.review-order
+      #items-container 
+        .item 
+          h2 
+            margin-left: 5%
+          .item-image 
+            width: 20%
+          .item-description
+            margin-left: 2%
+            width: 25% 
+            h3 
+              font-size: 1.05em
+              letter-spacing: 0px
+            p 
+              font-size: 0.85em
+          .remove-item 
+            margin-left: 5%

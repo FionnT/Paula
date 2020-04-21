@@ -1,6 +1,7 @@
+// eslint-disable-file
 import React, { Component } from "react"
 import "./styles.sass"
-import { isEdge, isFirefox } from "react-device-detect"
+import { isEdge, isFirefox, isMobile } from "react-device-detect"
 
 class Photoshoot extends Component {
   constructor(props) {
@@ -21,15 +22,15 @@ class Photoshoot extends Component {
     if (this.state.activated === "activated") this.handleActivate()
   }
 
-  handleActivate() {
-    //
-    // All browsers handle grid layouts differently
-    // Webkit assigns margins to center, but Firefox just positions them pseudo-absolutely
-    // Edge just makes stuff up basically
-    // Don't rewrite to calculate based on margins
-    //
+  // All browsers handle grid layouts differently
+  // Webkit assigns margins to center, but Firefox just positions them pseudo-absolutely
+  // Edge just makes stuff up basically
+  // Don't rewrite the below calculate based on margins
 
+  handleActivate() {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
+    const photoWrapper = document.querySelectorAll("#" + this.state.url + " .photo-wrapper")[0]
+    photoWrapper.style.overflowX = "visible"
 
     for (let i = 0; i < images.length; i++) {
       let image = images[i]
@@ -39,14 +40,15 @@ class Photoshoot extends Component {
       let prevOffset = parseInt(image.attributes.prevoffset) || undefined
       let prevWidth = parseInt(image.attributes.prevwidth) || undefined
       let windowWidth = window.innerWidth
+      image.style.opacity = 1
+      image.style.transition = "transform 0.5s ease"
+
       if (isEdge) {
         document.body.style.overflow = "visible"
         document.documentElement.style.overflowY = "hidden"
       }
-      image.style.opacity = 1
-      image.style.transition = "transform 0.5s ease"
       //
-      // yay responsiveness
+      // Yay responsiveness
       // Left offset for the first item is = (container width/2 * -1) + (item width/2)
       // Each child tags the next image with it's current offset, and it's width
       // For images that are bigger, or smaller than the previous image +- 50, we need to do some additional computation
@@ -81,7 +83,6 @@ class Photoshoot extends Component {
         images[i + 1].attributes.prevwidth = myWidth
       }
 
-      // applying new styles
       image.style.transform = `translatex(${myOffset + "px"}) translatey(${parseInt(myStyles.height) * -0.1 + "px"}) scale(0.8)`
     }
 
@@ -101,23 +102,20 @@ class Photoshoot extends Component {
     for (let i in images) {
       let image = images[i]
       image.style.transition = "all .35s ease"
-      image.style.transform = "none"
+      image.style.transform = ""
       // eslint-disable-next-line eqeqeq
       if (i == 1 || i == 2) image.style.transform = "scale(0.9)"
     }
   }
 
-  // handleFullPhoto = url => {
-  //   TODO
-  // }
-
   handleHover(enable) {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
-    if (this.state.activated !== "activated") {
+    const GalleryIsInMotion = document.getElementById("animationbox").dataset.motion == "true"
+    if (this.state.activated !== "activated" && !GalleryIsInMotion) {
       if (enable) {
         for (let i = 0; i < images.length - 1; i++) {
           let image = images[i]
-          // We don't move the first element at all
+          // Element 0 is not manipulated
           if (i === 1) image.style.transform = `translatex(85px) scale(0.92)`
           if (i >= 2) image.style.transform = `translatex(175px) scale(0.84)`
           if (i < 3) {
@@ -140,12 +138,11 @@ class Photoshoot extends Component {
   handleRender() {
     const { itemOrder } = this.state
     const { length } = itemOrder
-    const maxAllowableLoad = this.props.data.activated === "activated" ? length : 3
+    const maxAllowableLoad = this.props.data.activated === "activated" ? length : isMobile ? 1 : 3
     let result = []
     for (let i = 0; i < maxAllowableLoad; i++) {
       const divStyle = { zIndex: length - i }
       const photoURL = "/galleries/" + this.state.url + "/" + itemOrder[i] + ".jpg"
-      // const fullURL = i === 0 ? "../galleries/" + this.state.url + "/full/cover.jpg" : "../galleries/" + this.state.url + "/full/" + i + ".jpg"
       let photo = <img key={i} className={"image-" + i} src={photoURL} alt="" style={divStyle} />
       result.push(photo)
     }
@@ -161,13 +158,14 @@ class Photoshoot extends Component {
         <div
           className={"photo-wrapper"}
           onMouseOver={() => this.handleHover(true)}
+          onMouseMove={() => this.handleHover(true)} // Handle moving mouse after scrolling
           onMouseLeave={() => this.handleHover()}
           onMouseDown={() => this.handlePageNavigation(this.state.url)}
         >
           {this.handleRender()}
         </div>
         <div className="gallery-back">
-          <p onClick={() => this.handlePageNavigation()}>Go Back</p>
+          <p onClick={e => this.handlePageNavigation(e)}>Go Back</p>
           <span></span>
         </div>
       </div>

@@ -8,29 +8,6 @@
     z-index: 100
     height: 12vh
     background-color: #F3F3F3
-    #mobileindicator
-      transition: all .35s ease
-      background: #fff
-      cursor: pointer
-      border-radius: 100%
-      height: 30px
-      width: 31px
-      border: none
-      font-size: 1.2em
-      color: #8e7e7e
-      position: fixed
-      z-index: 102
-      bottom: 0
-      display: none
-      float: left
-      left: 50%
-      bottom: 25px
-      margin-left: -18px
-      text-align: center
-      i
-        padding-top: 5px
-      @media only screen and (max-width: 1200px)
-        display: block
     nav
       transition: 0.35s ease
       margin: 0 auto
@@ -168,6 +145,18 @@
           left: 0
           padding: 0
           margin-top: -54vh
+        li.cart 
+          position: fixed 
+          bottom: 30px 
+          right: 20px 
+          div span 
+            width: 40px 
+            height: 40px
+            border-radius: 100% 
+            background: #F3F3F3 
+            display: block 
+            i 
+              padding: 6px 0 0 5.5px // Stupid icon
         a
           h1
             padding: 25px 0 0 60px
@@ -213,8 +202,10 @@
                 padding-top: 9vh
                 @media only screen and (max-width: 500px)
                   padding-top: 10vh
-              &:last-of-type
+              &:nth-child(3)
                 padding-top: 4vh
+              &.cart 
+                width: 40px
 
   // adjustments for older iPhones
   @media only screen and (max-height: 700px)

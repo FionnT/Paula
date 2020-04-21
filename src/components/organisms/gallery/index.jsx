@@ -8,7 +8,7 @@ import "./styles.sass"
 class Gallery extends Component {
   constructor(props) {
     super(props)
-    this.handleGalleryScroll = this.handleGalleryScroll.bind(this)
+    this.handleScrollingBetweenGalleries = this.handleScrollingBetweenGalleries.bind(this)
     this.handleScrollAbility = this.handleScrollAbility.bind(this)
     this.handlePageNavigation = this.handlePageNavigation.bind(this)
     this.updateHistory = this.props.updateHistory.bind(this)
@@ -20,10 +20,10 @@ class Gallery extends Component {
         style: undefined
       },
       chevronState: this.props.chevronState, // should chevron navigation display?
-      shootCount: undefined, // how many galleries to create
+      shootCount: undefined, // Helps with determining scroll state
       rendered: undefined, // the updated, processed galleries, i.e. if one should be open
       shoots: undefined,
-      mobilestate: "", // adds padding to gallery on smaller devices
+      mobilestate: "", // adds padding to gallery on smaller devices for optics
       scrolling: false,
       forceRerender: false
     }
@@ -57,7 +57,7 @@ class Gallery extends Component {
     } else return
   }
 
-  handleGalleryScroll(down) {
+  handleScrollingBetweenGalleries(down) {
     const { animation } = this.state
 
     let newHeading // offset from top of page
@@ -91,10 +91,10 @@ class Gallery extends Component {
   // handling of shoot page open/close
   handlePageNavigation(shootname) {
     const { shoots } = this.state
-    if (shootname) {
+    if (shootname && typeof shootname === "string") {
       this.updateHistory(shootname)
       this.handleScrollAbility(true)
-      if (document.getElementById("mobileindicator")) document.getElementById("mobileindicator").style.display = "none"
+
       let shootIndex
       // Parsing pretty URL from :param into the selected shoot
       if (shoots) {
@@ -121,11 +121,11 @@ class Gallery extends Component {
       this.setState({ shoots: shoots, chevronState: "disabled", mobilestate: "opened", animation: animation }, () => {
         this.handleRender()
       })
-    } else {
+    } else if (shootname) {
+      shootname.target.parentNode.parentNode.getElementsByClassName("photo-wrapper")[0].style.overflowX = "hidden"
+      for (let shoot in shoots) shoots[shoot].activated = ""
       this.updateHistory("/")
       this.handleScrollAbility(false)
-      // document.getElementById("mobileindicator").style.display = "block"
-      for (let shoot in shoots) shoots[shoot].activated = ""
       // determining what type of chevron to show
       let chevronCalc = "full" // default
       if (this.state.animation.index === this.state.shootCount) chevronCalc = "uponly"
@@ -169,7 +169,7 @@ class Gallery extends Component {
     else if (this.state.chevronState !== "disabled") {
       // i.e. not in a gallery
       this.setState({ scrolling: true }, () => {
-        deltaY > 0 ? this.handleGalleryScroll(true) : this.handleGalleryScroll(false) // down = true
+        deltaY > 0 ? this.handleScrollingBetweenGalleries(true) : this.handleScrollingBetweenGalleries(false) // down = true
         setTimeout(() => {
           this.setState({ scrolling: false })
         }, 450)
@@ -187,7 +187,6 @@ class Gallery extends Component {
     let rendered = []
     const { shoots, animation } = this.state
     if (shoots) {
-      gallery - back
       const maxAllowableLoad = isMobile ? shoots.length : animation.index !== shoots.length ? animation.index + 1 : shoots.length
       for (let shoot = 0; shoot < maxAllowableLoad; shoot++) {
         const currentShoot = shoots[shoot]
@@ -204,7 +203,7 @@ class Gallery extends Component {
       <div id="gallery" className={this.state.mobilestate}>
         <div id="animationbox" key={"animation helper"} data-motion={this.state.scrolling} style={this.state.animation.style}></div>
         {this.handleRender()}
-        <ChevronNavigation handleGalleryScroll={this.handleGalleryScroll} chevronState={this.state.chevronState} />
+        <ChevronNavigation handleScrollingBetweenGalleries={this.handleScrollingBetweenGalleries} chevronState={this.state.chevronState} />
       </div>
     )
   }

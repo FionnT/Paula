@@ -18,7 +18,7 @@ class Authentication extends Component {
   }
 
   textUpdater = event => {
-    validateText(event, this.state, data => {
+    validateText(event, false, this.state, data => {
       this.setState(data)
     })
   }

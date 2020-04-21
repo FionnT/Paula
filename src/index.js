@@ -6,7 +6,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
 import * as serviceWorker from "./serviceWorker"
-import { About, Authentication, Contact, GalleriesAdmin, Home, Store, ReviewOrder } from "./pages"
+import { About, Authentication, Checkout, Contact, GalleriesAdmin, Home, Shipping, Store, ReviewOrder } from "./pages"
 import { ProtectedRoute } from "./components/atoms"
 import { UserProvider, CartProvider } from "./context-providers"
 import "./styles/global.sass"
@@ -26,6 +26,8 @@ const App = () => {
             <Route exact path="/admin/login" component={Authentication} />
             <Route exact path="/shop" component={Store} />
             <Route exact path="/shop/review" component={ReviewOrder} />
+            <Route exact path="/shop/shipping" component={Shipping} />
+            <Route exact path="/shop/checkout" component={Checkout} />
             <Route exact path="/shoot/">
               <Redirect to="/"></Redirect>
             </Route>

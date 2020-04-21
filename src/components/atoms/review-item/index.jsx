@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import "./styles.sass"
 
 export default function ReviewItem(props) {
-  const updateCart = props.updateCart.bind(this)
+  const updateCart = props.updateCart?.bind(this)
   const [amount, incrementAmount] = useState(props.amount)
 
   const modifyAmount = e => {
@@ -37,14 +37,22 @@ export default function ReviewItem(props) {
         </p>
       </div>
       <div className="quantity-selector">
-        <div onClick={() => modifyAmount("removeOne")}>-</div>
-        <input value={amount} min="1" type="number" onChange={e => modifyAmount(e)} />
-        <div onClick={modifyAmount}>+</div>
+        {!props.disabled ? (
+          <>
+            <div onClick={() => modifyAmount("removeOne")}>-</div>
+            <input value={amount} min="1" type="number" onChange={e => modifyAmount(e)} />
+            <div onClick={modifyAmount}>+</div>
+          </>
+        ) : (
+          <input className="noselect" value={amount} disabled />
+        )}
       </div>
       <h2>{amount * props.purchaseCost} &euro;</h2>
-      <div className="remove-item" onClick={() => updateCart({ removeID: props.UUID, size: props.size })}>
-        <i className="las la-times"></i>
-      </div>
+      {!props.disabled ? (
+        <div className="remove-item" onClick={() => updateCart({ removeID: props.UUID, size: props.size })}>
+          <i className="las la-times"></i>
+        </div>
+      ) : null}
     </div>
   )
 }

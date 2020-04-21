@@ -29,11 +29,7 @@ const adminSchema = new Schema(
 const orderSchema = new Schema(
   {
     orderingUserEmail: String,
-    addressOne: String,
-    addressTwo: String,
-    city: String,
-    postCode: String,
-    country: String,
+    shipping: Object,
     orderCost: String,
     orderItems: Array
   },
@@ -45,7 +41,8 @@ const sessionSchema = new Schema(
     _email: String,
     _id: String,
     expires: Date,
-    Session: Object
+    Session: Object,
+    paymentIntent: String
   },
   { collection: "sessions" }
 )
@@ -57,14 +54,6 @@ const storeItemSchema = new Schema(
     isPublished: Boolean,
     name: String,
     sizes: Array
-  },
-  { collection: "StoreItems" }
-)
-
-const storeItemCostSchema = new Schema(
-  {
-    tiles: Object,
-    prints: Object
   },
   { collection: "StoreItems" }
 )
@@ -117,7 +106,6 @@ const Photoshoots = mongoose.model("Photoshoots", photoshootSchema)
 const Person = mongoose.model("Person", userSchema)
 const Session = mongoose.model("Session", sessionSchema)
 const StoreItems = mongoose.model("StoreItem", storeItemSchema)
-const StoreItemCost = mongoose.model("StoreItemCost", storeItemCostSchema)
 
 module.exports = {
   Admin,
@@ -125,6 +113,5 @@ module.exports = {
   Photoshoots,
   Person,
   Session,
-  StoreItems,
-  StoreItemCost
+  StoreItems
 }

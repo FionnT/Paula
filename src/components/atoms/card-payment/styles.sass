@@ -1,23 +1,61 @@
-.StripeElement 
-  height: 40px
-  padding: 10px 12px
-  width: 100%
-  color: #32325d
-  background-color: white
-  border: 1px solid transparent
-  border-radius: 4px
-  box-shadow: 0 1px 3px 0 #e6ebf1
-  -webkit-transition: box-shadow 150ms ease
-  transition: box-shadow 150ms ease
+#stripe-payment-form
+  float: left 
+  width: 90% 
+  padding-bottom: 40px
+  label 
+    display: none
+  p 
+    padding-bottom: 15px
+    margin-left: 5px
+    display: inline-block
+    width: auto
+    font-size: 1.25em
+    font-weight: 300
+    text-transform: none
+    letter-spacing: -1px
+  #accepted-payments 
+    width: auto
+    float: right
+    height: 20px
+    overflow: hidden
+    padding-bottom: 0
+    display: inline-block
+    padding-top: 3px
+    margin-right: -25px
+    img 
+      float: left 
+      padding-right: 5px
+      height: 100%
+      width: auto
+  .StripeElement 
+    height: 30px
+    padding: 10px 12px
+    width: 100%
+    color: #32325d
+    background-color: white
+    border: 1px solid transparent
+    border-radius: 4px
+    box-shadow: 0 1px 3px 0 #e6ebf1
+    -webkit-transition: box-shadow 150ms ease
+    transition: box-shadow 150ms ease
+  .StripeElement--focus 
+    box-shadow: 0 1px 3px 0 #cfd7df
+  .StripeElement--invalid 
+    border-color: #fa755a
+  .StripeElement--webkit-autofill 
+    background-color: #fefde5 !important
+  .card-errors
+    padding-top: 10px  
+    text-align: center
+    color: coral
+
+  // .StripeElement--focus 
+  //   box-shadow: 0 1px 3px 0 #cfd7df
 
 
-.StripeElement--focus 
-  box-shadow: 0 1px 3px 0 #cfd7df
+  // .StripeElement--invalid 
+  //   border-color: #fa755a
 
 
-.StripeElement--invalid 
-  border-color: #fa755a
-
-
-.StripeElement--webkit-autofill 
-  background-color: #fefde5 !important
+  // .StripeElement--webkit-autofill 
+  //   background-color: #fefde5 !important

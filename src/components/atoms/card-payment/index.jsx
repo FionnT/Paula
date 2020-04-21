@@ -7,12 +7,15 @@ import "./styles.sass"
 const CARD_ELEMENT_OPTIONS = {
   style: {
     base: {
-      color: "#32325d",
-      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      color: "black",
+      fontFamily: "'Source Sans Pro', sans-serif",
       fontSmoothing: "antialiased",
-      fontSize: "16px",
+      fontSize: "18px",
+      fontWeight: "300",
+      textAlign: "center",
+      lineHeight: "30px",
       "::placeholder": {
-        color: "#aab7c4"
+        color: "#coral  "
       }
     },
     invalid: {
@@ -66,15 +69,20 @@ const CardPayment = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} id="stripe-payment-form">
       <div className="form-row">
         <label htmlFor="card-element">Credit or debit card</label>
+        <p>Credit or debit card</p>
+        <div id="accepted-payments">
+          <img src="/visa.png" alt="stripe badge" />
+          <img src="/mastercard.png" alt="stripe badge" />
+          <img src="/amex.png" alt="stripe badge" />
+        </div>
         <CardElement id="card-element" options={CARD_ELEMENT_OPTIONS} onChange={handleChange} />
         <div className="card-errors" role="alert">
           {error}
         </div>
       </div>
-      <button type="submit">Submit Payment</button>
     </form>
   )
 }

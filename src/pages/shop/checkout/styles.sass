@@ -1,0 +1,62 @@
+#store-container
+  &.checkout 
+    .left-column
+      width: 50%
+      height: auto
+      float: left
+      overflow-y: auto 
+      overflow-x: hidden
+      #items-container
+        width: 100%
+        margin-top: 0px
+        .edit 
+          margin-top: 10px
+          padding-bottom: 15px
+          color: coral 
+          text-align: left
+          cursor: pointer
+          width: 85%
+        .total-cost 
+          width: 85%
+          border-top: 1px solid black
+          height: auto 
+          overflow: auto
+          display: block
+          p 
+            font-size: 1.15em
+            margin-top: 15px 
+            float: left 
+            display: inline-block
+            &:last-of-type
+              float: right
+              margin-right: 18px
+      #shipping-details
+        display: block
+        width: 85%
+        height: auto
+        float: left
+        padding-bottom: 50px 
+        h2 
+          text-align: center 
+          font-size: 1.25em
+          padding-bottom: 25px
+        p
+          text-align: left 
+          line-height: 26px 
+          height: 26px 
+          font-size: 1em 
+          // border-bottom: 1px solid gray
+          float: left
+          width: 100%
+          margin-bottom: 1px
+          &.edit 
+            margin-top: 4px
+            text-align: left 
+            color: coral 
+            cursor: pointer 
+    .right-column 
+      width: 50%
+      height: auto
+      float: left
+      overflow-y: auto 
+      overflow-x: hidden

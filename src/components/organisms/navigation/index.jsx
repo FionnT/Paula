@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { Link } from "react-router-dom"
 import { UserConsumer, CartConsumer } from "../../../context-providers"
 import { UserProfileButton, CartButton } from "../../molecules"
+import { isMobile } from "react-device-detect"
 import "./styles.sass"
 
 class Navigation extends Component {
@@ -10,16 +11,6 @@ class Navigation extends Component {
     this.state = {
       enabled: ""
     }
-  }
-
-  // only display the arrow on the homepage
-  scrollArrow = () => {
-    if (document.location.pathname === "/")
-      return (
-        <div id="mobileindicator">
-          <i className="las la-angle-down"></i>
-        </div>
-      )
   }
 
   // toggle mobile navigation menu
@@ -40,20 +31,14 @@ class Navigation extends Component {
     this.state.enabled === "opened" ? slideIn() : slideOut()
   }
 
-  // handles mobile arrow visibility after scrolling
-  scrollOfArrow = enable => {
-    let arrow = document.getElementById("mobileindicator")
-    if (window.innerWidth < 1200 && document.location.pathname === "/") document.body.scrollTop > 0 ? (arrow.style.display = "none") : (arrow.style.display = "block")
-  }
-
   componentDidMount() {
+    window.addEventListener("scroll", this.handleMobileArrow, { passive: false, useCapture: true })
     const links = Array.from(document.getElementById("navigation").getElementsByTagName("a"))
     links.forEach(link => {
       const linkPath = link.attributes.href.value
       const currentPath = document.location.pathname
-      if (linkPath === currentPath && currentPath !== "/") link.style.color = "#FF7F50"
+      if (currentPath.match(linkPath) && linkPath !== "/") link.style.color = "coral"
     })
-    document.body.addEventListener("scroll", this.scrollOfArrow)
   }
 
   render() {
@@ -109,7 +94,6 @@ class Navigation extends Component {
             </UserConsumer>
           </ul>
         </nav>
-        {this.scrollArrow()}
       </div>
     )
   }

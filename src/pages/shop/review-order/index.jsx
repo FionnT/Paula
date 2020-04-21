@@ -2,7 +2,7 @@ import React from "react"
 import { Button, ReviewItem } from "../../../components/atoms"
 import { Navigation } from "../../../components/organisms"
 import { CartConsumer } from "../../../context-providers"
-import { Redirect } from "react-router-dom"
+import { Link, Redirect } from "react-router-dom"
 import "./styles.sass"
 
 export default function ReviewOrder() {
@@ -15,7 +15,7 @@ export default function ReviewOrder() {
           <span>-</span>
           <p>Shipping Details</p>
           <span>-</span>
-          <p>Payment</p>
+          <p>Confirm & Pay</p>
         </div>
         <CartConsumer>
           {({ cart, updateCart }) => {
@@ -49,7 +49,9 @@ export default function ReviewOrder() {
                       <p>Total</p>
                       <p>{cart.purchaseCost} &euro;</p>
                     </div>
-                    <Button className="center">Shipping Details</Button>
+                    <Link to="/shop/shipping">
+                      <Button className="center">Shipping & Billing</Button>
+                    </Link>
                   </div>
                 </>
               )

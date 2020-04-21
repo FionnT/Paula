@@ -13,7 +13,7 @@ class GalleryConfiguration extends Component {
   }
 
   textUpdater = event => {
-    validateText(event, this.state, data => {
+    validateText(event, false, this.state, data => {
       this.setState({ name: data.name })
     })
   }

@@ -8,39 +8,24 @@ import "./styles.sass"
 // React will prefer any user input over an update to the prop
 
 class Input extends Component {
-  constructor(props) {
-    super(props)
-    this.textController = this.props?.textController?.bind(this)
-    this.state = {
-      value: this.props.value
-    }
-    this.userIsInputting = false
-  }
-
-  componentDidUpdate() {
-    if (this.state.value !== this.props.value && !this.userIsInputting) this.setState({ value: this.props.value })
-  }
-
   render() {
-    const { immutable, immutableWidth, mutableWidth, type, placeholder } = this.props
+    const { className, immutable, immutableWidth, label, mutableWidth, placeholder, required, type, value } = this.props
     return (
-      <div className={"inputField " + type}>
+      <div className={"inputField " + type + " " + className}>
         <p>{placeholder}</p>
+        {label ? <label htmlFor={label}>{label}</label> : null}
         {immutable ? <input className="fixedValue" style={{ width: immutableWidth }} value={immutable} disabled /> : null}
         {type !== "text" ? (
           <input
-            onInput={this.textController}
+            onInput={e => this.props.textController(e)}
             type={type}
-            value={this.state.value}
-            onChange={e => {
-              this.userIsInputting = true
-              this.setState({ value: e.target.value }, () => (this.userIsInputting = false))
-            }}
-            className={immutable ? "immutable" : ""}
+            className={immutable ? "immutable " : ""}
             style={{ width: mutableWidth }}
+            required={required ? true : false}
+            defaultValue={value ? value : ""}
           />
         ) : (
-          <textarea type={type} onInput={this.textController}></textarea>
+          <textarea type={type} onInput={e => this.props.textController(e)}></textarea>
         )}
       </div>
     )

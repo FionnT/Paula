@@ -24,6 +24,7 @@
     "nodemailer": "^6.4.3",
     "nodemailer-ses-transport": "^1.5.1",
     "sharp": "^0.24.1",
+    "stripe": "^8.44.0",
     "uuid": "^7.0.3"
   }
 }

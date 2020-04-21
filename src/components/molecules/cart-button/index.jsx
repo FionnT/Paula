@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { CartItem } from "../../atoms"
 import { Button } from "../../atoms"
 import { Link } from "react-router-dom"
+import { isMobile } from "react-device-detect"
 class CartButton extends Component {
   constructor(props) {
     super(props)
@@ -13,6 +14,10 @@ class CartButton extends Component {
   }
 
   handleCartDisplay = () => {
+    if (isMobile) {
+      document.location = "/shop/review"
+      return
+    }
     if (document.location.pathname.match("/shop") || this.state.cartItems.length) {
       if (this.state.cartStatus) document.getElementById("cart-container").style.display = "none"
       else document.getElementById("cart-container").style.display = "block"

@@ -29,7 +29,7 @@ class ContactForm extends Component {
   }
 
   textUpdater = event => {
-    validateText(event, this.state, data => {
+    validateText(event, false, this.state, data => {
       this.setState(data)
     })
   }
@@ -46,8 +46,8 @@ class ContactForm extends Component {
   render() {
     return (
       <>
-        <Input type="email" textController={this.textUpdater} placeholder="Your email address *" />
-        <Input type="name" textController={this.textUpdater} placeholder="Your name" />
+        <Input type="email" textController={this.textUpdater} placeholder="Your email address *" autoComplete="email" name="email" label="Email" />
+        <Input type="name" textController={this.textUpdater} placeholder="Your name" autoComplete="name" label="Name" />
         <Input type="text" textController={this.textUpdater} placeholder="Your message *" />
         <Button onSubmit={this.submit}>Submit Your message</Button>
       </>

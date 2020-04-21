@@ -58,5 +58,22 @@
         &:nth-of-type(2)
           width: auto
           float: right
-        
-          
+
+@media only screen and (max-width: 925px)
+  #store-container
+    &.review-order
+      width: 100% 
+      margin-left: 3.5%
+      #items-summary 
+        width: 100% 
+        height: auto
+        #grid-description  
+          p 
+            &:first-of-type
+              width: 47% 
+            &:nth-child(2)
+              width: 24%              
+      #order-summary 
+        width: 93% 
+        float: left
+        margin-top: 2vh
