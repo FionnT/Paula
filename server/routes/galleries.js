@@ -58,11 +58,14 @@ server.post("/upload/update-positions", jsonParser, async (req, res) => {
       const newPhotoshoots = req.body
       existingPhotoshoots.forEach(Photoshoot => {
         newPhotoshoots.forEach(newPhotoshoot => {
-          let existingID = Photoshoot._id.toString()
-          let submittedID = newPhotoshoot._id.toString()
-          if (existingID === submittedID && Photoshoot.isInHomePosition !== newPhotoshoot.isInHomePosition) {
-            Photoshoot.isInHomePosition = newPhotoshoot.isInHomePosition
-            Photoshoot.save()
+          if (newPhotoshoot) {
+            // Sometimes we send null in the array \__0__/
+            let existingID = Photoshoot._id.toString()
+            let submittedID = newPhotoshoot._id.toString()
+            if (existingID === submittedID && Photoshoot.isInHomePosition !== newPhotoshoot.isInHomePosition) {
+              Photoshoot.isInHomePosition = newPhotoshoot.isInHomePosition
+              Photoshoot.save()
+            }
           }
         })
       })

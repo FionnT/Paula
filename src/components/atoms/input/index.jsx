@@ -8,6 +8,11 @@ import "./styles.sass"
 // React will prefer any user input over an update to the prop
 
 class Input extends Component {
+  constructor(props) {
+    super(props)
+    this.textController = props.textController?.bind(this)
+  }
+
   render() {
     const { className, immutable, immutableWidth, label, mutableWidth, placeholder, required, type, value } = this.props
     return (
@@ -17,12 +22,12 @@ class Input extends Component {
         {immutable ? <input className="fixedValue" style={{ width: immutableWidth }} value={immutable} disabled /> : null}
         {type !== "text" ? (
           <input
-            onChange={e => this.props.textController(e)}
+            onChange={e => this.textController(e)}
             type={type}
             className={immutable ? "immutable " : ""}
             style={{ width: mutableWidth }}
             required={required ? true : false}
-            value={value ? value : undefined}
+            value={value}
           />
         ) : (
           <textarea type={type} onInput={e => this.props.textController(e)}></textarea>

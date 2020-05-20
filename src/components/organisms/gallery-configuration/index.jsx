@@ -59,35 +59,33 @@ class GalleryConfiguration extends Component {
     const selected = this.state
     return (
       <div id="gallery-configuration">
-        <h2>{selected.title}</h2>
-        <div id="gallery-input-fields">
-          <Input
-            type="title"
-            textController={this.textUpdater}
-            placeholder="Gallery Name *"
-            value={selected.title !== "Add a new gallery?" ? selected.title : ""}
-            required="true"
-          />
-          <Input
-            type="url"
-            textController={this.textUpdater}
-            placeholder="Gallery URL *"
-            immutable="/shoot/"
-            immutableWidth="16%"
-            mutableWidth="84%"
-            value={selected.url ? selected.url : ""}
-            required="true"
-          />
-        </div>
-        <FileDropZone multiple={true} existing={selected} url={selected.url} accept="image/*" onGalleryDetailChange={this.onGalleryDetailChange}>
-          Gallery Photos
-        </FileDropZone>
-        <div id="gallery-input-fields">
-          <Input type="password" placeholder="Add a password?" />
-        </div>
-        <div style={{ width: "80.5%", margin: "50px 0" }}>
-          <Button className="center">Save Gallery!</Button>
-        </div>
+        {this.props.selected !== false ? (
+          <>
+            <h2>{selected.title}</h2>
+            <div id="gallery-input-fields">
+              <Input type="title" textController={this.textUpdater} placeholder="Gallery Name *" value={selected.title ? selected.title : ""} required="true" />
+              <Input
+                type="url"
+                textController={this.textUpdater}
+                placeholder="Gallery URL *"
+                immutable="/shoot/"
+                immutableWidth="16%"
+                mutableWidth="84%"
+                value={selected.url ? selected.url : ""}
+                required="true"
+              />
+            </div>
+            <FileDropZone multiple={true} existing={selected} url={selected.url} accept="image/*" onGalleryDetailChange={this.onGalleryDetailChange}>
+              Gallery Photos
+            </FileDropZone>
+            <div id="gallery-input-fields">
+              <Input type="password" placeholder="Add a password?" />
+            </div>
+            <div style={{ width: "80.5%", margin: "50px 0" }}>
+              <Button className="center">Save Gallery!</Button>
+            </div>
+          </>
+        ) : null}
       </div>
     )
   }

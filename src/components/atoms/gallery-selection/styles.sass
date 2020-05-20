@@ -5,14 +5,51 @@
       width: 15% 
       height: 100% 
       float: left
-      .order-lock-toggle 
-        font-size: 24px
+      ul 
+        width: 93%
+        margin: 20px auto
+        height: 25px
+        font-size: 18px
+        line-height: 28px
+        overflow: hidden
+        position: relative
+        padding: 15px 0 13px 0
         text-align: center
-        width: 100%
         cursor: pointer
-        transition: all 0.15s ease
-        &:hover 
-          color: coral
+        border-radius: 4px
+        transition: all 0.35s ease
+        li 
+          width: 60% 
+          margin: 0 auto
+          text-align: left  
+          transition: color 0.15s ease
+          padding-bottom: 3px
+          &:before 
+            opacity: 0
+            transition: all 0.15s ease
+            color: coral
+            width: 10px 
+            height: 1px 
+            margin: 0 13px 0 -20px 
+            content: "\2022"
+          &:hover 
+            &:before
+              opacity: 1
+          &:hover 
+            color: coral
+        &:hover
+          height: 90px
+          background: white 
+          box-shadow: 0px 3px 10px -8px black 
+          span 
+            display: none
+        span 
+          position: relative
+          right: 0 
+          top: 0
+          display: inline-block
+          float: right
+          margin: 0 7px 0 -7px
       .gallery-selector-container
         .gallery-selector 
           cursor: pointer
@@ -70,12 +107,19 @@
             pointer-events: all
             &:hover 
               color: coral
+      .order-lock-toggle 
+        font-size: 24px
+        text-align: center
+        width: 100%
+        cursor: pointer
+        transition: all 0.15s ease
+        &:hover 
+          color: coral
       h2
         color: #FF7F50
         font-weight: 600
         letter-spacing: 1
-        margin: 30px 0 60px 15px
-
+        margin: 0px 0 60px 25px
       p, h2 
         height: 20px
         font-size: 16px   

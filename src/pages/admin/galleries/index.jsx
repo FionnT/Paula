@@ -8,12 +8,22 @@ import { pageNotification } from "../../../utilities"
 
 import "./styles.sass"
 
+const emptyGallery = {
+  title: "",
+  url: "",
+  itemOrder: [],
+  isInHomePosition: undefined,
+  _id: uuid()
+}
+
 class GalleriesAdmin extends Component {
   constructor() {
     super()
     this.state = {
       galleries: undefined,
-      selectedGallery: undefined
+      selectedGalleries: undefined,
+      selectedType: undefined,
+      selectedPhotoshoot: undefined
     }
   }
 
@@ -23,26 +33,42 @@ class GalleriesAdmin extends Component {
       fetch(server, { credentials: "include", mode: "cors" })
         .then(res => (res.ok ? res.json() : res))
         .then(res =>
-          this.setState({ galleries: res, selectedGallery: res[0] }, () => {
-            resolve(res)
-          })
+          this.setState(
+            {
+              galleries: res,
+              selectedGalleries: res.homeGalleries,
+              selectedType: "homeGalleries",
+              selectedPhotoshoot: res.homeGalleries[0]
+            },
+            () => {
+              resolve(res)
+            }
+          )
         )
     })
   }
 
-  onActivateGallery = gallery => this.setState({ selectedGallery: gallery })
+  onActivateGallery = gallery => this.setState({ selectedPhotoshoot: gallery })
+
+  onToggleGalleryType = selectedType => {
+    let selectedGalleries = this.state.galleries[selectedType]
+    let selectedPhotoshoot
+    selectedGalleries.length ? (selectedPhotoshoot = selectedGalleries[0]) : (selectedPhotoshoot = false)
+
+    this.setState({ selectedGalleries, selectedPhotoshoot, selectedType })
+  }
 
   onAddGallery = () => {
-    let existingGalleries = this.state.galleries
-    let newGallery = {
-      title: "New Gallery",
-      url: "example",
-      itemOrder: [],
-      isInHomePosition: existingGalleries.length + 1,
-      _id: uuid()
-    }
-    existingGalleries.push(newGallery)
-    this.setState({ galleries: existingGalleries, selectedGallery: newGallery }, () => {
+    let galleries = this.state.galleries
+    let collection = galleries[this.state.selectedType]
+    let newGallery = Object.assign({}, emptyGallery)
+    const { length } = collection
+
+    newGallery.isInHomePosition = length + 1
+    collection.push(newGallery)
+    let updatedMaster = Object.assign(galleries, collection)
+
+    this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedPhotoshoot: newGallery }, () => {
       let galleries = Array.from(document.querySelectorAll(".gallery-selector-container"))
       let newGallerySelector = galleries[galleries.length - 1].childNodes[0]
       Array.from(document.querySelectorAll(".active")).forEach(element => element.classList.remove("active"))
@@ -51,41 +77,46 @@ class GalleriesAdmin extends Component {
   }
 
   onGalleryDetailChange = modifiedGallery => {
-    let galleryBlob = this.state.galleries
-    let found
-    galleryBlob.forEach(gallery => {
-      if (modifiedGallery._id.toString() === gallery._id.toString()) {
-        found = true
-        Object.assign(gallery, modifiedGallery)
-      }
+    // Trust me, this is as optimised as you can make it.
+    let galleries = this.state.galleries
+    let collection = galleries[this.state.selectedType]
+    let galleryIndex
+    collection.forEach((gallery, index) => {
+      if (gallery._id === modifiedGallery._id) galleryIndex = index
     })
-    if (!found) pageNotification([false, "Couldn't find that gallery!"])
-    else this.setState({ galleries: galleryBlob })
+
+    let updatedGallery = Object.assign(collection[galleryIndex], modifiedGallery) // Create a clone of the original, and update the fields
+    collection[galleryIndex] = updatedGallery // Update the original
+
+    let updatedMaster = Object.assign(galleries, collection)
+
+    this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedGallery: updatedGallery })
   }
 
   onHomeOrderChange = (editingGallery, direction) => {
     const originalPosition = editingGallery.isInHomePosition
-    const existingGalleries = this.state.galleries
+    let galleries = this.state.galleries
+    let homeGalleries = this.state.galleries.homeGalleries // You can only re-arrange the home galleries
 
     if (originalPosition !== 1 && direction === "up") {
-      existingGalleries.forEach(gallery => {
+      homeGalleries.forEach(gallery => {
         if (gallery.isInHomePosition === originalPosition - 1) gallery.isInHomePosition += 1
         else if (gallery.isInHomePosition === originalPosition) gallery.isInHomePosition -= 1
       })
-    } else if (originalPosition !== existingGalleries.length + 1 && direction === "down") {
-      existingGalleries.forEach(gallery => {
+    } else if (originalPosition !== homeGalleries.length + 1 && direction === "down") {
+      homeGalleries.forEach(gallery => {
         if (gallery.isInHomePosition === originalPosition + 1) gallery.isInHomePosition -= 1
         else if (gallery.isInHomePosition === originalPosition) gallery.isInHomePosition += 1
       })
     } else return
 
-    existingGalleries.sort((a, b) => {
+    homeGalleries.sort((a, b) => {
       if (a.isInHomePosition > b.isInHomePosition) return 1
       else if (a.isInHomePosition < b.isInHomePosition) return -1
       else return 0
     })
-
-    this.setState({ galleries: existingGalleries })
+    let updatedMaster = Object.assign(galleries, homeGalleries)
+    this.setState({ galleries: updatedMaster, selectedGalleries: homeGalleries }) // You can only re-arrange the home galleries
   }
 
   submitHomePositionChanges = () => {
@@ -97,7 +128,7 @@ class GalleriesAdmin extends Component {
         "Content-Type": "application/json"
       },
       mode: "cors",
-      body: JSON.stringify(this.state.galleries)
+      body: JSON.stringify(this.state.galleries.homeGalleries)
     }).then(res => (res.ok ? pageNotification([true, "New order saved"]) : pageNotification([false, "Couldn't save new details, try again!"])))
   }
 
@@ -115,11 +146,17 @@ class GalleriesAdmin extends Component {
                   <GallerySelection
                     onActivate={this.onActivateGallery}
                     onHomeOrderChange={this.onHomeOrderChange}
-                    galleries={this.state.galleries}
+                    galleries={this.state.selectedGalleries}
                     onAddGallery={this.onAddGallery}
+                    onToggleGalleryType={this.onToggleGalleryType}
                     submitHomePositionChanges={this.submitHomePositionChanges}
                   />
-                  <GalleryConfiguration selected={this.state.selectedGallery} onGalleryDetailChange={this.onGalleryDetailChange} title="Add a new gallery" />
+                  <GalleryConfiguration
+                    selected={this.state.selectedPhotoshoot}
+                    selectedType={this.state.selectedType}
+                    onGalleryDetailChange={this.onGalleryDetailChange}
+                    title="Add a new gallery"
+                  />
                 </div>
               )
             }

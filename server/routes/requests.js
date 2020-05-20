@@ -14,9 +14,22 @@ server.get("/photoshoots/home", (req, res) => {
 server.get("/photoshoots/all", (req, res) => {
   Photoshoots.find({})
     .sort("isInHomePosition")
+    .lean()
     .exec((err, results) => {
       if (err) res.sendStatus(502)
-      else res.json(results)
+      else {
+        let responseBody = {
+          homeGalleries: [],
+          privateGalleries: [],
+          unpublishedGalleries: []
+        }
+        results.forEach(photoshoot => {
+          if (photoshoot.isOnHomeScreen) responseBody.homeGalleries.push(photoshoot)
+          else if (photoshoot.isPublished) responseBody.privateGalleries.push(photoshoot)
+          else responseBody.unpublishedGalleries.push(photoshoot)
+        })
+        res.json(responseBody)
+      }
     })
 })
 
