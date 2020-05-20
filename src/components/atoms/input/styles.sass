@@ -14,7 +14,7 @@ div.inputField
       padding-bottom: 15px
   p 
     padding-bottom: 5px
-    margin-left: 5px
+    margin-left: calc(2.5% + 5px)
     display: inline-block
     width: 100%
     font-size: 1.25em
@@ -26,15 +26,18 @@ div.inputField
     border: none
     height: 30%
     width: 95%
+    margin-left: 2.5%
     outline: none
     border-bottom: 1px solid #989898
     background: #F3f3f3
     font-size: 1.25em
     &.fixedValue 
       width: 13%
+      margin-left: 5px
       margin-right: -3px
     &.immutable 
       width: 89%
+      margin: 0 -5px 0 0
   textarea 
     font-weight: 300
     width: 95%

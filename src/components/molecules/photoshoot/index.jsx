@@ -22,10 +22,10 @@ class Photoshoot extends Component {
     if (this.state.activated === "activated") this.handleActivate()
   }
 
+  // TL:DR; Don't rewrite the below to calculate based on margins
   // All browsers handle grid layouts differently
   // Webkit assigns margins to center, but Firefox just positions them pseudo-absolutely
   // Edge just makes stuff up basically
-  // Don't rewrite the below calculate based on margins
 
   handleActivate() {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
@@ -49,19 +49,22 @@ class Photoshoot extends Component {
       }
       //
       // Yay responsiveness
-      // Left offset for the first item is = (container width/2 * -1) + (item width/2)
+      // Left offset for the first item is = (container width/2 * -1) + (item width/2) --- Images are moved from the center, not the edges
       // Each child tags the next image with it's current offset, and it's width
       // For images that are bigger, or smaller than the previous image +- 50, we need to do some additional computation
+      // It's always going to be a fuzzy number here, we because need margins of error due to being responsive
+      // Which is all to say I have no idea why the below works, except that it does work.
       //
+
       if (i === 0) {
         let bump = windowWidth > 1200 ? 0 : windowWidth > 800 ? 5 : windowWidth > 700 ? 0 : windowWidth > 425 ? 22 : window.innerHeight > 800 ? 40 : 0
         let containerWidth = parseInt(window.getComputedStyle(document.querySelector("#gallery")).width)
         myOffset = containerWidth / -2 + myWidth / 2 - bump
       } else if (myWidth - prevWidth > 50 || myWidth - prevWidth < -50) {
         if (windowWidth > 1200) {
-          let biggerImageBump = isFirefox ? -10 : isEdge ? -5 : window.innerHeight > 990 ? -15 : 15
-          let smallerImageBump = isFirefox ? 0 : isEdge ? 0 : window.innerHeight > 990 ? 10 : -20
-          myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + biggerImageBump) : (myOffset = prevOffset - myWidth / 2 + prevWidth + smallerImageBump)
+          let bumpForLargeImage = isFirefox ? -10 : isEdge ? -5 : window.innerHeight > 990 ? -15 : 15
+          let bumpForSmallerImage = isFirefox ? 0 : isEdge ? 0 : window.innerHeight > 990 ? 10 : -20
+          myWidth > prevWidth ? (myOffset = prevWidth / 2 + myWidth / 2 + prevOffset + bumpForLargeImage) : (myOffset = prevOffset - myWidth / 2 + prevWidth + bumpForSmallerImage)
         } else if (windowWidth < 1200 && windowWidth > 1050) {
           // iPad Pro, landscape, or other large'ish device
           myWidth > prevWidth ? (myOffset = prevWidth + myWidth / 3 + prevOffset - 20) : (myOffset = prevOffset + myWidth * 0.6 + prevWidth / 2 - 10)
@@ -87,8 +90,8 @@ class Photoshoot extends Component {
     }
 
     setTimeout(() => {
-      // When loading a gallery via a direct link, the scripts above and from the Gallery component complete before the images have loaded
-      // We therefore need to force a rerender after at least a partial load of those images, so that their computed styles are correct
+      // When loading a gallery via a direct link, the scripts above and from the Gallery component sometimes complete before the images have loaded
+      // We therefore need to force a rerender after at least a partial load of those images, so that their _computed_ styles are correct
       this.setState({ forceRerender: true })
     }, 500)
   }
@@ -110,6 +113,7 @@ class Photoshoot extends Component {
 
   handleHover(enable) {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
+    // eslint-disable-next-line eqeqeq
     const GalleryIsInMotion = document.getElementById("animationbox").dataset.motion == "true"
     if (this.state.activated !== "activated" && !GalleryIsInMotion) {
       if (enable) {
@@ -137,7 +141,7 @@ class Photoshoot extends Component {
 
   handleRender() {
     const { itemOrder } = this.state
-    const { length } = itemOrder
+    const { length } = itemOrder // Ain't that neat?
     const maxAllowableLoad = this.props.data.activated === "activated" ? length : isMobile ? 1 : 3
     let result = []
     for (let i = 0; i < maxAllowableLoad; i++) {
@@ -165,7 +169,7 @@ class Photoshoot extends Component {
           {this.handleRender()}
         </div>
         <div className="gallery-back">
-          <p onClick={e => this.handlePageNavigation(e)}>Go Back</p>
+          <p onClick={() => this.handlePageNavigation(false)}>Go Back</p>
           <span></span>
         </div>
       </div>

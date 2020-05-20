@@ -2,12 +2,11 @@ const mongoose = require("mongoose")
 
 mongoose.Promise = global.Promise
 
-// mongoose.connect("mongodb://site:kseneU5ffzGUpZ3@ds161397.mlab.com:61397/heroku_6lgfsr4h", { useNewUrlParser: true });
-
 mongoose.connect("mongodb://localhost:27017/paula", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+  useCreateIndex: true
 })
 
 const Schema = mongoose.Schema
@@ -28,32 +27,43 @@ const adminSchema = new Schema(
 
 const orderSchema = new Schema(
   {
-    orderingUserEmail: String,
-    shipping: Object,
-    orderCost: String,
-    orderItems: Array
+    items: Array,
+    name: String,
+    streetAddress: String,
+    city: String,
+    state: String,
+    country: String,
+    zip: String,
+    purchaseCost: Number,
+    email: String,
+    orderID: String,
+    createdAt: { type: Date, default: Date.now },
+    expireAt: { type: Date, default: undefined }
   },
   { collection: "orders" }
 )
+
+orderSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 })
 
 const sessionSchema = new Schema(
   {
     _email: String,
     _id: String,
-    expires: Date,
-    Session: Object,
-    paymentIntent: String
+    createdAt: { type: Date, default: Date.now },
+    expireAt: { type: Date, default: undefined },
+    Session: Object
   },
   { collection: "sessions" }
 )
+sessionSchema.index({ expireAt: 1 }, { expireAfterSeconds: 14400 }) // 4 hours
 
 const storeItemSchema = new Schema(
   {
-    UUID: String, // names are not unique here, so we need a GUID to avoid duplicates
+    UUID: String, // names are not unique here, so we need a UUID to avoid duplicates
     image: String,
     isPublished: Boolean,
     name: String,
-    sizes: Array
+    sizes: Array // This expects an array of JSON objects as such: {"measurements": "30 x 30", "type" : "tile", "cost": 30}
   },
   { collection: "StoreItems" }
 )
@@ -80,7 +90,11 @@ const photoshootSchema = new Schema(
       type: String,
       default: undefined
     },
-    url: String
+    url: String,
+    _v: {
+      type: String,
+      include: false
+    }
   },
   { collection: "photoshoots" }
 )
@@ -101,7 +115,7 @@ const userSchema = new Schema(
 )
 
 const Admin = mongoose.model("Admin", adminSchema)
-const Order = mongoose.model("Order", orderSchema)
+const Order = mongoose.model("confirmedOrder", orderSchema)
 const Photoshoots = mongoose.model("Photoshoots", photoshootSchema)
 const Person = mongoose.model("Person", userSchema)
 const Session = mongoose.model("Session", sessionSchema)

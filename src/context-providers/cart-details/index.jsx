@@ -1,21 +1,7 @@
 import React, { createContext } from "react"
-import Cookies from "universal-cookie"
 import Async from "react-async"
-const cookies = new Cookies()
-
-// TODO: Add async call to server to fetch items details here, so we only need to make the call once and can then pass it down
-
-const required_details = {
-  items: [],
-  streetAddress: undefined,
-  city: undefined,
-  state: undefined,
-  country: undefined,
-  zip: undefined,
-  purchaseCost: undefined,
-  paymentSecret: undefined,
-  email: undefined
-}
+import { Cookie } from "../../utilities"
+import { requiredDetails, addressCookie, cartCookie, paymentCookie } from "./data-structures.js"
 
 export const CartContext = createContext({
   cart: {},
@@ -24,6 +10,34 @@ export const CartContext = createContext({
 })
 
 export class CartProvider extends React.Component {
+  // Stores or retrives cookies
+  manageCookies = (storingNewCookies, newDetails) => {
+    if (storingNewCookies) {
+      // Insert relevant data into respective object; data splitting
+      Object.keys(addressCookie).forEach(key => (addressCookie[key] = newDetails[key]))
+      Object.keys(cartCookie).forEach(key => (cartCookie[key] = newDetails[key]))
+      Object.keys(paymentCookie).forEach(key => (paymentCookie[key] = newDetails[key]))
+
+      // Store objects as Cookies
+      Cookie.set("addressCookie", addressCookie)
+      Cookie.set("cartCookie", cartCookie)
+      Cookie.set("paymentCookie", paymentCookie)
+    } else {
+      const addressCookie = Cookie.get("addressCookie")
+      const cartCookie = Cookie.get("cartCookie")
+      const paymentCookie = Cookie.get("paymentCookie")
+      let newDetails = requiredDetails
+      newDetails = Object.assign(newDetails, addressCookie)
+      newDetails = Object.assign(newDetails, cartCookie)
+      newDetails = Object.assign(newDetails, paymentCookie)
+      this.setState({ cart: newDetails })
+    }
+  }
+
+  componentDidMount() {
+    this.manageCookies(false)
+  }
+
   updateCart = newDetails => {
     let existingItems = this.state.cart.items
 
@@ -71,22 +85,17 @@ export class CartProvider extends React.Component {
       newDetails.purchaseCost += item.purchaseCost * item.amount
     })
 
-    let requiredCart = required_details // Cloning base object
+    let requiredCart = requiredDetails // Cloning base object
     newDetails = Object.assign(requiredCart, newDetails)
-    cookies.set("cart", newDetails, { path: "/" }) // store it in cookies too so we don't forget details
+
+    this.manageCookies(true, newDetails)
     this.setState({ cart: newDetails })
   }
 
   state = {
-    cart: required_details,
+    cart: requiredDetails,
     updateCart: this.updateCart,
     availableItems: []
-  }
-
-  componentDidMount() {
-    const cookie = cookies.get("cart")
-    // Avoid unneccessary re-render
-    if (cookie) this.setState({ cart: cookie })
   }
 
   fetchStoreItems = () => {

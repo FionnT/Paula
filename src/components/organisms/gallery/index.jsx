@@ -38,14 +38,21 @@ class Gallery extends Component {
         else this.handlePageNavigation()
       })
     })
+    this.handleScrollAbility(false)
+  }
+
+  componentWillUnmount() {
+    window.onpopstate = undefined
   }
 
   componentDidUpdate(prevProps) {
     // If a user has entered a URL to a shoot, it will be passed down via props
     // Here we enable a singular shoot where selected, or enable all if the prop is empty
     if (this.props.shootname && prevProps.shootname !== this.props.shootname) this.handlePageNavigation(this.props.shootname)
-    else if (!this.props.shootname && prevProps.shootname) this.handlePageNavigation()
+    else if (!this.props.shootname && prevProps.shootname) this.handlePageNavigation(false)
     if (this.props.chevron && this.props.chevron !== this.state.chevron) this.setState({ chevron: this.props.chevron })
+    // Handle back button (JS can't distinguish between forward and back history navigation)
+    window.onpopstate = () => this.updateHistory(false, location => this.handlePageNavigation(location))
   }
 
   fetchAllShoots = () => {
@@ -121,8 +128,8 @@ class Gallery extends Component {
       this.setState({ shoots: shoots, chevronState: "disabled", mobilestate: "opened", animation: animation }, () => {
         this.handleRender()
       })
-    } else if (shootname) {
-      shootname.target.parentNode.parentNode.getElementsByClassName("photo-wrapper")[0].style.overflowX = "hidden"
+    } else if (!shootname) {
+      Array.from(document.getElementsByClassName("photo-wrapper")).forEach(element => (element.style.overflowX = "hidden"))
       for (let shoot in shoots) shoots[shoot].activated = ""
       this.updateHistory("/")
       this.handleScrollAbility(false)
@@ -187,8 +194,9 @@ class Gallery extends Component {
     let rendered = []
     const { shoots, animation } = this.state
     if (shoots) {
-      const maxAllowableLoad = isMobile ? shoots.length : animation.index !== shoots.length ? animation.index + 1 : shoots.length
-      for (let shoot = 0; shoot < maxAllowableLoad; shoot++) {
+      const maxAllowableLoad = isMobile ? shoots.length : animation.index !== shoots.length ? animation.index + 2 : shoots.length
+      // We need to double check we're not loading further than exists, as well as further than is allowed
+      for (let shoot = 0; shoot < maxAllowableLoad && shoot < shoots.length; shoot++) {
         const currentShoot = shoots[shoot]
         const position = Number(currentShoot.isInHomePosition) - 1
         let photoshoot = <Photoshoot key={position} data={currentShoot} handlePageNavigation={this.handlePageNavigation} />

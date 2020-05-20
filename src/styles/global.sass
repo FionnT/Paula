@@ -39,11 +39,12 @@ body, html
     position: relative
     height: 100%
     #notifier 
-      position: absolute
-      margin: -10vh 0 0 -10vw
-      padding: 1.25vh 0 // center the text vertically
+      position: fixed
+      margin: -10vh auto
+      padding: 1.25vh 2vw // center the text vertically
       left: 50%
-      width: 20vw
+      margin-left: calc(-150px + -2vw)
+      width: 300px
       height: auto
       z-index: 102
       background: transparent
@@ -51,12 +52,14 @@ body, html
       transition: opacity 0.2s linear
       text-align: center 
       border: 0.1em solid
-      &.false 
-        border-color: black
-        background: black
+      border-radius: 5px
+      &.false
+        border-color: #ff8888
+        background: rgba(226, 25, 25, 0.7)
+        color: white
       &.true 
         background: #549f93
-        border-color: transparent
+        border-color: #6fd2c2
         color: white
     #admin
       max-width: 1200px

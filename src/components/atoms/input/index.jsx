@@ -17,12 +17,12 @@ class Input extends Component {
         {immutable ? <input className="fixedValue" style={{ width: immutableWidth }} value={immutable} disabled /> : null}
         {type !== "text" ? (
           <input
-            onInput={e => this.props.textController(e)}
+            onChange={e => this.props.textController(e)}
             type={type}
             className={immutable ? "immutable " : ""}
             style={{ width: mutableWidth }}
             required={required ? true : false}
-            defaultValue={value ? value : ""}
+            value={value ? value : undefined}
           />
         ) : (
           <textarea type={type} onInput={e => this.props.textController(e)}></textarea>

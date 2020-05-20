@@ -1,49 +1,98 @@
 import React, { Component } from "react"
 import Dropzone from "react-dropzone"
-import { Draggable, Droppable } from "react-beautiful-dnd"
 import { Button, DropZoneImage } from "../../atoms"
 import "./styles.sass"
-const MovableSection = props => <ul>{props.children}</ul>
 
 class FileDropZone extends Component {
   constructor(props) {
     super(props)
-    this.onDrop = files => {
-      let new_files = files
+    // Handle adding new files
+    this.onDrop = newFiles => {
       let rendered = this.state.rendered.slice()
+      let files = this.state.files.length ? this.state.files.slice() : []
       let { index } = this.state
-      if (this.state.files.length) new_files = this.state.files.slice()
-      files.forEach(file => {
-        index += 1
+      newFiles.forEach(file => {
         const file_src = URL.createObjectURL(file)
-        new_files.push(file)
-        rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} />)
+        files.push(file)
+        rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
+        index += 1
       })
-      this.setState({ files: new_files, rendered: rendered, index: index })
+      const combined = this.props.existing.itemOrder.concat(files)
+      this.setState({ files, rendered, index, combined })
     }
+
+    this.onGalleryDetailChange = this.props.onGalleryDetailChange.bind(this)
 
     this.state = {
       files: [],
       rendered: [],
-      existing: this.props.existing,
+      combined: this.props.existing.itemOrder,
+      existing: this.props.existing.itemOrder,
       index: 0
     }
-    this.children = this.props.children
   }
 
+  // Handle existing gallery files
   componentDidUpdate() {
-    if (this.props.existing && this.state.existing !== this.props.existing) {
-      const { existing, url } = this.props
-      let { index } = this.state
+    const existing = this.props.existing.itemOrder
+    if (existing && this.state.existing !== existing) {
+      let index = 0
       let rendered = []
       if (existing) {
-        existing.forEach((file, index) => {
+        existing.forEach(file => {
+          const file_src = "/galleries/" + this.props.url + "/" + file + ".jpg"
+          rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
           index += 1
-          const file_src = "/galleries/" + url + "/" + file + ".jpg"
-          rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} />)
         })
       }
-      this.setState({ rendered: rendered, existing: this.props.existing, index: index })
+      this.setState({ rendered, existing, index, combined: existing })
+    }
+  }
+
+  componentDidMount() {
+    const existing = this.state.existing
+    if (existing) {
+      let index = 0
+      let rendered = []
+      if (existing) {
+        existing.forEach(file => {
+          const file_src = "/galleries/" + this.props.url + "/" + file + ".jpg"
+          rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
+          index += 1
+        })
+      }
+      this.setState({ rendered, existing, index, combined: existing })
+    }
+  }
+
+  onModificationOfImages = (method, index) => {
+    const currentOrder = this.state.combined.slice()
+    const movedItem = currentOrder[index]
+    const { length } = currentOrder
+
+    if (method === "left" && index !== 0) {
+      currentOrder.splice(index, 1, currentOrder[index - 1])
+      currentOrder.splice(index - 1, 1, movedItem)
+    } else if (method === "right" && index !== length - 1) {
+      currentOrder.splice(index, 1, currentOrder[index + 1])
+      currentOrder.splice(index + 1, 1, movedItem)
+    } else if (method === "delete") currentOrder.splice(index, 1)
+    else return
+
+    this.refreshRender(currentOrder)
+    this.onGalleryDetailChange({ itemOrder: currentOrder, _id: this.props.existing._id })
+  }
+
+  refreshRender = newOrder => {
+    let rendered = []
+    let file_src
+    if (newOrder) {
+      newOrder.forEach((file, index) => {
+        if (typeof file != "object") file_src = "/galleries/" + this.props.url + "/" + file + ".jpg"
+        else file_src = URL.createObjectURL(file)
+        rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
+      })
+      this.setState({ rendered, combined: newOrder, index: rendered.length })
     }
   }
 
@@ -68,9 +117,8 @@ class FileDropZone extends Component {
         {({ getRootProps, getInputProps }) => (
           <section className="container">
             <div className="inputField" style={{ height: "2vh" }}>
-              <p>{this.children}</p>
+              <p>{this.props.children}</p>
             </div>
-
             <div {...getRootProps({ className: "filedropzone" })}>
               <input {...getInputProps()} />
               <ul>{this.state.rendered}</ul>

@@ -12,21 +12,24 @@ class Home extends Component {
     }
   }
 
-  updateHistory(url) {
-    let newURL = "/shoot/" + url
-    if (this.props.history.location.pathname !== newURL && !newURL.match("//")) {
+  updateHistory(url, callback) {
+    let newURL = !url ? false : url === "/" ? undefined : "/shoot/" + url
+    if (newURL && this.props.history.location.pathname !== newURL && !newURL.match("//")) {
       this.props.history.push(newURL)
       this.setState({ shootname: url })
     } else if (url === "/") {
-      this.setState({ shootname: undefined })
+      this.setState({ shootname: newURL })
       this.props.history.push("/")
+    } else if (!url) {
+      this.props.history.push(this.props.history.location.pathname)
     }
+    if (callback) callback(newURL)
   }
 
   componentDidMount() {
     if (this.props.match.params && this.props.match.params.shootname !== this.state.shootname) this.setState({ shootname: this.props.match.params.shootname })
   }
-  componentDidUpdate(prevProps) {
+  componentDidUpdate() {
     if (this.props.location.state && this.props.location.state.shootname !== this.state.shootname) this.setState({ shootname: this.props.location.state.shootname })
   }
 

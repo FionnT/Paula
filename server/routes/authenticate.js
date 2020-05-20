@@ -15,7 +15,7 @@ const store = new MongoDBStore(
 )
 
 const authenticated = require("./middleware/authenticated")()
-const { Admin, Person, Session } = require("../models/index")
+const { Admin, Person } = require("../models/index")
 const maxSessionLength = 1000 * 60 * 60 * 8 // 8 hours
 const public_metadata = {
   email: undefined,
@@ -90,16 +90,16 @@ server.post("/admin/login", jsonParser, async (req, res) => {
 // The authenticated middleware will tell us if we have an active session for this connectSID
 // If we do, we will assign the res.locals object with the email relating to that SID
 // We then send a response containing the public metadata of the email address tied to that connectSID
-// If we can't find a user registered with that email, such as if they've just been deleted, we send a blank response
-// This ensures that you need two keys at all times to access an account
-// 1. Password verified session per above
+// If we can't find a user registered with that email, we send a 401 which clears the user object on the client side
+// This ensures that you need two components at all times to access an account
+// 1. A password verified session per login route above
 // 2. ConnectSID matching that of the veririfed session
 
 server.get("/verify_session", jsonParser, authenticated, async (req, res) => {
   const { email, privileges } = res.locals
   if (privileges) {
     await Admin.findOne({ email }, (err, user) => {
-      if (err) res.sendStatus(503)
+      if (err) res.sendStatus(401)
       else if (!user) res.sendStatus(401)
       else {
         for (let key in public_metadata) {
@@ -110,16 +110,17 @@ server.get("/verify_session", jsonParser, authenticated, async (req, res) => {
     })
   } else if (!privileges) {
     await Person.findOne({ email }, (err, user) => {
-      if (err) res.sendStatus(503)
+      if (err) res.sendStatus(401)
       else if (!user) res.sendStatus(401)
       else {
-        for (let key in public_metadata) {
-          public_metadata[key] = user[key]
-        }
+        public_metadata.forEach(key => (public_metadata[key] = user[key]))
+        // for (let key in public_metadata) {
+        //   public_metadata[key] = user[key]
+        // }
         res.json(public_metadata)
       }
     })
-  } else res.send(401).json({ Reason: "User unauthorised" })
+  } else res.json({ Reason: "User unauthorised" })
 })
 
 server.get("/logout", (req, res) => {

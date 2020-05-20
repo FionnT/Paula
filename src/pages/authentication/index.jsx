@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import { Login } from "../../components/molecules"
 import { Navigation } from "../../components/organisms"
-import { validateText, pageNotification } from "../../utilities"
+import { Cookie, validateText, pageNotification } from "../../utilities"
 import { Redirect } from "react-router-dom"
 import { UserConsumer } from "../../context-providers"
 import "./styles.sass"
@@ -14,7 +14,6 @@ class Authentication extends Component {
       password: undefined,
       valid: false
     }
-    this.emailNotification = pageNotification.bind(this)
   }
 
   textUpdater = event => {
@@ -23,27 +22,31 @@ class Authentication extends Component {
     })
   }
 
-  onSubmit = (submitLocation, _callback) => {
+  onSubmit = (submitLocation, updateUser) => {
     if (this.state.valid !== true) pageNotification([false, "Please check your details and try again."])
     else {
-      let server = process.env.REACT_APP_API_URL + submitLocation
-      fetch(server, {
-        method: "POST", // or 'PUT'
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        mode: "cors",
-        body: JSON.stringify(this.state)
+      return new Promise((resolve, reject) => {
+        let server = process.env.REACT_APP_API_URL + submitLocation
+        fetch(server, {
+          method: "POST", // or 'PUT'
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          mode: "cors",
+          body: JSON.stringify(this.state)
+        }).then(res => {
+          res.ok ? resolve(res.json()) : reject(false)
+        })
       })
         .then(res => {
-          if (res.status === 200) {
-            document.location = "/"
-          } else pageNotification([false, "Please check your details and try again."])
+          updateUser(res)
+          Cookie.set("userCookie", res)
+          // this.props.history.push("/")
         })
         .catch(err => {
           console.log(err)
-          this.emailNotification([false, "Couldn't find that combination of login details!"])
+          pageNotification([false, "Please check your details and try again."])
         })
     }
   }
@@ -53,10 +56,10 @@ class Authentication extends Component {
       <>
         <Navigation />
         <UserConsumer>
-          {({ user }) => {
+          {({ user, updateUser }) => {
             const submitLocation = document.location.pathname.match("admin") ? "/admin/login" : "/shop/login"
             if (user.name) return <Redirect to="/" />
-            else return <Login data={user} textController={this.textUpdater} onSubmit={() => this.onSubmit(submitLocation)} />
+            else return <Login data={user} textController={this.textUpdater} onSubmit={() => this.onSubmit(submitLocation, updateUser)} />
           }}
         </UserConsumer>
       </>

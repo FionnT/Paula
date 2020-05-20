@@ -1,9 +1,8 @@
 import React, { Component } from "react"
-import { Async } from "react-async"
 import { Redirect } from "react-router-dom"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
-import { CardPayment, ReviewItem, Input, Button } from "../../../components/atoms"
+import { CardPayment, CreatePaymentIntent, ReviewItem, Input } from "../../../components/atoms"
 import { Navigation } from "../../../components/organisms"
 import { CartConsumer } from "../../../context-providers"
 import { validateText } from "../../../utilities"
@@ -24,25 +23,6 @@ class Checkout extends Component {
     })
   }
 
-  createPaymentIntent = (cart, updateCart) => {
-    // console.log(cart, updateCart)
-    if (!cart.items.length) return
-    let server = process.env.REACT_APP_API_URL + "/store/paymentintent"
-    return fetch(server, {
-      credentials: "include",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      mode: "cors",
-      body: JSON.stringify(cart)
-    })
-      .then(res => (res.ok ? res.json() : res))
-      .then(res => {
-        updateCart({ paymentSecret: res.secret })
-      })
-  }
-
   render() {
     return (
       <>
@@ -59,49 +39,39 @@ class Checkout extends Component {
             {({ cart, updateCart }) => {
               if (!cart.items.length) return <Redirect to="/shop" />
               return (
-                <Async Promise={this.createPaymentIntent(cart, updateCart)}>
-                  {({ data, err, isLoading }) => {
-                    if (isLoading) return <img src="/loading.gif" className="loading-image" alt="Page is loading" />
-                    if (err) return <Redirect to="/shop" />
-                    if (data)
-                      return (
-                        <>
-                          <div className="left-column">
-                            <div id="shipping-details">
-                              <h2>Shipping Details</h2>
-                              <p>{cart.name},</p>
-                              <p>{cart.streetAddress},</p>
-                              <p>{cart.city},</p>
-                              <p>{cart.zip},</p>
-                              <p>{cart.country}</p>
-                              <p className="edit" onClick={() => this.props.history.push("/shop/shipping")}>
-                                Edit Shipping
-                              </p>
-                            </div>
-                            <div id="items-container">
-                              {cart.items.map(item => (
-                                <ReviewItem {...item} updateCart={null} key={item.UUID + item.size} disabled="true" />
-                              ))}
-                              <div className="total-cost">
-                                <p>Total Cost:</p>
-                                <p>{cart.purchaseCost} &euro;</p>
-                              </div>
-                              <p className="edit" onClick={() => this.props.history.push("/shop/review")}>
-                                Edit Cart
-                              </p>
-                            </div>
-                          </div>
-                          <div className="right-column">
-                            <Input textController={this.textUpdater} type="email" value={cart.email} placeholder="Contact email" label="email" className="fill" />
-                            <Elements stripe={stripePromise}>
-                              <CardPayment />
-                            </Elements>
-                            <Button className="center"> Checkout </Button>
-                          </div>
-                        </>
-                      )
-                  }}
-                </Async>
+                <CreatePaymentIntent cart={cart} updateCart={updateCart}>
+                  <div className="left-column">
+                    <div id="shipping-details">
+                      <h2>Shipping Details</h2>
+                      <p>{cart.name},</p>
+                      <p>{cart.streetAddress},</p>
+                      <p>{cart.city},</p>
+                      <p>{cart.zip},</p>
+                      <p>{cart.country}</p>
+                      <p className="edit" onClick={() => this.props.history.push("/shop/shipping")}>
+                        Edit Shipping
+                      </p>
+                    </div>
+                    <div id="items-container">
+                      {cart.items.map(item => (
+                        <ReviewItem {...item} updateCart={null} key={item.UUID + item.size} disabled="true" />
+                      ))}
+                      <div className="total-cost">
+                        <p>Total Cost:</p>
+                        <p>{cart.purchaseCost} &euro;</p>
+                      </div>
+                      <p className="edit" onClick={() => this.props.history.push("/shop/review")}>
+                        Edit Cart
+                      </p>
+                    </div>
+                  </div>
+                  <div className="right-column">
+                    <Input textController={this.textUpdater} type="email" value={cart.email} placeholder="Contact email" label="email" className="fill" />
+                    <Elements stripe={stripePromise}>
+                      <CardPayment cart={cart} />
+                    </Elements>
+                  </div>
+                </CreatePaymentIntent>
               )
             }}
           </CartConsumer>

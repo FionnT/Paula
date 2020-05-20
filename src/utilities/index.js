@@ -1,7 +1,5 @@
-import validateText from "./validate-text";
-import pageNotification from "./page-notification";
+import validateText from "./validate-text"
+import pageNotification from "./page-notification"
+import Cookie from "./cookie-manager"
 
-export {
-  validateText,
-  pageNotification
-}
+export { Cookie, validateText, pageNotification }

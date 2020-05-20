@@ -2,7 +2,6 @@ import React, { Component } from "react"
 import { Link } from "react-router-dom"
 import { UserConsumer, CartConsumer } from "../../../context-providers"
 import { UserProfileButton, CartButton } from "../../molecules"
-import { isMobile } from "react-device-detect"
 import "./styles.sass"
 
 class Navigation extends Component {
@@ -71,7 +70,7 @@ class Navigation extends Component {
               {methods => {
                 if (
                   // Display in shop root, and only shop root
-                  // Display outside the ship if we have items in cart, but not if we're already reviewing our order
+                  // Display outside the shop if we have items in cart, but not if we're already reviewing our order
                   (document.location.pathname.match("shop") && !document.location.pathname.match("/shop/")) ||
                   (methods.cart.items.length && !document.location.pathname.match("shop"))
                 )

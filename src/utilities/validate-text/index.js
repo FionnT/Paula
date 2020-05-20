@@ -3,7 +3,7 @@
 // Pass false for event, and pass a JSON blob if you need to check a collection of objects at once, state keys should be equal to value of the type prop of the element.
 // Resizes textelement input fields automatically to fit entered text
 
-const validateText = (event, collection, state, _callback) => {
+const validateText = (event, collection, state, _callback, elementCount) => {
   // The below isn't foolproof, but it's a close enough approximation
   // eslint-disable-next-line
   const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -74,12 +74,12 @@ const validateText = (event, collection, state, _callback) => {
   } else return false
 
   let validatedCount = 0
-  let keyCount = Object.keys(state).length - 1
+  let keyCount = elementCount || Object.keys(state).length - 1
   for (let item in state) {
     if (item !== "valid") {
       let selector = '[type="' + item + '"]'
       let element = document.querySelectorAll(selector)[0]
-      if (element.dataset.valid === "true") validatedCount += 1
+      if (element && element.dataset.valid === "true") validatedCount += 1
     }
   }
 

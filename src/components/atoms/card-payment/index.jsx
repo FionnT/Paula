@@ -1,6 +1,8 @@
 import React from "react"
 import { useState } from "react"
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
+import { Button } from "../../../components/atoms"
+import { pageNotification } from "../../../utilities"
 import "./styles.sass"
 
 // Custom styling can be passed to options when creating an Element.
@@ -25,22 +27,10 @@ const CARD_ELEMENT_OPTIONS = {
   }
 }
 
-// POST the token ID to your backend.
-async function stripeTokenHandler(token) {
-  let server = process.env.REACT_APP_API_URL + "/shop/charge"
-  const response = await fetch(server, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ token: token.id })
-  })
-
-  return response.json()
-}
-
-const CardPayment = () => {
+const CardPayment = props => {
   const [error, setError] = useState(null)
+  const [status, updateStatus] = useState("Checkout")
+  const [payable, changePayability] = useState(true)
   const stripe = useStripe()
   const elements = useElements()
 
@@ -48,42 +38,87 @@ const CardPayment = () => {
   const handleChange = event => {
     if (event.error) {
       setError(event.error.message)
+      toggleStatus(true)
     } else {
       setError(null)
     }
   }
 
-  // Handle form submission.
+  const toggleStatus = (resetting, message, className) => {
+    // Don't let the user close the tab
+    const preventUnload = e => {
+      e.preventDefault()
+      return (e.returnValue = "") // You can't actually change the message
+    }
+
+    const button = document.getElementById("checkout-button")
+    if (resetting) {
+      window.removeEventListener("beforeunload", preventUnload)
+      button.classList = "center"
+      updateStatus("Checkout")
+      changePayability(true)
+    } else {
+      window.addEventListener("beforeunload", preventUnload)
+      button.classList.add(className)
+      updateStatus(message)
+    }
+  }
+
   const handleSubmit = async event => {
     event.preventDefault()
-    const card = elements.getElement(CardElement)
-    const result = await stripe.createToken(card)
-    if (result.error) {
-      // Inform the user if there was an error.
-      setError(result.error.message)
-    } else {
-      setError(null)
-      // Send the token to your server.
-      stripeTokenHandler(result.token)
-    }
+
+    if (!payable || !stripe || !elements) return
+    changePayability(false)
+    toggleStatus(false, "Verifying Payment", "processing")
+
+    const paymentConfirmation = await stripe.confirmCardPayment(props.cart.paymentIntent, {
+      payment_method: {
+        card: elements.getElement(CardElement)
+      }
+    })
+
+    if (paymentConfirmation.error) {
+      pageNotification(["false", paymentConfirmation.error.message + "<br />Please try again."])
+      toggleStatus(true)
+    } else if (paymentConfirmation.paymentIntent.status === "succeeded") pageNotification([true, "Succeeded"])
+
+    // let server = process.env.REACT_APP_API_URL + "/store/confirm-order"
+
+    // const orderConfirmation = await fetch(server, {
+    //   credentials: "include",
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   mode: "cors",
+    //   body: JSON.stringify({ paymentIntent: props.cart.paymentIntent })
+    // })
+
+    // if (orderConfirmation.status === 200) pageNotification([true, "Succeeded"])
+    // document.getElementById("checkout-button").classList.remove("processing")
   }
 
   return (
-    <form onSubmit={handleSubmit} id="stripe-payment-form">
-      <div className="form-row">
-        <label htmlFor="card-element">Credit or debit card</label>
-        <p>Credit or debit card</p>
-        <div id="accepted-payments">
-          <img src="/visa.png" alt="stripe badge" />
-          <img src="/mastercard.png" alt="stripe badge" />
-          <img src="/amex.png" alt="stripe badge" />
+    <>
+      <form onSubmit={handleSubmit} id="stripe-payment-form">
+        <div className="form-row">
+          <label htmlFor="card-element">Credit or debit card</label>
+          <p>Credit or debit card</p>
+          <div id="accepted-payments">
+            <img src="/visa.png" alt="Visa is accepted" />
+            <img src="/mastercard.png" alt="Mastercard is accepted" />
+            <img src="/amex.png" alt="American Express is accepted" />
+          </div>
+          <CardElement id="card-element" options={CARD_ELEMENT_OPTIONS} onChange={handleChange} />
+          <div className="card-errors" role="alert">
+            {error}
+          </div>
         </div>
-        <CardElement id="card-element" options={CARD_ELEMENT_OPTIONS} onChange={handleChange} />
-        <div className="card-errors" role="alert">
-          {error}
-        </div>
-      </div>
-    </form>
+      </form>
+      <Button id="checkout-button" className="center" onSubmit={handleSubmit}>
+        {status}
+      </Button>
+    </>
   )
 }
 
