@@ -36,7 +36,7 @@ class GalleriesAdmin extends Component {
           this.setState(
             {
               galleries: res,
-              selectedGalleries: res.homeGalleries,
+              selectedGalleries: res.homeGalleries, // Set defaults
               selectedType: "homeGalleries",
               selectedPhotoshoot: res.homeGalleries[0]
             },
@@ -48,25 +48,15 @@ class GalleriesAdmin extends Component {
     })
   }
 
-  onActivateGallery = gallery => this.setState({ selectedPhotoshoot: gallery })
-
-  onToggleGalleryType = selectedType => {
-    let selectedGalleries = this.state.galleries[selectedType]
-    let selectedPhotoshoot
-    selectedGalleries.length ? (selectedPhotoshoot = selectedGalleries[0]) : (selectedPhotoshoot = false)
-
-    this.setState({ selectedGalleries, selectedPhotoshoot, selectedType })
-  }
-
   onAddGallery = () => {
     let galleries = this.state.galleries
     let collection = galleries[this.state.selectedType]
-    let newGallery = Object.assign({}, emptyGallery)
+    let newGallery = Object.assign({}, emptyGallery) // Clone the emptyGallery object into a new object
     const { length } = collection
 
     newGallery.isInHomePosition = length + 1
-    collection.push(newGallery)
-    let updatedMaster = Object.assign(galleries, collection)
+    collection.push(newGallery) // Is an array
+    let updatedMaster = Object.assign(galleries, collection) // Clone original, and update it
 
     this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedPhotoshoot: newGallery }, () => {
       let galleries = Array.from(document.querySelectorAll(".gallery-selector-container"))
@@ -75,6 +65,8 @@ class GalleriesAdmin extends Component {
       newGallerySelector.classList.add("active")
     })
   }
+
+  onActivateGallery = gallery => this.setState({ selectedPhotoshoot: gallery })
 
   onGalleryDetailChange = modifiedGallery => {
     // Trust me, this is as optimised as you can make it.
@@ -89,8 +81,84 @@ class GalleriesAdmin extends Component {
     collection[galleryIndex] = updatedGallery // Update the original
 
     let updatedMaster = Object.assign(galleries, collection)
-
     this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedGallery: updatedGallery })
+  }
+
+  onToggleSelectedGalleriesType = (selectedType, forceSelected) => {
+    let selectedGalleries = this.state.galleries[selectedType]
+    let selectedPhotoshoot
+    // 0 is falsey, and an array index
+    if (selectedGalleries.length && typeof forceSelected === "undefined") selectedPhotoshoot = selectedGalleries[0]
+    else if (selectedGalleries.length) selectedPhotoshoot = selectedGalleries[forceSelected]
+    else selectedPhotoshoot = false // used to display different UI if there are no galleries in that category
+
+    // Set state, than activate the correct forced gallery selection
+    this.setState({ selectedGalleries, selectedPhotoshoot, selectedType }, () => {
+      if (typeof forceSelected !== "undefined") {
+        let availableGalleries = document.querySelectorAll(".gallery-selector-container")
+        Array.from(availableGalleries).forEach(element => element.childNodes[0].classList.remove("active"))
+        availableGalleries[forceSelected].childNodes[0].classList.add("active")
+      }
+    })
+  }
+
+  onToggleGalleryType = (type, id) => {
+    let galleries = this.state.galleries
+    let oldCollection = galleries[this.state.selectedType]
+    let newCollection = galleries[type]
+    let galleryIndex
+    let updatedGallery
+
+    if (type !== this.state.selectedType) {
+      oldCollection.forEach((gallery, index) => {
+        if (gallery._id === id) galleryIndex = index
+      })
+      newCollection.push(oldCollection[galleryIndex])
+      oldCollection = oldCollection.filter(gallery => gallery._id !== id)
+      updatedGallery = newCollection[newCollection.length - 1]
+
+      switch (type) {
+        case "homeGalleries":
+          updatedGallery.isOnHomeScreen = true
+          updatedGallery.isPublished = true
+          updatedGallery.isInHomePosition = this.state.galleries.homeGalleries.length
+          updatedGallery.isPasswordProtected = false
+          break
+        case "privateGalleries":
+          updatedGallery.isOnHomeScreen = false
+          updatedGallery.isPublished = true
+          updatedGallery.isInHomePosition = false
+          if (this.state.selectedType === "homeGalleries") oldCollection.forEach((gallery, index) => (gallery.isInHomePosition = index + 1))
+          break
+        case "unpublishedGalleries":
+          updatedGallery.isOnHomeScreen = false
+          updatedGallery.isPublished = false
+          updatedGallery.isInHomePosition = false
+          if (this.state.selectedType === "homeGalleries") oldCollection.forEach((gallery, index) => (gallery.isInHomePosition = index + 1))
+          break
+        default:
+          return
+      }
+
+      galleries[this.state.selectedType] = oldCollection
+      galleries[type] = newCollection
+
+      // Swap the Category Option menu display
+      Array.from(document.querySelectorAll("#type-menu li")).forEach(element => {
+        if (element.dataset.type === type) {
+          let menuElement = document.getElementById("type-menu")
+          let currentElement = menuElement.childNodes[1]
+          menuElement.insertBefore(element, currentElement)
+        }
+      })
+
+      this.setState({ galleries }, () => {
+        this.onToggleSelectedGalleriesType(type, newCollection.length - 1)
+
+        // console.log(availableGalleries)
+        //
+      })
+    }
   }
 
   onHomeOrderChange = (editingGallery, direction) => {
@@ -148,13 +216,15 @@ class GalleriesAdmin extends Component {
                     onHomeOrderChange={this.onHomeOrderChange}
                     galleries={this.state.selectedGalleries}
                     onAddGallery={this.onAddGallery}
-                    onToggleGalleryType={this.onToggleGalleryType}
+                    onToggleSelectedGalleriesType={this.onToggleSelectedGalleriesType}
                     submitHomePositionChanges={this.submitHomePositionChanges}
+                    selectedID={this.state.selectedPhotoshoot._id}
                   />
                   <GalleryConfiguration
                     selected={this.state.selectedPhotoshoot}
                     selectedType={this.state.selectedType}
                     onGalleryDetailChange={this.onGalleryDetailChange}
+                    onToggleGalleryType={this.onToggleGalleryType}
                     title="Add a new gallery"
                   />
                 </div>

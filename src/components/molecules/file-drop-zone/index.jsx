@@ -116,7 +116,7 @@ class FileDropZone extends Component {
       >
         {({ getRootProps, getInputProps }) => (
           <section className="container">
-            <div className="inputField" style={{ height: "2vh" }}>
+            <div className="inputField" style={{ height: "5vh" }}>
               <p>{this.props.children}</p>
             </div>
             <div {...getRootProps({ className: "filedropzone" })}>

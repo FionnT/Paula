@@ -1,10 +1,10 @@
 .photoshoot
-  width: 100%
+  width: auto
   height: 84vh
   padding-bottom: 2vh
-  float: right
+  float: left
   display: block
-  overflow: hidden
+  overflow: visible
   h2
     font-weight: 400
     font-size: 1.5em
@@ -18,6 +18,7 @@
     overflow: visible
     float: left
     cursor: pointer
+    margin-top: 35px
     &:hover 
       p
         color: coral 
@@ -44,52 +45,28 @@
       display: block
       margin: 4px auto 0
   .photo-wrapper
-    overflow: inherit
-    width: 100%
-    height: 100%
-    display: grid
-    grid-template-columns: 100%
-    grid-column-start: 1
-    grid-row-start: 1
-    overflow-x: visible
-    .image-0
-      max-width: 100vw
-    .image-0, .image-1, .image-2
-      display: grid
-      opacity: 1
-    .image-1, .image-2
-      transform: scale(0.9) translateX(10px)
-    img
-      opacity: 0
-      transition: all 0.35s ease
-      height: auto
+    width: 1200px
+    overflow: auto 
+    height: 84vh
+    display: flex 
+    cursor: pointer
+    img  
+      transition: all 0.15s linear 
       width: auto
-      display: none
-      position: relative
-      margin: 0 auto
-      grid-column: 1
-      grid-row: 1
-      @supports (-ms-ime-align:auto) // fix for Microsoft Edge grid height issue
-        max-height: 84vh !important
-      &:last-of-type
-        width: 1vw
-      &.image-0
-        cursor: pointer
-        display: grid
-  &.hidden
-    opacity: 0
+      display: block
+      height: 100%
+      &:nth-child(-n+3)
+        margin-right: 0px
   &.activated
     overflow: visible
     .gallery-back
+      margin-top: 35px
       display: initial
       overflow: visible
-    img
-      display: grid
-      transform: scale(0.8)
-      transition: all 0.35 ease
-      max-width: unset
-      height: 100%
-      cursor: pointer
+    h2 
+      display: block
+  &.hidden
+    opacity: 0
     h2
       display: block
 
@@ -124,10 +101,6 @@
   .photoshoot
     margin-bottom: -7vh
 
-// @media only screen and (min-height: 800px)
-//   .photoshoot
-//     margin-bottom: -14vh
-//     padding-bottom: 2vh
 
 @media only screen and (min-width: 750px)
   .photoshoot

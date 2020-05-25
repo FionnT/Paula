@@ -198,6 +198,7 @@ class Gallery extends Component {
       // We need to double check we're not loading further than exists, as well as further than is allowed
       for (let shoot = 0; shoot < maxAllowableLoad && shoot < shoots.length; shoot++) {
         const currentShoot = shoots[shoot]
+
         const position = Number(currentShoot.isInHomePosition) - 1
         let photoshoot = <Photoshoot key={position} data={currentShoot} handlePageNavigation={this.handlePageNavigation} />
         rendered[position] = photoshoot

@@ -2,17 +2,11 @@ import React, { useState } from "react"
 import "./styles.sass"
 
 export default function GallerySelection(props) {
-  const [unlocked, toggle] = useState(false)
-  const [canAlterOrder, toggleDisplay] = useState(true)
-
-  const handleActivate = (e, gallery) => {
-    Array.from(document.getElementsByClassName("active")).forEach(element => element.classList.remove("active"))
-    e.target.classList.add("active")
-    props.onActivate(gallery)
-  }
+  const [unlocked, toggle] = useState(false) // controls display of the lock icon
 
   const submitHomePositionChanges = props.submitHomePositionChanges.bind(this)
-  const onToggleGalleryType = props.onToggleGalleryType.bind(this)
+  const onToggleSelectedGalleriesType = props.onToggleSelectedGalleriesType.bind(this)
+  const canAlterOrder = props.galleries[0]?.isInHomePosition ? true : false
 
   const toggleAndSave = () => {
     if (unlocked) submitHomePositionChanges()
@@ -20,10 +14,7 @@ export default function GallerySelection(props) {
   }
 
   const toggleType = (e, type) => {
-    onToggleGalleryType(type)
-    if (type === "homeGalleries") toggleDisplay(true)
-    else toggleDisplay(false)
-
+    onToggleSelectedGalleriesType(type)
     let menuElement = document.getElementById("type-menu")
     let firstOption = menuElement.childNodes[1] // first element is the chevron
     menuElement.insertBefore(e.target, firstOption) // new element to insert, which element to insert it before
@@ -35,16 +26,22 @@ export default function GallerySelection(props) {
         <span>
           <i className="las la-angle-down"></i>
         </span>
-        <li onClick={e => toggleType(e, "homeGalleries")}>Home Page</li>
-        <li onClick={e => toggleType(e, "privateGalleries")}>Private</li>
-        <li onClick={e => toggleType(e, "unpublishedGalleries")}>Unpublished</li>
+        <li data-type="homeGalleries" onClick={e => toggleType(e, "homeGalleries")}>
+          Home Page
+        </li>
+        <li data-type="privateGalleries" onClick={e => toggleType(e, "privateGalleries")}>
+          Private
+        </li>
+        <li data-type="unpublishedGalleries" onClick={e => toggleType(e, "unpublishedGalleries")}>
+          Unpublished
+        </li>
       </ul>
       {props.galleries.length
-        ? props.galleries.map((gallery, index) => {
+        ? props.galleries.map(gallery => {
             return (
               <div key={gallery.title + gallery.isInHomePosition} className="gallery-selector-container">
-                <div className={index === 0 ? "active gallery-selector" : "gallery-selector "} onClick={e => handleActivate(e, gallery)}>
-                  <span>{gallery.isInHomePosition}.</span>
+                <div className={gallery._id === props.selectedID ? "active gallery-selector" : "gallery-selector "} onClick={() => props.onActivate(gallery)}>
+                  {gallery.isInHomePosition ? <span>{gallery.isInHomePosition}.</span> : <span></span>}
                   <p>{gallery.title}</p>
                 </div>
                 {canAlterOrder ? (

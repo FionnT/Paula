@@ -42,7 +42,7 @@ class Authentication extends Component {
         .then(res => {
           updateUser(res)
           Cookie.set("userCookie", res)
-          // this.props.history.push("/")
+          this.props.history.push("/")
         })
         .catch(err => {
           console.log(err)
@@ -58,7 +58,7 @@ class Authentication extends Component {
         <UserConsumer>
           {({ user, updateUser }) => {
             const submitLocation = document.location.pathname.match("admin") ? "/admin/login" : "/shop/login"
-            if (user.name) return <Redirect to="/" />
+            if (user.email) return <Redirect to="/" />
             else return <Login data={user} textController={this.textUpdater} onSubmit={() => this.onSubmit(submitLocation, updateUser)} />
           }}
         </UserConsumer>

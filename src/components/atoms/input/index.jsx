@@ -11,6 +11,11 @@ class Input extends Component {
   constructor(props) {
     super(props)
     this.textController = props.textController?.bind(this)
+    this.onSubmit = props.onSubmit?.bind(this)
+  }
+
+  handleKeyDown = e => {
+    if (e.key === "Enter") this.onSubmit()
   }
 
   render() {
@@ -23,6 +28,7 @@ class Input extends Component {
         {type !== "text" ? (
           <input
             onChange={e => this.textController(e)}
+            onKeyDown={e => this.handleKeyDown(e)}
             type={type}
             className={immutable ? "immutable " : ""}
             style={{ width: mutableWidth }}

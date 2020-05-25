@@ -8,8 +8,9 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^1.0.3",
     "@stripe/stripe-js": "^1.0.2",
+    "imagesloaded": "^4.1.4",
     "minimist": "^1.2.5",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.14.1",
     "react": "^16.12.0",
     "react-async": "^10.0.0",
     "react-device-detect": "^1.11.14",

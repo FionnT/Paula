@@ -12,8 +12,8 @@ class Login extends Component {
   render() {
     return (
       <div id="login">
-        <Input type="email" textController={this.textChange} placeholder="Your email" />
-        <Input type="password" textController={this.textChange} placeholder="Your password" />
+        <Input type="email" textController={this.textChange} onSubmit={this.onSubmit} placeholder="Your email" />
+        <Input type="password" textController={this.textChange} onSubmit={this.onSubmit} placeholder="Your password" />
         <Button className="center" onSubmit={this.onSubmit}>
           Login
         </Button>

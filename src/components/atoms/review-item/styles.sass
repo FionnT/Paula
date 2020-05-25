@@ -54,7 +54,8 @@
           width: 16%
           height: 100% 
           float: left 
-          // background: red
+          display: flex 
+          justify-content: space-around
           input::-webkit-outer-spin-button,
           input::-webkit-inner-spin-button 
             -webkit-appearance: none
@@ -66,7 +67,7 @@
             line-height: 22px
           div, input
             height: 20px
-            width: 32% 
+            width: auto
             color: coral 
             text-align: center 
             margin: 40px 0 0 0
@@ -82,7 +83,7 @@
             &:nth-child(2)
               color: black
           input
-            width: 34%
+            max-width: 34%
             font-size: 1.25em
             &:disabled
               display: block

@@ -16,10 +16,36 @@
         margin: 25px 0 60px 0
         line-height: 28px
       .inputField 
-        margin: 0 0 30px 0
-      #gallery-input-fields 
+        margin: 0 
+      .gallery-input-fields 
         div 
           width: 42.5% 
-          
-      
-
+      .gallery-type 
+        width: 100% 
+        height: auto 
+        margin: 0 0 60px 0
+        p 
+          padding-bottom: 15px
+          margin-left: calc(1% + 5px) // ?? 
+          display: inline-block
+          width: 100%
+          font-size: 1.25em
+          font-weight: 300
+          text-transform: none
+          letter-spacing: -1px
+        div 
+          width: 85.5% 
+          height: 40px 
+          display: flex 
+          justify-content: space-around 
+          color: gray
+          span 
+            cursor: pointer
+            padding: 10px 0
+            width: 32% 
+            text-align: center
+            transition: all 0.35s ease  
+            &.active, &:hover 
+              color: black
+              background: white
+              box-shadow: 0px 3px 10px -8px black

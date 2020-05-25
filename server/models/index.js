@@ -82,18 +82,19 @@ const photoshootSchema = new Schema(
       default: false
     },
     title: String,
-    passwordProtected: {
+    isPasswordProtected: {
       type: Boolean,
       default: false
     },
     password: {
       type: String,
-      default: undefined
+      default: undefined,
+      select: false
     },
     url: String,
-    _v: {
-      type: String,
-      include: false
+    __v: {
+      type: Number,
+      select: false
     }
   },
   { collection: "photoshoots" }
