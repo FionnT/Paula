@@ -35,6 +35,17 @@ Find out more about deployment here:
   bit.ly/CRA-deploy
 
 
+Left to do: 
+-------------
+
+1. Backend of Galleries admin
+2. Front & Back of Shop admin
+3. Front & Back user management
+4. Front & back of about page management
+4. Redesign pageNotification bubble 
+5. Checkout emails sent for various scenarios
+
+
 License
 -- 
 See here for more details as well: https://creativecommons.org/licenses/by/4.0/

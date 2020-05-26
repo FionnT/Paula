@@ -19,7 +19,7 @@ class Input extends Component {
   }
 
   render() {
-    const { className, immutable, immutableWidth, label, mutableWidth, placeholder, required, type, value } = this.props
+    const { className, defaultValue, immutable, immutableWidth, label, mutableWidth, placeholder, required, type, value } = this.props
     return (
       <div className={"inputField " + type + " " + className}>
         <p>{placeholder}</p>
@@ -33,7 +33,8 @@ class Input extends Component {
             className={immutable ? "immutable " : ""}
             style={{ width: mutableWidth }}
             required={required ? true : false}
-            value={value}
+            value={value ? value : undefined}
+            defaultValue={defaultValue ? defaultValue : undefined}
           />
         ) : (
           <textarea type={type} onInput={e => this.props.textController(e)}></textarea>

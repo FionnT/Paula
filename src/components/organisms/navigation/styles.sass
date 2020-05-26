@@ -111,15 +111,13 @@
           transition: 0.45s cubic-bezier(0, 1.35, 0.99, 1.44)
           width: 50%
           height: 4px
-          top: 0%
-          right: 0
           border-radius: 4px
           background: #b2b2b2
-          position: relative
           box-shadow: none
-          display: inline-block
+          display: flex
           float: left
-          &:first-of-type
+          justify-content: flex-start
+          &:nth-child(1)
             top: 100%
             width: 100%
             margin: 0 0 5px
@@ -163,6 +161,11 @@
         .mobile
           display: inline-block
           top: 6px
+          div
+            &:nth-child(1)
+              width: 50px
+            &:nth-child(2)
+              width: 15px
           ul
             margin-top: -54vh
             background: #F8F8F8
@@ -177,16 +180,18 @@
             li a
               display: none
         &.opened
+          a
+            margin-top: -10px
           margin-top: 35vh
           .mobile
             top: 3px
             div
-              width: 100%
-              margin-top: calc(60% - 2px)
-              transform: rotate(-45deg)
+              width: 50px
+              margin-top: calc(-50% - 2px)
+              transform: rotate(45deg)
               &:last-of-type
-                transform: rotate(45deg)
-                margin-top: calc(-30% + 2px)
+                width: 50px
+                transform: rotate(-45deg)
           ul
             margin-top: -52vh
             background: #F8F8F8
@@ -210,12 +215,12 @@
   // adjustments for older iPhones
   @media only screen and (max-height: 700px)
     .wrapper
-      height: 14vh
+      height: 12vh
       nav
         width: 100vw
         left: 0
-        height: 14vh
-        margin-bottom: 15px
+        height: 12vh
+        margin-top: -10px
         a
           h1
             padding-top: 30px
@@ -229,7 +234,6 @@
     // adjustments for even older iPhones
   @media only screen and (max-height: 700px)
     .wrapper
-      height: 14vh
       nav
         .mobile
           top: 10px
@@ -276,7 +280,7 @@
       nav
         &.opened
           .mobile
-            top: 7px
+            top: 3px
         .mobile
           top: 9px
           height: 28px

@@ -60,3 +60,58 @@
       float: left
       overflow-y: auto 
       overflow-x: hidden
+
+    @media only screen and (max-width: 900px)
+      .left-column 
+        width: 100% 
+        #shipping-details 
+          width: 81% 
+          padding-bottom: 50px 
+          height: auto
+          overflow: auto 
+          margin: 0 auto 
+          float: none
+        #items-container
+          width: 81% 
+          margin-top: 50px
+          margin: 0 auto 20px
+          float: none
+          .item 
+            width: 100%
+            .item-description
+              margin-left: 5%
+              width: 32%
+            h2 
+              margin-left: 9%
+          .total-cost
+            width: 100%
+      .right-column 
+        width: 86%
+        height: auto
+        overflow-y: auto
+        overflow-x: hidden
+        margin: 0 auto
+        float: none
+        padding-bottom: 50px
+        button 
+          width: 75%
+        #stripe-payment-form
+          width: 91%
+    @media only screen and (max-width: 500px)
+      .left-column 
+        #items-container 
+          .item
+            .item-description 
+              width: 27%
+    @media only screen and (max-width: 380px)
+      .left-column 
+        #items-container 
+          .item
+            h2 
+              margin-left: 4%
+    @media only screen and (max-width: 1050px)
+      .left-column 
+        #items-container 
+          .item
+            h2
+              margin-left: 18%

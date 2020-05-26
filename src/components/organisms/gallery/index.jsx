@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import { ChevronNavigation } from "../../atoms"
 import { Photoshoot } from "../../molecules"
 import { Redirect } from "react-router-dom"
-import { isMobile, isFirefox } from "react-device-detect"
+import { isMobile, isFirefox, isIOS13, isIPad13, isIPhone13, isIPod13 } from "react-device-detect" // Fucking iOS
 import "./styles.sass"
 
 class Gallery extends Component {
@@ -129,7 +129,6 @@ class Gallery extends Component {
         this.handleRender()
       })
     } else if (!shootname) {
-      Array.from(document.getElementsByClassName("photo-wrapper")).forEach(element => (element.style.overflowX = "hidden"))
       for (let shoot in shoots) shoots[shoot].activated = ""
       this.updateHistory("/")
       this.handleScrollAbility(false)
@@ -194,9 +193,13 @@ class Gallery extends Component {
     let rendered = []
     const { shoots, animation } = this.state
     if (shoots) {
-      const maxAllowableLoad = isMobile ? shoots.length : animation.index !== shoots.length ? animation.index + 2 : shoots.length
+      const maxAllowableLoad = () => {
+        if (isMobile || isIOS13 || isIPad13 || isIPhone13 || isIPod13) return shoots.length
+        else if (animation.index !== shoots.length) return animation.index + 2
+        else return shoots.length
+      }
       // We need to double check we're not loading further than exists, as well as further than is allowed
-      for (let shoot = 0; shoot < maxAllowableLoad && shoot < shoots.length; shoot++) {
+      for (let shoot = 0; shoot < maxAllowableLoad() && shoot < shoots.length; shoot++) {
         const currentShoot = shoots[shoot]
 
         const position = Number(currentShoot.isInHomePosition) - 1

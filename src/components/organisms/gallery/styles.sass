@@ -11,17 +11,21 @@
   @media only screen and (max-width: 1200px)
     margin-top: 15vh // iOS is a stupid platform
   @media only screen and (min-width: 400px) and (max-width: 900px)
-    margin-top: 13vh // Fix for android nav bar
+    margin-top: 11.25vh // Fix for android nav bar
   &.opened 
     // phones
     @media only screen and (max-width: 700px)
       padding-left: 20px
+      margin-top: 13vh
     // tablets
     @media only screen and (min-width: 701px) and (max-width: 1200px)
       padding-left: 5vw
       height: 81.2vh
+      margin-top: 12vh
     // desktop
     @media only screen and (min-width: 1270px)
       padding-left: 0
+    @media only screen and (max-width: 500px)
+      margin-top: 11.25vh // Fix for android nav bar
   #animationbox
     transition: 0.35s linear
