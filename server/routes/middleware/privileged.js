@@ -6,7 +6,7 @@ const privileged = level => {
       .lean()
       .exec((err, admin) => {
         if (err) res.sendStatus(502)
-        else if (admin && admin.privileges < level) next()
+        else if (admin && admin.privileges > level) next()
         else res.sendStatus(403)
       })
   }

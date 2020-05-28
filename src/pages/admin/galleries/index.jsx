@@ -13,7 +13,10 @@ const emptyGallery = {
   url: "",
   itemOrder: [],
   isInHomePosition: undefined,
-  _id: uuid()
+  isOnHomeScreen: false,
+  isPublished: false,
+  inPasswordProtected: false,
+  _id: undefined
 }
 
 class GalleriesAdmin extends Component {
@@ -27,6 +30,10 @@ class GalleriesAdmin extends Component {
     }
   }
 
+  componentDidUpdate() {
+    if (!this.state.selectedPhotoshoot._id) this.onAddGallery()
+  }
+
   fetchGalleries = () => {
     let server = process.env.REACT_APP_API_URL + "/photoshoots/all"
     return new Promise(resolve => {
@@ -38,7 +45,7 @@ class GalleriesAdmin extends Component {
               galleries: res,
               selectedGalleries: res.homeGalleries, // Set defaults
               selectedType: "homeGalleries",
-              selectedPhotoshoot: res.homeGalleries[0]
+              selectedPhotoshoot: res.homeGalleries[0]?._id ? res.homeGalleries[0] : { _id: undefined } // _id is required for render => Case: 0 galleries exist
             },
             () => {
               resolve(res)
@@ -52,17 +59,43 @@ class GalleriesAdmin extends Component {
     let galleries = this.state.galleries
     let collection = galleries[this.state.selectedType]
     let newGallery = Object.assign({}, emptyGallery) // Clone the emptyGallery object into a new object
+
     const { length } = collection
 
-    newGallery.isInHomePosition = length + 1
-    collection.push(newGallery) // Is an array
+    newGallery.isInHomePosition = length ? collection[length - 1].isInHomePosition + 1 : 1
+    newGallery._id = uuid()
+    newGallery.isNew = true
+
+    switch (this.state.selectedType) {
+      case "homeGalleries":
+        newGallery.isOnHomeScreen = true
+        newGallery.isPublished = true
+        newGallery.isPasswordProtected = false
+        break
+      case "privateGalleries":
+        newGallery.isOnHomeScreen = false
+        newGallery.isPublished = true
+        newGallery.isInHomePosition = false
+        break
+      case "unpublishedGalleries":
+        newGallery.isOnHomeScreen = false
+        newGallery.isPublished = false
+        newGallery.isInHomePosition = false
+        break
+      default:
+        break
+    }
+
+    collection.push(newGallery) // Collection is an array
     let updatedMaster = Object.assign(galleries, collection) // Clone original, and update it
 
     this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedPhotoshoot: newGallery }, () => {
       let galleries = Array.from(document.querySelectorAll(".gallery-selector-container"))
-      let newGallerySelector = galleries[galleries.length - 1].childNodes[0]
-      Array.from(document.querySelectorAll(".active")).forEach(element => element.classList.remove("active"))
-      newGallerySelector.classList.add("active")
+      if (galleries.length) {
+        let newGallerySelector = galleries[galleries.length - 1].childNodes[0]
+        Array.from(document.querySelectorAll(".active.gallery-selector")).forEach(element => element.classList.remove("active"))
+        newGallerySelector.classList.add("active")
+      }
     })
   }
 
@@ -73,6 +106,7 @@ class GalleriesAdmin extends Component {
     let galleries = this.state.galleries
     let collection = galleries[this.state.selectedType]
     let galleryIndex
+
     collection.forEach((gallery, index) => {
       if (gallery._id === modifiedGallery._id) galleryIndex = index
     })
@@ -81,20 +115,22 @@ class GalleriesAdmin extends Component {
     collection[galleryIndex] = updatedGallery // Update the original
 
     let updatedMaster = Object.assign(galleries, collection)
+
     this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedGallery: updatedGallery })
   }
 
   onToggleSelectedGalleriesType = (selectedType, forceSelected) => {
     let selectedGalleries = this.state.galleries[selectedType]
     let selectedPhotoshoot
+
     // 0 is falsey, and an array index
     if (selectedGalleries.length && typeof forceSelected === "undefined") selectedPhotoshoot = selectedGalleries[0]
     else if (selectedGalleries.length) selectedPhotoshoot = selectedGalleries[forceSelected]
     else selectedPhotoshoot = false // used to display different UI if there are no galleries in that category
 
-    // Set state, than activate the correct forced gallery selection
     this.setState({ selectedGalleries, selectedPhotoshoot, selectedType }, () => {
       if (typeof forceSelected !== "undefined") {
+        // Maintain highlighting on the select element
         let availableGalleries = document.querySelectorAll(".gallery-selector-container")
         Array.from(availableGalleries).forEach(element => element.childNodes[0].classList.remove("active"))
         availableGalleries[forceSelected].childNodes[0].classList.add("active")
@@ -113,6 +149,7 @@ class GalleriesAdmin extends Component {
       oldCollection.forEach((gallery, index) => {
         if (gallery._id === id) galleryIndex = index
       })
+
       newCollection.push(oldCollection[galleryIndex])
       oldCollection = oldCollection.filter(gallery => gallery._id !== id)
       updatedGallery = newCollection[newCollection.length - 1]
@@ -140,8 +177,8 @@ class GalleriesAdmin extends Component {
           return
       }
 
-      galleries[this.state.selectedType] = oldCollection
-      galleries[type] = newCollection
+      galleries[this.state.selectedType] = oldCollection // i.e. Original collection, less the removed one
+      galleries[type] = newCollection // i.e. That gallery type plus the added one
 
       // Swap the Category Option menu display
       Array.from(document.querySelectorAll("#type-menu li")).forEach(element => {
@@ -154,9 +191,6 @@ class GalleriesAdmin extends Component {
 
       this.setState({ galleries }, () => {
         this.onToggleSelectedGalleriesType(type, newCollection.length - 1)
-
-        // console.log(availableGalleries)
-        //
       })
     }
   }
@@ -188,7 +222,7 @@ class GalleriesAdmin extends Component {
   }
 
   submitHomePositionChanges = () => {
-    let server = process.env.REACT_APP_API_URL + "/upload/update-positions"
+    let server = process.env.REACT_APP_API_URL + "/galleries/update-positions"
     fetch(server, {
       credentials: "include",
       method: "POST",

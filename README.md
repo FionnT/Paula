@@ -38,7 +38,7 @@ Find out more about deployment here:
 Left to do: 
 -------------
 
-1. Backend of Galleries admin
+1. Backend: Modifying existing galleries 
 2. Front & Back of Shop admin
 3. Front & Back user management
 4. Front & back of about page management

@@ -55,7 +55,6 @@ const sessionSchema = new Schema(
   },
   { collection: "sessions" }
 )
-sessionSchema.index({ expireAt: 1 }, { expireAfterSeconds: 14400 }) // 4 hours
 
 const storeItemSchema = new Schema(
   {

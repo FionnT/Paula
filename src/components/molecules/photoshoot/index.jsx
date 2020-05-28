@@ -68,7 +68,6 @@ class Photoshoot extends Component {
       const width = index <= 2 ? parseInt(image.dataset.originalWidth) : parseInt(images[0].dataset.originalWidth) - 100
 
       if (window.innerWidth <= 900) image.style.width = "max-content"
-      if (index === 2) image.style.opacity = 1
       switch (index) {
         case 0:
           image.style.height = "100%"
@@ -88,6 +87,7 @@ class Photoshoot extends Component {
           image.style.marginRight = "0"
           image.style.opacity = "0"
       }
+      if (index === 2) image.style.opacity = 1
     })
   }
 
@@ -155,7 +155,7 @@ class Photoshoot extends Component {
     } // Fucking iOS
     let result = []
     for (let i = 0; i < maxAllowableLoad(); i++) {
-      const photoURL = "/galleries/" + this.state.url + "/" + itemOrder[i] + ".jpg"
+      const photoURL = "/galleries/" + this.state.url + "/" + itemOrder[i]
       const src = i < 3 ? photoURL : "/blank_placeholder.png"
       let photo = <img key={i} src={src} alt="" data-index={i} data-true-src={photoURL} onLoad={this.handleOnLoad.bind(this)} style={{ zIndex: length - i }} />
       result.push(photo)

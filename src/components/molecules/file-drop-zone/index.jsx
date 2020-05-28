@@ -7,9 +7,11 @@ class FileDropZone extends Component {
   constructor(props) {
     super(props)
     // Handle adding new files
+
+    this.onGalleryDetailChange = this.props.onGalleryDetailChange.bind(this)
     this.onDrop = newFiles => {
       let rendered = this.state.rendered.slice()
-      let files = this.state.files.length ? this.state.files.slice() : []
+      let files = this.state.files?.length ? this.state.files.slice() : []
       let { index } = this.state
       newFiles.forEach(file => {
         const file_src = URL.createObjectURL(file)
@@ -18,10 +20,9 @@ class FileDropZone extends Component {
         index += 1
       })
       const combined = this.props.existing.itemOrder.concat(files)
-      this.setState({ files, rendered, index, combined })
+      this.onGalleryDetailChange({ itemOrder: combined, _id: this.props.existing._id })
+      this.setState({ files, rendered, index })
     }
-
-    this.onGalleryDetailChange = this.props.onGalleryDetailChange.bind(this)
 
     this.state = {
       files: [],
@@ -35,34 +36,13 @@ class FileDropZone extends Component {
   // Handle existing gallery files
   componentDidUpdate() {
     const existing = this.props.existing.itemOrder
-    if (existing && this.state.existing !== existing) {
-      let index = 0
-      let rendered = []
-      if (existing) {
-        existing.forEach(file => {
-          const file_src = "/galleries/" + this.props.url + "/" + file + ".jpg"
-          rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
-          index += 1
-        })
-      }
-      this.setState({ rendered, existing, index, combined: existing })
-    }
+    if (existing && this.state.existing !== existing)
+      this.renderImages(existing, rendered => this.setState({ files: undefined, rendered, existing, index: rendered.length, combined: existing }))
   }
 
   componentDidMount() {
     const existing = this.state.existing
-    if (existing) {
-      let index = 0
-      let rendered = []
-      if (existing) {
-        existing.forEach(file => {
-          const file_src = "/galleries/" + this.props.url + "/" + file + ".jpg"
-          rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
-          index += 1
-        })
-      }
-      this.setState({ rendered, existing, index, combined: existing })
-    }
+    if (existing) this.renderImages(existing, rendered => this.setState({ rendered, existing, combined: existing, index: rendered.length }))
   }
 
   onModificationOfImages = (method, index) => {
@@ -83,17 +63,17 @@ class FileDropZone extends Component {
     this.onGalleryDetailChange({ itemOrder: currentOrder, _id: this.props.existing._id })
   }
 
-  refreshRender = newOrder => {
+  refreshRender = newOrder => this.renderImages(newOrder, rendered => this.setState({ rendered, combined: newOrder, index: rendered.length }))
+
+  renderImages = (files, callback) => {
     let rendered = []
     let file_src
-    if (newOrder) {
-      newOrder.forEach((file, index) => {
-        if (typeof file != "object") file_src = "/galleries/" + this.props.url + "/" + file + ".jpg"
-        else file_src = URL.createObjectURL(file)
-        rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
-      })
-      this.setState({ rendered, combined: newOrder, index: rendered.length })
-    }
+    files.forEach((file, index) => {
+      if (typeof file != "object") file_src = "/galleries/" + this.props.url + "/" + file
+      else file_src = URL.createObjectURL(file)
+      rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
+    })
+    callback(rendered)
   }
 
   openFileSelect = () => {

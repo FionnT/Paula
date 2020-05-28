@@ -81,21 +81,7 @@ const CardPayment = props => {
       pageNotification(["false", paymentConfirmation.error.message + "<br />Please try again."])
       toggleStatus(true)
     } else if (paymentConfirmation.paymentIntent.status === "succeeded") pageNotification([true, "Succeeded"])
-
-    // let server = process.env.REACT_APP_API_URL + "/store/confirm-order"
-
-    // const orderConfirmation = await fetch(server, {
-    //   credentials: "include",
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    //   mode: "cors",
-    //   body: JSON.stringify({ paymentIntent: props.cart.paymentIntent })
-    // })
-
-    // if (orderConfirmation.status === 200) pageNotification([true, "Succeeded"])
-    // document.getElementById("checkout-button").classList.remove("processing")
+    // TODO: Add redirect to Thanks for your order page.
   }
 
   return (

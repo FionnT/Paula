@@ -16,7 +16,7 @@ const store = new MongoDBStore(
 
 const authenticated = require("./middleware/authenticated")()
 const { Admin, Person } = require("../models/index")
-const maxSessionLength = 1000 * 60 * 60 * 8 // 8 hours
+const maxSessionLength = 1000 * 60 * 60 * 4 // 4 hours
 const public_metadata = {
   email: undefined,
   name: undefined,
