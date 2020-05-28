@@ -12,11 +12,11 @@ First rename .env.example in root, and ./server to .env, and fill in your versio
 
 Next amend models.js in server/models to point to your MongoDB instance, then start MongoDB
 
-Start the Server: 
+Start the Server (requires: Node 14+): 
 
     cd server && npm install && npm start
 
-Next install the front end: 
+Next install the front end (requires Node: 12+): 
 
     cd ../ && npm install 
 
