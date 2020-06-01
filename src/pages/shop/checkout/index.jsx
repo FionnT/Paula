@@ -66,7 +66,7 @@ class Checkout extends Component {
                     </div>
                   </div>
                   <div className="right-column">
-                    <Input textController={this.textUpdater} type="email" value={cart.email} placeholder="Contact email" label="email" className="fill" />
+                    <Input textController={this.textUpdater} type="email" value={this.state.email} placeholder="Contact email" label="email" className="fill" />
                     <Elements stripe={stripePromise}>
                       <CardPayment cart={cart} />
                     </Elements>

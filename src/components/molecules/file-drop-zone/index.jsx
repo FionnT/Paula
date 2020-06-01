@@ -6,9 +6,10 @@ import "./styles.sass"
 class FileDropZone extends Component {
   constructor(props) {
     super(props)
-    // Handle adding new files
 
     this.onGalleryDetailChange = this.props.onGalleryDetailChange.bind(this)
+
+    // Handle adding new files
     this.onDrop = newFiles => {
       let rendered = this.state.rendered.slice()
       let files = this.state.files?.length ? this.state.files.slice() : []
@@ -19,7 +20,7 @@ class FileDropZone extends Component {
         rendered.push(<DropZoneImage key={index} alt={file} name={file} src={file_src} index={index} onModificationOfImages={this.onModificationOfImages} />)
         index += 1
       })
-      const combined = this.props.existing.itemOrder.concat(files)
+      const combined = [...new Set(this.props.existing.itemOrder.concat(files))] // Comine, and remove any potential duplicates
       this.onGalleryDetailChange({ itemOrder: combined, _id: this.props.existing._id })
       this.setState({ files, rendered, index })
     }

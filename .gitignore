@@ -1,4 +1,4 @@
-#
+# Empty folders that are needed
 
 /public/galleries/*
 !/public/galleries/.gitkeep 
@@ -7,6 +7,13 @@
 /db/*
 /server/db/*
 !/server/db/.gitkeep 
+
+/public/galleries/* 
+!/public/galleries/.gitkeep 
+
+/server/temp/*
+!/server/temp/.gitkeep 
+
 
 # Logs
 logs

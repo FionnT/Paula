@@ -67,7 +67,7 @@ class Shipping extends Component {
             {({ cart, updateCart }) => {
               if (!cart.items.length) return <Redirect to="/shop" />
               else {
-                const { name, streetAddress, city, state, country, zip } = cart
+                const { name, streetAddress, city, state, country, zip } = this.state
                 return (
                   <>
                     <div id="shipping-details">
@@ -75,7 +75,7 @@ class Shipping extends Component {
                         textController={this.textUpdater}
                         className="fill"
                         type="name"
-                        defaultValue={name}
+                        value={name}
                         placeholder="Full Name"
                         label="Name"
                         autocomplete="name"
@@ -86,18 +86,18 @@ class Shipping extends Component {
                         textController={this.textUpdater}
                         className="fill"
                         type="streetAddress"
-                        defaultValue={streetAddress}
+                        value={streetAddress}
                         placeholder="Address"
                         label="Address"
                         autoComplete="address-line1"
                         name="address"
                         required
                       />
-                      <Input textController={this.textUpdater} type="city" defaultValue={city} placeholder="City" label="City" autoComplete="address-level2" name="city" required />
+                      <Input textController={this.textUpdater} type="city" value={city} placeholder="City" label="City" autoComplete="address-level2" name="city" required />
                       <Input
                         textController={this.textUpdater}
                         type="state"
-                        defaultValue={state}
+                        value={state}
                         placeholder="State"
                         label="State, Province"
                         autoComplete="address-level1"
@@ -107,14 +107,14 @@ class Shipping extends Component {
                       <Input
                         textController={this.textUpdater}
                         type="country"
-                        defaultValue={country}
+                        value={country}
                         placeholder="Country"
                         label="Country"
                         autoComplete="country"
                         name="country"
                         required
                       />
-                      <Input textController={this.textUpdater} type="zip" defaultValue={zip} placeholder="Zip" label="Zip" autoComplete="postal-code" name="postal-code" required />
+                      <Input textController={this.textUpdater} type="zip" value={zip} placeholder="Zip" label="Zip" autoComplete="postal-code" name="postal-code" required />
                     </div>
                     <div onClick={() => this.validationCheck(updateCart, cart)}>
                       <Button className="center">Confirm & Pay</Button>

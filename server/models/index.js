@@ -62,7 +62,7 @@ const storeItemSchema = new Schema(
     image: String,
     isPublished: Boolean,
     name: String,
-    sizes: Array // This expects an array of JSON objects as such: {"measurements": "30 x 30", "type" : "tile", "cost": 30}
+    sizes: Array // This expects an array of JSON objects as such: [{"measurements": "30 x 30", "type" : "tile", "cost": 30}]
   },
   { collection: "StoreItems" }
 )
@@ -70,7 +70,7 @@ const storeItemSchema = new Schema(
 const photoshootSchema = new Schema(
   {
     itemOrder: Array,
-    length: String,
+    length: Number,
     isInHomePosition: Number,
     isOnHomeScreen: {
       type: Boolean,
@@ -82,7 +82,7 @@ const photoshootSchema = new Schema(
     },
     title: String,
     isPasswordProtected: {
-      type: Boolean,
+      type: Boolean, // Boolean so we don't have to send the password to the user
       default: false
     },
     password: {
@@ -90,7 +90,10 @@ const photoshootSchema = new Schema(
       default: undefined,
       select: false
     },
-    url: String,
+    url: {
+      type: String,
+      lowercase: true
+    },
     __v: {
       type: Number,
       select: false

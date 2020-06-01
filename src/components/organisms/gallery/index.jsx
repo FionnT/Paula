@@ -30,7 +30,7 @@ class Gallery extends Component {
   }
 
   componentDidMount() {
-    let element = document.scrollingElement || document.documentElement
+    let element = document.body
     element.addEventListener("wheel", this.handleScrollWheel, { passive: false })
     this.fetchAllShoots().then(shoots => {
       this.setState({ shoots, shootCount: shoots.length }, () => {
@@ -148,7 +148,7 @@ class Gallery extends Component {
     const setting = enteringShootPage ? "on" : "off"
     const settings = {
       on: {
-        big: { html: "visible", body: "visible hidden", root: "visible" },
+        big: { html: "visible hidden", body: "visible hidden", root: "visible" },
         small: { html: "visible hidden", body: "visible hidden", root: undefined, rootX: "visible", rootY: "hidden" }
       },
       off: {

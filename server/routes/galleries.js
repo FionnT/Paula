@@ -5,9 +5,15 @@ const sharp = require("sharp")
 const path = require("path")
 const fs = require("fs")
 const { v4: uuidv4 } = require("uuid")
+const bcrypt = require("bcrypt")
+
 const privileged = require("./middleware/privileged")
 const authenticated = require("./middleware/authenticated")()
+
 const { Photoshoots } = require("../models/index")
+const saltRounds = 10
+
+const saveDir = path.join(__dirname, "../../public/galleries/")
 
 let acceptableInputData = {
   itemOrder: undefined,
@@ -26,46 +32,92 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
-  const tmpDir = path.join(__dirname, "../temp/", dirUUID, "/")
-  const saveDir = path.join(__dirname, "../../public/galleries/")
-  const response = { code: 200 }
+  const tmpDir = path.join(__dirname, "../temp/", dirUUID)
+  const minifiedDir = path.join(tmpDir, "minified")
+  const response = { code: undefined }
   let galleryData
+  let filteredData = {}
   let galleryFiles = []
   let galleryDir
 
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
 
+  req.busboy.on("field", (fieldname, val) => {
+    galleryData = JSON.parse(val)
+    galleryDir = path.join(saveDir, galleryData.url)
+  })
+
+  req.busboy.on("file", async (fieldname, file, fileName) => {
+    const extension = fileName.split(".").slice(-1)[0]
+    const newFileName = uuidv4() + "." + extension
+
+    const fstream = fs.createWriteStream(path.join(tmpDir, newFileName))
+
+    galleryFiles.push(newFileName)
+    file.pipe(fstream)
+    return
+  })
+
   const checkGalleryIsUnique = () => {
     return Photoshoots.find({ url: galleryData.url }, (err, data) => {
       if (err) response.code = 500
       else if (data.length || fs.existsSync(galleryDir)) response.code = 403
-      else response.code = 200
+      else {
+        fs.mkdirSync(galleryDir)
+        response.code = 200
+        return
+      }
     })
   }
 
-  const deleteTmpFiles = async () =>
-    fs.rmdirSync(tmpDir, {
-      recursive: true // Will not work below Node ~= v14
-    })
-
   const minifyFiles = async () => {
-    return new Promise((resolve, reject) => {
-      const minifiedDir = path.join(tmpDir, "minified")
-      fs.mkdir(minifiedDir, async () => {
-        for (let i = 0; i < galleryFiles.length - 1; i++) {
-          const file = galleryFiles[i]
-          const fileLocation = path.join(tmpDir, file)
-          const minifiedFile = path.join(minifiedDir, file)
-          await sharp(fileLocation).resize(null, 800).toFile(minifiedFile)
-          if (i === galleryFiles.length - 1) resolve()
-        }
+    fs.mkdirSync(minifiedDir)
+
+    await (async function minify() {
+      for (let item in galleryFiles) {
+        const file = galleryFiles[item]
+        const fileLocation = path.join(tmpDir, file)
+        const minifiedFile = path.join(minifiedDir, file)
+        await sharp(fileLocation).resize(null, 800).toFile(minifiedFile)
+        continue
+      }
+      return
+    })()
+
+    return
+  }
+
+  // If the password field was selected, but no password entered, disable the password
+  // Otherwise create a hash, and store it
+  const hashPassword = async () => {
+    if (!filteredData.isPasswordProtected) return
+    else if (!filteredData.password) {
+      filteredData.isPasswordProtected = false
+      return
+    } else {
+      return new Promise((resolve, reject) => {
+        bcrypt.genSalt(saltRounds, async (err, salt) => {
+          if (err) {
+            response.code = 500
+            reject(err)
+          } else {
+            bcrypt.hash(filteredData.password, salt, (err, hash) => {
+              if (err) {
+                response.code = 500
+                reject(err)
+              } else {
+                console.log(hash)
+                filteredData.password = hash
+                resolve()
+              }
+            })
+          }
+        })
       })
-    })
+    }
   }
 
   const saveGallery = async () => {
-    let filteredData = {}
-
     Object.keys(acceptableInputData).forEach(acceptableField => {
       filteredData[acceptableField] = galleryData[acceptableField]
     })
@@ -73,6 +125,8 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
     filteredData.itemOrder = galleryFiles
     filteredData.length = galleryFiles.length
 
+    // Make sure we hashed the password
+    if (filteredData.password && filteredData.password === galleryData.password) response.code = 500
     const gallery = new Photoshoots(filteredData)
     await gallery
       .save()
@@ -83,34 +137,37 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
       )
       .then((response.code = 200))
       .catch(err => console.log(err))
+    return
   }
 
-  req.busboy.on("field", (fieldname, val) => {
-    galleryData = JSON.parse(val)
-    galleryDir = path.join(saveDir, galleryData.url)
-  })
+  const deleteTmpFiles = async () =>
+    fs.rmdirSync(tmpDir, {
+      recursive: true // Will not work below Node ~= v14
+    })
 
-  req.busboy.on("file", async (fieldname, file, fileName) => {
-    const fileUUID = uuidv4()
-    const extension = fileName.split(".").slice(-1)[0]
-    const newFileName = fileUUID + "." + extension
-
-    const fstream = fs.createWriteStream(path.join(tmpDir, newFileName))
-
-    galleryFiles.push(newFileName)
-    file.pipe(fstream)
-  })
+  const cleanUpAfterError = () =>
+    new Promise(async (resolve, reject) => {
+      if (fs.existsSync(tmpDir)) await deleteTmpFiles()
+      if (fs.existsSync(galleryDir)) fs.rmdirSync(galleryDir, { recursive: true })
+      await Photoshoots.findOneAndRemove({ url: galleryData.url }) // We create a fake ID on client side, which does not reflect real ID
+        .then(resolve())
+        .catch(err => {
+          console.log(err)
+          reject(err)
+        })
+    })
 
   req.busboy.on("finish", async () => {
     try {
       await checkGalleryIsUnique()
       if (response.code !== 200) await deleteTmpFiles()
       else {
-        fs.mkdirSync(galleryDir)
         await minifyFiles()
+        await hashPassword()
         await saveGallery()
         await deleteTmpFiles()
       }
+      if (response.code === 500) await cleanUpAfterError() // Delete our work if we created it, but could not complete it - 500 is only used for issues completing work
       res.sendStatus(response.code)
     } catch (error) {
       console.log(error)
@@ -119,7 +176,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
   })
 })
 
-server.post("/galleries/update-positions", jsonParser, async (req, res) => {
+server.post("/galleries/update-positions", authenticated, privileged(2), jsonParser, async (req, res) => {
   Photoshoots.find({}, (err, data) => {
     if (err) {
       res.sendStatus(500)
@@ -141,6 +198,24 @@ server.post("/galleries/update-positions", jsonParser, async (req, res) => {
       })
       res.sendStatus(200)
     }
+  })
+})
+
+server.post("/galleries/delete", authenticated, privileged(2), jsonParser, async (req, res) => {
+  const response = { code: undefined }
+  const { _id } = req.body
+
+  console.log(_id, req.body)
+  Photoshoots.findOneAndDelete({ _id }, (err, photoshoot) => {
+    if (err) {
+      console.log(err)
+      response.code = 500
+    } else if (photoshoot) {
+      const galleryDir = path.join(saveDir, photoshoot.url)
+      if (fs.existsSync(galleryDir)) fs.rmdirSync(galleryDir, { recursive: true })
+      response.code = 200
+    } else response.code = 404
+    res.sendStatus(response.code)
   })
 })
 

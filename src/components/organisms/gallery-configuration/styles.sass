@@ -1,4 +1,24 @@
 #admin 
+  .delete-confirmation 
+    width: 44% 
+    height: 100% 
+    position: absolute 
+    background: rgba(243, 243, 243, 0.9)
+    top: 0 
+    z-index: 99
+    display: none
+    transition: all 0.15s linear
+    padding-left: 30px 
+    margin-left: -30px
+    p 
+      font-size: 25px 
+      text-align: center
+      color: black
+      padding-top: 30vh
+    button 
+      width: 30.5%
+      margin: 40px 9%
+      display: inline-block
   &.admin-galleries 
     #gallery-configuration
       display: inline-block
@@ -6,9 +26,19 @@
       width: calc(80% - 15px) 
       height: 100%
       margin-left: calc(5% + 15px)
+      .delete-button 
+        float: left
+        margin-top: 24px
+        font-size: 25px
+        cursor: pointer
+        transition: all 0.15s linear
+        &:hover
+          color: coral
       h2 
         height: 28px
-        width: 100%
+        width: 82%
+        float: left
+        display: inline-block
         color: #000000
         font-size: 23px
         font-weight: 600
@@ -20,6 +50,23 @@
       .gallery-input-fields 
         div 
           width: 42.5% 
+        #password-confirmation
+          width: 84% 
+          height: 50px 
+          margin-bottom: 25px
+          display: flex
+          justify-content: space-around
+          button 
+            margin-top: 0
+            margin-botom: -2px
+            width: 49%
+            background: #102542
+            &:hover
+              color: green
+            &:last-of-type
+              color: gray
+              &:hover
+                color: white
       .gallery-type 
         width: 100% 
         height: auto 
@@ -40,6 +87,10 @@
           justify-content: space-around 
           color: gray
           span 
+            float: none 
+            margin: none 
+            font-size: 15px
+            height: 20px
             cursor: pointer
             padding: 10px 0
             width: 32% 

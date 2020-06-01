@@ -2,6 +2,9 @@
 import React, { Component } from "react"
 import "./styles.sass"
 import { isEdge, isMobile, isIOS13, isIPad13, isIPhone13, isIPod13 } from "react-device-detect"
+
+let maxUnopenedWidth
+
 class Photoshoot extends Component {
   constructor(props) {
     super(props)
@@ -23,11 +26,15 @@ class Photoshoot extends Component {
     if (this.state.activated === "activated") this.handleActivate()
   }
 
+  isNotDesktop() {
+    if (isMobile || isIOS13 || isIPad13 || isIPhone13 || isIPod13) return true
+    else return false
+  }
+
   handleActivate() {
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
     const container = document.querySelectorAll("#" + this.state.url + " .photo-wrapper")[0]
     const galleryButton = document.querySelectorAll("#" + this.state.url + " .gallery-back")[0]
-    this.scrollTop = window.scrollTop
     galleryButton.style.display = "block"
 
     container.style.pointerEvents = "none"
@@ -47,9 +54,6 @@ class Photoshoot extends Component {
   }
 
   handleClosure() {
-    // This will get triggered on galleries even if they've never been opened, due to the SPA logic
-    // Therefore we are storing the original width of the item (this, is the unshrunken version)
-    // We store this using onLoad() handler below
     const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
     const container = document.querySelectorAll("#" + this.state.url + " .photo-wrapper")[0]
     const containerWidth = parseInt(window.getComputedStyle(container).width) / 2
@@ -65,35 +69,31 @@ class Photoshoot extends Component {
 
     images.forEach((image, index) => {
       image.style.transition = "all 0.25s ease"
-      const width = index <= 2 ? parseInt(image.dataset.originalWidth) : parseInt(images[0].dataset.originalWidth) - 100
 
       if (window.innerWidth <= 900) image.style.width = "max-content"
       switch (index) {
         case 0:
           image.style.height = "100%"
-          image.style.marginLeft = containerWidth - width / 2 + "px"
+          image.style.marginLeft = containerWidth - maxUnopenedWidth / 2 + "px"
           image.style.marginRight = "0"
           return
         case 1:
           image.style.height = "92%"
-          image.style.marginLeft = width * -1 + "px"
+          image.style.width = maxUnopenedWidth + "px"
+          image.style.marginLeft = maxUnopenedWidth * -1 + "px" // Add 20 px to neg. margin to ensure no overflowing of wide images
           image.style.marginTop = "2.5%" // Ye I dunno either, should be 4%
           image.style.marginRight = "0"
           return
         default:
-          image.style.marginTop = "5%" // Ye I dunno either, should be 7.5%
+          image.style.marginTop = "5%" // Mmm, should be 7.5%
+          image.style.width = maxUnopenedWidth + "px"
           image.style.height = "85%"
-          image.style.marginLeft = width * -1 + "px"
+          image.style.marginLeft = maxUnopenedWidth * -1 + "px"
           image.style.marginRight = "0"
           image.style.opacity = "0"
       }
       if (index === 2) image.style.opacity = 1
     })
-  }
-
-  isNotDesktop() {
-    if (isMobile || isIOS13 || isIPad13 || isIPhone13 || isIPod13) return true
-    else return false
   }
 
   handleHover(enable) {
@@ -117,30 +117,31 @@ class Photoshoot extends Component {
   }
 
   handleOnLoad(e) {
+    const container = document.querySelectorAll("#" + this.state.url + " .photo-wrapper")[0]
+    const containerWidth = parseInt(window.getComputedStyle(container).width) / 2
+    const realWidth = parseInt(e.target.naturalWidth)
+    const styles = window.getComputedStyle(e.target)
+    const index = parseInt(e.target.dataset.index)
+    let renderWidth = parseInt(styles.width)
+    let effectiveWidth
+
     if (this.state.activated !== "activated" && !isMobile) {
-      const styles = window.getComputedStyle(e.target)
-      const index = parseInt(e.target.dataset.index)
-      const container = document.querySelectorAll("#" + this.state.url + " .photo-wrapper")[0]
-      const containerWidth = parseInt(window.getComputedStyle(container).width) / 2
-      const { width } = styles
-      switch (index) {
-        case 0:
-          e.target.style.marginLeft = containerWidth - parseInt(width) / 2 + "px"
-          e.target.dataset.originalWidth = width
-          return
-        case 1:
-          e.target.dataset.originalWidth = width
-          e.target.style.marginLeft = parseInt(width) * -1 + "px"
-          return
-        default:
-          e.target.dataset.originalWidth = width
-          e.target.style.marginLeft = parseInt(width) * -1 + "px"
-          return
+      effectiveWidth = renderWidth > realWidth ? realWidth : renderWidth
+      if (index === 0) {
+        maxUnopenedWidth = effectiveWidth * 0.9
+        e.target.dataset.effectiveWidth = effectiveWidth
+        e.target.style.marginLeft = containerWidth - effectiveWidth / 2 + "px"
+      } else {
+        e.target.style.width = maxUnopenedWidth + "px"
+        e.target.style.marginLeft = maxUnopenedWidth * -1 + "px"
       }
     } else if (document.location.href.match(this.state.url)) {
-      // They are shrunk to 85% when activated, we need to store their true width
-      const styles = window.getComputedStyle(e.target)
-      e.target.dataset.originalWidth = (parseInt(styles.width) / 85) * 100
+      if (index === 0) {
+        // They are shrunk to 85% when activated, so we need to calculate their effective width differently
+        renderWidth = (parseInt(styles.width) / 85) * 100
+        effectiveWidth = renderWidth > realWidth ? realWidth : renderWidth
+        maxUnopenedWidth = effectiveWidth * 0.9
+      }
     }
   }
 

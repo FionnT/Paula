@@ -15,7 +15,9 @@ const emptyGallery = {
   isInHomePosition: undefined,
   isOnHomeScreen: false,
   isPublished: false,
-  inPasswordProtected: false,
+  isPasswordProtected: false,
+  isCreatingPassword: true, // Used as local boolean for display of password input fields
+  password: false,
   _id: undefined
 }
 
@@ -100,6 +102,43 @@ class GalleriesAdmin extends Component {
   }
 
   onActivateGallery = gallery => this.setState({ selectedPhotoshoot: gallery })
+
+  onDeleteGallery = _id => {
+    let galleries = this.state.galleries
+    let collection = galleries[this.state.selectedType]
+    let galleryIndex
+
+    collection.forEach((gallery, index) => {
+      if (gallery._id === _id) galleryIndex = index
+    })
+
+    collection.splice(galleryIndex, 1)
+    if (this.state.selectedType === "homeGalleries") {
+      collection.forEach((photoshoot, index) => {
+        photoshoot.isInHomePosition = index + 1
+      })
+    }
+
+    let updatedMaster = Object.assign(galleries, collection)
+
+    this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedGallery: collection[0] }, () => {
+      let server = process.env.REACT_APP_API_URL + "/galleries/delete"
+      fetch(server, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        mode: "cors",
+        body: JSON.stringify({ _id })
+      }).then(res => {
+        if (res.ok) {
+          if (this.state.selectedType === "homeGalleries") this.submitHomePositionChanges(true)
+          pageNotification([false, "Gallery Deleted!"])
+        } else pageNotification([false, "Couldn't delete gallery, refresh and try again!"])
+      })
+    })
+  }
 
   onGalleryDetailChange = modifiedGallery => {
     // Trust me, this is as optimised as you can make it.
@@ -221,7 +260,7 @@ class GalleriesAdmin extends Component {
     this.setState({ galleries: updatedMaster, selectedGalleries: homeGalleries }) // You can only re-arrange the home galleries
   }
 
-  submitHomePositionChanges = () => {
+  submitHomePositionChanges = silent => {
     let server = process.env.REACT_APP_API_URL + "/galleries/update-positions"
     fetch(server, {
       credentials: "include",
@@ -231,7 +270,11 @@ class GalleriesAdmin extends Component {
       },
       mode: "cors",
       body: JSON.stringify(this.state.galleries.homeGalleries)
-    }).then(res => (res.ok ? pageNotification([true, "New order saved"]) : pageNotification([false, "Couldn't save new details, try again!"])))
+    }).then(res => {
+      if (!silent) {
+        res.ok ? pageNotification([true, "New order saved"]) : pageNotification([false, "Couldn't save new details, try again!"])
+      }
+    })
   }
 
   render() {
@@ -259,6 +302,7 @@ class GalleriesAdmin extends Component {
                     selectedType={this.state.selectedType}
                     onGalleryDetailChange={this.onGalleryDetailChange}
                     onToggleGalleryType={this.onToggleGalleryType}
+                    onDeleteGallery={this.onDeleteGallery}
                     title="Add a new gallery"
                   />
                 </div>

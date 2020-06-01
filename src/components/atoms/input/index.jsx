@@ -33,7 +33,7 @@ class Input extends Component {
             className={immutable ? "immutable " : ""}
             style={{ width: mutableWidth }}
             required={required ? true : false}
-            value={value} // Don't do exist check here, as when emptying the element it won't overwrite
+            value={value ? value : ""} // Don't do exist check here, as when emptying the element it won't overwrite
             defaultValue={defaultValue ? defaultValue : undefined}
           />
         ) : (
