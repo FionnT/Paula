@@ -42,7 +42,6 @@ Left to do:
 2. Front & Back of Shop admin
 3. Front & Back user management
 4. Front & back of about page management
-4. Redesign pageNotification bubble 
 5. Checkout emails sent for various scenarios
 
 

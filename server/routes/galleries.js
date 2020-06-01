@@ -178,9 +178,8 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
 
 server.post("/galleries/update-positions", authenticated, privileged(2), jsonParser, async (req, res) => {
   Photoshoots.find({}, (err, data) => {
-    if (err) {
-      res.sendStatus(500)
-    } else {
+    if (err) res.sendStatus(500)
+    else {
       const existingPhotoshoots = data
       const newPhotoshoots = req.body
       existingPhotoshoots.forEach(Photoshoot => {
