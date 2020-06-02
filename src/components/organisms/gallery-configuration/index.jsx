@@ -191,9 +191,9 @@ class GalleryConfiguration extends Component {
         <FileDropZone multiple={true} existing={selected} url={selected.url} accept="image/*" onGalleryDetailChange={this.onGalleryDetailChange}>
           Gallery Photos
         </FileDropZone>
-        <div style={{ width: "85%", margin: "50px 0" }}>
+        <div style={{ width: "calc(100% -50px)", margin: "50px 0" }}>
           <Button className="center" onSubmit={this.onGallerySumbit}>
-            Save Gallery!
+            {this.state.isNew ? "Save Gallery" : "Update Gallery"}
           </Button>
         </div>
       </div>
