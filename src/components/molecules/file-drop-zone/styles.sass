@@ -1,18 +1,20 @@
 section.container 
-  width: 84%
+  width: 100%
   margin-top: 40px 
   .filedropzone
     box-sizing: border-box
     height: 346px
-    width: 760px
-    border: 1px dashed rgba(0,0,0,0.2)
+    width: 788px
+    // border: 1px dashed rgba(0,0,0,0.2)
     border-radius: 5px
     background-color: rgba(0,0,0,0.01)
     overflow: auto
-    margin: 0 auto
-    &:active, &:focus
+    margin: 0 auto 0 15px
+    ul
+      scrollbar-base-color: transparent
+      scrollbar-track-color: transparent
+    &:focus
       outline: none 
-      border: 1px dashed rgba(0,0,0,0.2)
     #infoarea
       height: 20% 
       margin: 17% auto 0

@@ -162,7 +162,7 @@ class GalleryConfiguration extends Component {
           </div>
         </div>
         {selected.isPublished && !selected.isOnHomeScreen ? (
-          <div className="gallery-input-fields">
+          <div className="gallery-input-fields admin-gallery-password">
             {selected.isPasswordProtected && !selected.creatingPassword ? (
               <div id="password-confirmation">
                 <Button>Password Protected &#10004;</Button>

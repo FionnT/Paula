@@ -1,34 +1,33 @@
 #admin 
-  .delete-confirmation 
-    width: 44% 
-    height: 100% 
-    position: absolute 
-    background: rgba(243, 243, 243, 0.9)
-    top: 0 
-    z-index: 99
-    display: none
-    transition: all 0.15s linear
-    padding-left: 30px 
-    margin-left: -30px
-    p 
-      font-size: 25px 
-      text-align: center
-      color: black
-      padding-top: 30vh
-    button 
-      width: 30.5%
-      margin: 40px 9%
-      display: inline-block
-  &.admin-galleries 
+  &.admin-galleries
     #gallery-configuration
       display: inline-block
-      float: left 
-      width: calc(80% - 15px) 
+      width: 70%
       height: 100%
-      margin-left: calc(5% + 15px)
+      margin-left: 0 auto
+      .delete-confirmation 
+        width: 44% 
+        height: 100% 
+        position: absolute 
+        background: rgba(243, 243, 243, 0.9)
+        top: 0 
+        z-index: 99
+        display: none
+        transition: all 0.15s linear
+        padding-left: 30px 
+        margin-left: -30px
+        p 
+          font-size: 25px 
+          text-align: center
+          color: black
+          padding-top: 30vh
+        button 
+          width: 30.5%
+          margin: 40px 9%
+          display: inline-block
       .delete-button 
-        float: left
-        margin-top: 24px
+        float: right
+        margin: 24px 19px 0 0
         font-size: 25px
         cursor: pointer
         transition: all 0.15s linear
@@ -36,20 +35,30 @@
           color: coral
       h2 
         height: 28px
-        width: 82%
+        width: auto
         float: left
-        display: inline-block
+        display: block
         color: #000000
         font-size: 23px
         font-weight: 600
         letter-spacing: -0.5px
-        margin: 25px 0 60px 0
+        margin: 25px 0 60px 10px
         line-height: 28px
       .inputField 
         margin: 0 
+
       .gallery-input-fields 
+        overflow: auto 
+        display: inline-block
+        height: auto
+        &.admin-gallery-password
+          margin-top: 50px     
+          width: 100%
+          div input 
+            &:last-of-type
+              margin-left: 5px // Correction due to immutable input above     
         div 
-          width: 42.5% 
+          width: 49% 
         #password-confirmation
           width: 84% 
           height: 50px 
@@ -70,18 +79,19 @@
       .gallery-type 
         width: 100% 
         height: auto 
-        margin: 0 0 60px 0
+        margin: 0 auto
         p 
           padding-bottom: 15px
-          margin-left: calc(1% + 5px) // ?? 
           display: inline-block
           width: 100%
           font-size: 1.25em
           font-weight: 300
           text-transform: none
           letter-spacing: -1px
+          padding: 0 0 10px 15px
         div 
-          width: 85.5% 
+          width: calc(100% - 41px)
+          margin: 0 auto 0 10px
           height: 40px 
           display: flex 
           justify-content: space-around 
