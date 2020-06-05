@@ -13,7 +13,7 @@ class Login extends Component {
     return (
       <div id="login">
         <Input type="email" textController={this.textChange} onSubmit={this.onSubmit} placeholder="Your email" />
-        <Input type="password" textController={this.textChange} onSubmit={this.onSubmit} placeholder="Your password" />
+        <Input type="password" name="password" textController={this.textChange} onSubmit={this.onSubmit} placeholder="Your password" />
         <Button className="center" onSubmit={this.onSubmit}>
           Login
         </Button>

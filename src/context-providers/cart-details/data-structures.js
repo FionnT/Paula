@@ -21,7 +21,8 @@ export const addressCookie = {
 }
 
 export const cartCookie = {
-  items: undefined
+  items: undefined,
+  purchaseCost: undefined
 }
 
 export const paymentCookie = {

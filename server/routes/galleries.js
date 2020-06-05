@@ -218,4 +218,166 @@ server.post("/galleries/delete", authenticated, privileged(2), jsonParser, async
   })
 })
 
+server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res) => {
+  req.pipe(req.busboy)
+
+  const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
+  const tmpDir = path.join(__dirname, "../temp/", dirUUID)
+  const minifiedDir = path.join(tmpDir, "minified")
+  const response = { code: undefined }
+  let galleryData
+  let filteredData = {}
+  let galleryFiles = []
+  let newFiles = []
+  let galleryDir
+
+  if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
+
+  req.busboy.on("field", (fieldname, val) => {
+    galleryData = JSON.parse(val)
+    galleryFiles = galleryData.itemOrder
+    galleryDir = path.join(__dirname, "../../public/galleries", galleryData.url)
+    return
+  })
+
+  req.busboy.on("file", async (fieldname, file, fileName) => {
+    const extension = fileName.split(".").slice(-1)[0]
+    const newFileName = uuidv4() + "." + extension
+    const fstream = fs.createWriteStream(path.join(tmpDir, newFileName))
+    newFiles.push({ old: fileName, new: newFileName })
+    file.pipe(fstream)
+    return
+  })
+
+  const checkGalleryExists = async () =>
+    new Promise(resolve => {
+      Photoshoots.findById(galleryData._id)
+        .lean()
+        .exec(err => {
+          if (err) {
+            response.code = 404
+            resolve()
+          } else {
+            response.code = 200
+            resolve()
+          }
+        })
+    })
+
+  const deleteTmpFiles = async () =>
+    fs.rmdirSync(tmpDir, {
+      recursive: true // Will not work below Node ~= v14
+    })
+
+  const minifyFiles = async () => {
+    fs.mkdirSync(minifiedDir)
+
+    await (async function minify() {
+      for (let item in newFiles) {
+        const file = newFiles[item].new
+        const fileLocation = path.join(tmpDir, file)
+        const minifiedFile = path.join(minifiedDir, file)
+        await sharp(fileLocation).resize(null, 800).toFile(minifiedFile)
+        continue
+      }
+      return
+    })()
+
+    return
+  }
+
+  const hashPassword = async () => {
+    if (!galleryData.isPasswordProtected) return
+    else if (!galleryData.password) {
+      galleryData.isPasswordProtected = false
+      return
+    } else {
+      return new Promise((resolve, reject) => {
+        bcrypt.genSalt(saltRounds, async (err, salt) => {
+          if (err) {
+            response.code = 500
+            reject(err)
+          } else {
+            bcrypt.hash(galleryData.password, salt, (err, hash) => {
+              if (err) {
+                response.code = 500
+                reject(err)
+              } else {
+                console.log(hash)
+                galleryData.password = hash
+                resolve()
+              }
+            })
+          }
+        })
+      })
+    }
+  }
+
+  const implementChanges = async () => {
+    let galleryFilesClone = galleryFiles.slice()
+
+    // Replace the old filenames with the new ones, and maintain positioning
+    newFiles.forEach(file => {
+      galleryFiles.forEach((item, index) => {
+        if (typeof item === "object") {
+          if (file.old === item.path) {
+            galleryFilesClone.splice(index, 1, file.new)
+          }
+        }
+      })
+    })
+
+    try {
+      newFiles.forEach(file => {
+        fs.renameSync(path.join(tmpDir, "/minified/", file.new), path.join(galleryDir, file.new))
+      })
+    } catch (err) {
+      console.log(err)
+      response.code = 500
+      return
+    }
+
+    Object.keys(acceptableInputData).forEach(key => {
+      filteredData[key] = galleryData[key]
+    })
+
+    filteredData.itemOrder = galleryFilesClone
+    filteredData.length = galleryData.itemOrder.length
+    return
+  }
+
+  const saveGalleryChanges = async () =>
+    new Promise(resolve => {
+      Photoshoots.findByIdAndUpdate(galleryData._id, filteredData, err => {
+        if (err) {
+          response.code = 500
+          resolve()
+        } else {
+          response.code = 200
+          resolve()
+        }
+      })
+    })
+
+  req.busboy.on("finish", async () => {
+    try {
+      await checkGalleryExists()
+      if (response.code !== 200) await deleteTmpFiles()
+      else {
+        await minifyFiles()
+        await hashPassword()
+        await implementChanges()
+        await saveGalleryChanges()
+        await deleteTmpFiles()
+      }
+      if (response.code === 500) await cleanUpAfterError() // Delete our work if we created it, but could not complete it, 500 is only used for issues completing work
+      res.sendStatus(response.code)
+    } catch (error) {
+      console.log(error)
+      res.sendStatus(500)
+    }
+  })
+})
+
 module.exports = server

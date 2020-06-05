@@ -12,6 +12,7 @@ export const CartContext = createContext({
 export class CartProvider extends React.Component {
   // Stores or retrives cookies
   manageCookies = (storingNewCookies, newDetails) => {
+    console.log("New Details: ", newDetails)
     if (storingNewCookies) {
       // Insert relevant data into respective object; data splitting
       Object.keys(addressCookie).forEach(key => (addressCookie[key] = newDetails[key]))

@@ -98,14 +98,20 @@ class GalleryConfiguration extends Component {
 
   onGallerySumbit = () => {
     let submission = new FormData()
+    let postLocation = this.state.isNew ? "/galleries/new" : "/galleries/update"
+    let server = process.env.REACT_APP_API_URL + postLocation
     let editableState = Object.assign(defaultState, this.state)
+
     if (this.state.isNew) {
       this.state.itemOrder.forEach(file => submission.append(file.name, file))
       delete editableState.files
       submission.append("data", JSON.stringify(editableState))
+    } else {
+      this.state.itemOrder.forEach(file => {
+        if (typeof file === "object") submission.append(file.name, file)
+      })
+      submission.append("data", JSON.stringify(this.state))
     }
-
-    let server = process.env.REACT_APP_API_URL + "/galleries/new"
 
     fetch(server, {
       credentials: "include",
@@ -172,13 +178,15 @@ class GalleryConfiguration extends Component {
               <>
                 <Input
                   type="password"
+                  name="password"
                   style={{ margin: "0 auto" }}
                   value={selected.password ? selected.password : null}
                   textController={this.textUpdater}
                   placeholder="Add a password?"
                 />
                 <Input
-                  type="password2"
+                  type="password"
+                  name="password2"
                   style={{ margin: "0 auto" }}
                   value={selected.password2 ? selected.password2 : null}
                   textController={this.textUpdater}
@@ -191,7 +199,7 @@ class GalleryConfiguration extends Component {
         <FileDropZone multiple={true} existing={selected} url={selected.url} accept="image/*" onGalleryDetailChange={this.onGalleryDetailChange}>
           Gallery Photos
         </FileDropZone>
-        <div style={{ width: "calc(100% -50px)", margin: "50px 0" }}>
+        <div style={{ width: `calc(100% - 41px)`, margin: "50px 0 100px 10px" }}>
           <Button className="center" onSubmit={this.onGallerySumbit}>
             {this.state.isNew ? "Save Gallery" : "Update Gallery"}
           </Button>

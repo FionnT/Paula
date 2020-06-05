@@ -101,7 +101,10 @@ class GalleriesAdmin extends Component {
     })
   }
 
-  onActivateGallery = gallery => this.setState({ selectedPhotoshoot: gallery })
+  onActivateGallery = gallery => {
+    gallery.isNew = false
+    this.setState({ selectedPhotoshoot: gallery })
+  }
 
   onDeleteGallery = _id => {
     let galleries = this.state.galleries
@@ -166,6 +169,8 @@ class GalleriesAdmin extends Component {
     if (selectedGalleries.length && typeof forceSelected === "undefined") selectedPhotoshoot = selectedGalleries[0]
     else if (selectedGalleries.length) selectedPhotoshoot = selectedGalleries[forceSelected]
     else selectedPhotoshoot = false // used to display different UI if there are no galleries in that category
+
+    if (selectedPhotoshoot) selectedPhotoshoot.isNew = false
 
     this.setState({ selectedGalleries, selectedPhotoshoot, selectedType }, () => {
       if (typeof forceSelected !== "undefined") {
