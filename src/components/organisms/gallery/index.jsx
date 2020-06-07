@@ -34,8 +34,14 @@ class Gallery extends Component {
     element.addEventListener("wheel", this.handleScrollWheel, { passive: false })
     this.fetchAllShoots().then(shoots => {
       this.setState({ shoots, shootCount: shoots.length }, () => {
-        if (this.props.shootname) this.handlePageNavigation(this.props.shootname)
-        else this.handlePageNavigation()
+        if (this.props.shootname) {
+          let propShootNameExists = false
+          shoots.forEach(shoot => {
+            if (shoot.url === this.props.shootname) propShootNameExists = true
+          })
+          if (propShootNameExists) this.handlePageNavigation(this.props.shootname)
+          else document.location = "/404"
+        } else this.handlePageNavigation()
       })
     })
     this.handleScrollAbility(false)

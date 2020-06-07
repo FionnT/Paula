@@ -4,11 +4,12 @@
 
 import React from "react"
 import ReactDOM from "react-dom"
-import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom"
+import { BrowserRouter, Switch, Route } from "react-router-dom"
 import * as serviceWorker from "./serviceWorker"
-import { About, Authentication, Checkout, Contact, GalleriesAdmin, Home, NotFound, Shipping, Store, ReviewOrder } from "./pages"
+
 import { ProtectedRoute } from "./components/atoms"
 import { UserProvider, CartProvider } from "./context-providers"
+import { About, Authentication, Checkout, Contact, GalleriesAdmin, Home, NotFound, ReviewOrder, Shipping, Store, Unauthorised } from "./pages"
 import "./styles/global.sass"
 
 // import * as serviceWorker from './serviceWorker'
@@ -35,6 +36,7 @@ const App = () => {
             <ProtectedRoute privileges="3" path="/admin/galleries" component={GalleriesAdmin}></ProtectedRoute>
 
             {/* Error Pages */}
+            <Route exact path="/unauthorised" component={Unauthorised} />
             <Route path="*" component={NotFound} />
           </Switch>
         </CartProvider>
