@@ -7,5 +7,6 @@ import Store from "./shop/store"
 import ReviewOrder from "./shop/review-order"
 import Authentication from "./authentication"
 import { GalleriesAdmin } from "./admin"
+import { NotFound } from "./error-pages"
 
-export { About, Authentication, Contact, Checkout, GalleriesAdmin, Home, ReviewOrder, Shipping, Store }
+export { About, Authentication, Contact, Checkout, GalleriesAdmin, Home, NotFound, ReviewOrder, Shipping, Store }
