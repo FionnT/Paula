@@ -6,7 +6,8 @@ import { validateText } from "../../../utilities"
 class ShippingForm extends Component {
   constructor(props) {
     super(props)
-    this.updateCart = props.updateCart.bind(this)
+    this.updateCart = this.props.updateCart
+    this.updateHistory = this.props.updateHistory.bind(this)
     this.state = {
       name: undefined,
       streetAddress: undefined,
@@ -18,32 +19,26 @@ class ShippingForm extends Component {
     }
 
     Object.keys(this.state).forEach(key => {
-      console.log(key)
-      this.state[key] = this.props.cart[key]
+      if (key !== "items" && key !== "purchaseCost") {
+        this.state[key] = this.props.details[key]
+      }
     })
   }
 
   textUpdater = event => {
-    validateText(event, false, this.state, data => {
-      // e.g. user hasn't inputted, but we have their details already
-      this.updateCart(data)
-    })
+    validateText(event, false, this.state, data => this.setState(data))
   }
 
-  validationCheck = (updateCart, cart) => {
+  validationCheck = details => {
     const redirectAndStore = () => {
       this.updateCart(this.state)
-      this.props.history.push("/shop/checkout")
+      this.updateHistory("/shop/checkout")
     }
 
     if (this.state.valid) redirectAndStore()
     else {
       // e.g. user hasn't inputted, but we have their details already
       let clonedState = Object.assign({}, this.state)
-      Object.keys(cart)
-        .filter(key => key in clonedState)
-        .forEach(key => (clonedState[key] = cart[key]))
-
       validateText(false, clonedState, this.state, data => {
         if (data.valid) redirectAndStore()
       })
@@ -91,7 +86,9 @@ class ShippingForm extends Component {
           <Input textController={this.textUpdater} type="zip" value={this.state.zip} placeholder="Zip" label="Zip" autoComplete="postal-code" name="postal-code" required />
         </div>
         <div>
-          <Button className="center">Confirm & Pay</Button>
+          <Button className="center" onSubmit={() => this.validationCheck(this.updateCart, this.state)}>
+            Confirm & Pay
+          </Button>
         </div>
       </>
     )
@@ -100,4 +97,4 @@ class ShippingForm extends Component {
 
 export default ShippingForm
 
-// onClick={() => this.validationCheck(this.props.cart)}
+//

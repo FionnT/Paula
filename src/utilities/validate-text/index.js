@@ -4,7 +4,6 @@
 // Resizes textelement input fields automatically to fit entered text
 
 const validateText = (event, collection, state, _callback, elementCount) => {
-  console.log("Initial event state: ", state)
   // The below isn't foolproof, but it's a close enough approximation
   // eslint-disable-next-line
   const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -86,8 +85,6 @@ const validateText = (event, collection, state, _callback, elementCount) => {
 
   if (validatedCount === keyCount) state.valid = true
   else state.valid = false
-  console.log("Event: ", event.target)
-  console.log("State: ", state)
   _callback(state)
 }
 

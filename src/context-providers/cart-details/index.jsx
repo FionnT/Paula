@@ -10,9 +10,17 @@ export const CartContext = createContext({
 })
 
 export class CartProvider extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      cart: requiredDetails,
+      updateCart: this.updateCart,
+      availableItems: []
+    }
+  }
+
   // Stores or retrives cookies
   manageCookies = (storingNewCookies, newDetails) => {
-    console.log("New Details: ", newDetails)
     if (storingNewCookies) {
       // Insert relevant data into respective object; data splitting
       Object.keys(addressCookie).forEach(key => (addressCookie[key] = newDetails[key]))
@@ -82,21 +90,17 @@ export class CartProvider extends React.Component {
 
     // Calculate total purchase cost
     newDetails.purchaseCost = 0
-    newDetails.items.forEach(item => {
-      newDetails.purchaseCost += item.purchaseCost * item.amount
-    })
+    if (newDetails.hasOwnProperty("items")) {
+      newDetails.items.forEach(item => {
+        newDetails.purchaseCost += item.purchaseCost * item.amount
+      })
+    }
 
     let requiredCart = requiredDetails // Cloning base object
     newDetails = Object.assign(requiredCart, newDetails)
 
     this.manageCookies(true, newDetails)
     this.setState({ cart: newDetails })
-  }
-
-  state = {
-    cart: requiredDetails,
-    updateCart: this.updateCart,
-    availableItems: []
   }
 
   fetchStoreItems = () => {

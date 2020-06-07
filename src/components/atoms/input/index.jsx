@@ -15,7 +15,7 @@ class Input extends Component {
   }
 
   handleKeyDown = e => {
-    if (e.key === "Enter") this.onSubmit()
+    if (e.key === "Enter" && this.onSubmit) this.onSubmit()
   }
 
   render() {
