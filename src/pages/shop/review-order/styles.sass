@@ -21,9 +21,9 @@
         letter-spacing: 1px
         color: #797979
         &:first-of-type
-          width: 50% 
+          width: 50.5% 
         &:nth-child(2)
-          width: 25%
+          width: 25.5%
   #order-summary 
     width: 30% 
     height: auto
@@ -70,12 +70,23 @@
         #grid-description  
           p 
             &:first-of-type
-              width: 47% 
+              width: 52% 
             &:nth-child(2)
-              width: 24%              
+              width: 17%              
       #order-summary 
         width: 93% 
         float: left
         margin-top: 2vh
     &.billing, &.checkout
       margin-left: 0 !important
+
+@media only screen and (max-width: 625px)
+  #store-container
+    &.review-order
+      #items-summary 
+        #grid-description  
+          p 
+            &:first-of-type
+              width: 50% 
+            &:nth-child(2)
+              width: 19.5%              

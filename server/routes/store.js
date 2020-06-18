@@ -118,7 +118,7 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
         const orderData = data.toJSON()
         const order = new Order(orderData)
         order.save().then(() => {
-          sendOrderEmails(orderID, true, true) // Payment and record update succeeded
+          sendOrderEmails(orderData, true, true) // Payment and record update succeeded
           res.sendStatus(200).end()
         })
       }
@@ -129,10 +129,10 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
   switch (event["type"]) {
     case "payment_intent.succeeded":
       const orderID = event.data.object.metadata.orderID
-      Order.findOneAndUpdate({ orderID }, { $unset: { expireAt: "" } }, err => {
+      Order.findOneAndUpdate({ orderID }, { $unset: { expireAt: "" } }, (err, data) => {
         if (err) saveOrderThroughFallback(orderID)
         else {
-          sendOrderEmails(orderID, true, true) // Payment and record update succeeded
+          sendOrderEmails(data, true, true) // Payment and record update succeeded
           res.sendStatus(200).end()
         }
       })

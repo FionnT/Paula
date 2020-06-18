@@ -22,32 +22,31 @@ class Login extends Component {
     })
   }
 
-  onSubmit = () => {
-    if (this.state.valid != true) pageNotification([false, "Pleasdssdadse check your details and try again."])
+  onSubmit = async () => {
+    if (this.state.valid !== true) pageNotification([false, "Please check your details and try again."])
     else {
-      return new Promise((resolve, reject) => {
-        let server = process.env.REACT_APP_API_URL + this.props.location
-        fetch(server, {
-          method: "POST", // or 'PUT'
-          headers: {
-            "Content-Type": "application/json"
-          },
-          credentials: "include",
-          mode: "cors",
-          body: JSON.stringify(this.state)
-        }).then(res => {
-          res.ok ? resolve(res.json()) : reject(false)
+      try {
+        const response = await new Promise((resolve, reject) => {
+          let server = process.env.REACT_APP_API_URL + this.props.location
+          fetch(server, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            credentials: "include",
+            mode: "cors",
+            body: JSON.stringify(this.state)
+          }).then(res => {
+            res.ok ? resolve(res.json()) : reject(false)
+          })
         })
-      })
-        .then(res => {
-          this.updateUser(res)
-          Cookie.set("userCookie", res)
-          this.updateHistory("/")
-        })
-        .catch(err => {
-          console.log(err)
-          pageNotification([false, "Please check your details and try again."])
-        })
+        this.updateUser(response)
+        Cookie.set("userCookie", response)
+        this.updateHistory("/")
+      } catch (err) {
+        console.log(err)
+        pageNotification([false, "Please check your details and try again."])
+      }
     }
   }
 
