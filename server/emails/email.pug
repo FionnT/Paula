@@ -1,0 +1,38 @@
+include includes/header.pug 
+
+#confirmation 
+  h3=order.status
+  p=order.message
+  if !order.paymentSucceeded 
+    #retry-button 
+      a(href="#")
+        button="Retry payment"
+
+if order.items
+  .order-information
+    h3 Order Details
+    for item in order.items 
+      .item
+        .image-wrapper 
+          img(src=item.image)
+        h4=item.name
+        span="QTY:" + item.amount
+        p &euro;
+        p=item.cost
+    if order.purchaseCost 
+      #order-total 
+        p &euro;
+        p=order.purchaseCost 
+        p Total:
+
+if order.shipping 
+  #shipping.order-information
+    h3 Shipping Details
+    #address
+      p Fionn Tolster
+      p Sluisstraat 21 - 2
+      p 1075 TA
+      p Amsterdam
+      p The Netherlands
+
+include includes/footer.pug
