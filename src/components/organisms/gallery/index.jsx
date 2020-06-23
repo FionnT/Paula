@@ -49,6 +49,8 @@ class Gallery extends Component {
 
   componentWillUnmount() {
     window.onpopstate = undefined
+    this.handleScrollAbility(false)
+    document.body.removeEventListener("wheel", this.handleScrollWheel)
   }
 
   componentDidUpdate(prevProps) {

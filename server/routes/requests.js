@@ -1,5 +1,5 @@
 const server = require("express")()
-const { Photoshoots, StoreItems, Order } = require("../models/index")
+const { Photoshoots, StoreItems, Order, Admin } = require("../models/index")
 const jsonParser = require("body-parser").json()
 const privileged = require("./middleware/privileged")
 const authenticated = require("./middleware/authenticated")()
@@ -15,7 +15,6 @@ server.get("/photoshoots/home", (req, res) => {
 
 server.get("/photoshoots/all", authenticated, privileged(2), (req, res) => {
   Photoshoots.find({})
-
     .sort("isInHomePosition")
     .lean()
     .exec((err, results) => {
@@ -33,6 +32,15 @@ server.get("/photoshoots/all", authenticated, privileged(2), (req, res) => {
         })
         res.json(responseBody)
       }
+    })
+})
+
+server.get("/users/all", authenticated, privileged(2), (req, res) => {
+  Admin.find({})
+    .lean()
+    .exec((err, result) => {
+      if (err) res.sendStatus(500)
+      else res.json(result)
     })
 })
 

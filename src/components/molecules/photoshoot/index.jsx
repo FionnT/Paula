@@ -10,7 +10,6 @@ class Photoshoot extends Component {
     super(props)
     this.handlePageNavigation = this.props.handlePageNavigation.bind(this) // handles actual page/url navigation
     this.state = this.props.data
-    this.state.openAnimationComplete = false
   }
 
   componentDidUpdate() {
@@ -20,6 +19,11 @@ class Photoshoot extends Component {
     else if (this.props.data.activated === "") {
       this.handleClosure()
     }
+
+    // Fix for slower internet speeds, feel free to adjust
+    setTimeout(() => {
+      if (this.state.activated !== "activated") this.handleClosure()
+    }, 2000)
   }
 
   componentDidMount() {
@@ -54,9 +58,14 @@ class Photoshoot extends Component {
   }
 
   handleClosure() {
-    const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
+    let containerWidth
     const container = document.querySelectorAll("#" + this.state.url + " .photo-wrapper")[0]
-    const containerWidth = parseInt(window.getComputedStyle(container).width) / 2
+
+    // skip processing unmounted elements
+    if (container) containerWidth = parseInt(window.getComputedStyle(container).width) / 2
+    else return
+
+    const images = Array.from(document.querySelectorAll("#" + this.state.url + " .photo-wrapper img")) // returns a nodelist != array
     const galleryButton = document.querySelectorAll("#" + this.state.url + " .gallery-back")[0]
 
     galleryButton.style.display = "none"

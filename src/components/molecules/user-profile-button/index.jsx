@@ -16,7 +16,7 @@ export default function UserProfileButton(props) {
     return rendered
   }
 
-  const imageStyle = { backgroundImage: "url(/" + props.user.filename + ")" }
+  const imageStyle = { backgroundImage: "url(" + props.user.filename + ")" }
   return (
     <>
       <div className="profileimage" style={imageStyle} alt="" onClick={() => toggleMenu(!menuStatus)} />

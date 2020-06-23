@@ -36,6 +36,10 @@ class GalleriesAdmin extends Component {
     if (!this.state.selectedPhotoshoot._id) this.onAddGallery()
   }
 
+  componentDidMount() {
+    document.documentElement.style.overflow = "auto"
+    document.body.style.overflow = "unset"
+  }
   fetchGalleries = () => {
     let server = process.env.REACT_APP_API_URL + "/photoshoots/all"
     return new Promise(resolve => {

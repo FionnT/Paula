@@ -11,9 +11,6 @@ export default function UserMenu(props) {
       <div className="profilemenu">
         <ul>
           <li>
-            <Link to="/admin/home">Homepage</Link>
-          </li>
-          <li>
             <Link to="/admin/galleries">Galleries</Link>
           </li>
           <li>
