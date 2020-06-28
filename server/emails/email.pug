@@ -1,38 +1,40 @@
 include includes/header.pug 
 
-#confirmation 
-  h3=order.status
-  p=order.message
+#confirmation(style="width: 100%;height: auto;background: white; max-width: 650px; margin: 0 auto; ")
+  h3(style="font-size: 1.25em;padding-top: 25px; text-align: center;")=order.status
+  p(style="font-size: 0.9em; max-width: 80%;display: block;margin: 0 auto;padding: 15px 0 35px;text-align: center;")=order.message
   if !order.paymentSucceeded 
-    #retry-button 
+    #retry-button(style="margin: 0 auto; width: 200px;height: 35px;padding: 0 0 20px 0;")
       a(href="#")
-        button="Retry payment"
+        button(style="border-radius: 15px;height: 35px; width: 100%;margin: 0 auto; background: coral;color: white;font-weight: 400;font-size: 0.95em;font-family: 'Source Sans Pro', sans-serif;border: none; outline: none;cursor: pointer;")="Retry payment"
 
 if order.items
-  .order-information
-    h3 Order Details
+  .order-information(style="width: 100%; height: auto; overflow: auto; max-width: 650px; margin: 0 auto; background: #f3f3f3")
+    h3(style="width: auto; display: block;text-align: left;float: left; margin: 40px auto 20px 25px; color: coral; font-size: 1.1em; font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;") Order Details
     for item in order.items 
-      .item
-        .image-wrapper 
-          img(src=item.image)
-        h4=item.name
-        span="QTY:" + item.amount
-        p &euro;
-        p=item.cost
+      .item(style="width: calc(100% - 50px);display: block;float: left;height: 60px; margin: 0 auto 10px 25px;")
+        .image-wrapper(style="display: flex;justify-content: center;width: 30%;height: 100%;float: left;margin: 0;")
+          img(src="cid:" + item.image style="float: left; height: 100%; display: block; margin-right: 15px;max-width: 100px")
+        div(style="width: 35%; float: left; height: 100%")
+          h4(style="width: 100%; height: 50%;display: block;float: left; text-align: left; line-height: 220%;")=item.name
+          p(style="width: 100%; height: 50%; float: left; display: block; text-align: left; line-height: 220%;")=item.size + "cm"
+        span(style="float: left; display: block; height: 100%;text-align: center; width: 25%;text-transform: uppercase; line-height: 375%;")="QTY: " + item.amount
+        p(style="float: right;display: block; text-align: center; margin: 0 0.5% 0 1%; line-height: 375%;") &euro;
+        p(style="float: right; line-height: 375%;")=item.cost
     if order.purchaseCost 
-      #order-total 
-        p &euro;
-        p=order.purchaseCost 
-        p Total:
+      #order-total(style="float: left;width: calc(100% - 42px);height: auto;margin: 10px 25px 0; border-top: 1px dashed gray; padding-top: 15px;") 
+        p(style="float: right; width: auto; text-align: center;font-size: 1em;padding: 0 1% 0 0;line-height: 33px;") &euro;
+        p(style="float: right; width: auto; text-align: center;font-size: 1em;padding: 0 1% 0 0;line-height: 33px;")=order.purchaseCost 
+        p(style="float: right; width: auto; text-align: center;font-size: 1em;padding: 0 1% 0 0;line-height: 33px;") Total:
 
-if order.shipping 
-  #shipping.order-information
-    h3 Shipping Details
-    #address
-      p Fionn Tolster
-      p Sluisstraat 21 - 2
-      p 1075 TA
-      p Amsterdam
-      p The Netherlands
+if order.streetAddress 
+  #shipping(style="padding-bottom: 50px; max-width: 650px; margin: 0 auto; height: auto; overflow: auto; background: #f3f3f3")
+    h3(style="width: calc(100% - 25px); display: block;text-align: left;float: left; margin: 40px auto 20px 25px; color: coral; font-size: 1.1em; font-weight: 600;text-transform: uppercase;letter-spacing: 0.5px;") Shipping Details
+    #address(style="width: auto;text-align: left; height: auto;overflow: hidden;float: left; margin: 0 auto 0 25px;")
+      p(style="font-size: 1em;padding-bottom: 3px")=order.name + ","
+      p(style="font-size: 1em;padding-bottom: 3px")=order.streetAddress + ","
+      p(style="font-size: 1em;padding-bottom: 3px")=order.zip + ","
+      p(style="font-size: 1em;padding-bottom: 3px")=order.city + ","
+      p(style="font-size: 1em;padding-bottom: 3px")=order.country
 
 include includes/footer.pug

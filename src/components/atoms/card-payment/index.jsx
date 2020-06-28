@@ -69,7 +69,7 @@ const CardPayment = props => {
 
     if (!payable || !stripe || !elements) return
     changePayability(false)
-    toggleStatus(false, "Verifying Payment", "processing")
+    toggleStatus(false, "Verifying Card", "processing")
 
     const paymentConfirmation = await stripe.confirmCardPayment(props.cart.paymentIntent, {
       payment_method: {
@@ -80,7 +80,7 @@ const CardPayment = props => {
     if (paymentConfirmation.error) {
       pageNotification(["false", paymentConfirmation.error.message + "<br />Please try again."])
       toggleStatus(true)
-    } else if (paymentConfirmation.paymentIntent.status === "succeeded") pageNotification([true, "Succeeded"])
+    } else if (paymentConfirmation.paymentIntent.status === "succeeded") this.updateHistory("/shop/thank-you")
     // TODO: Add redirect to Thanks for your order page.
   }
 

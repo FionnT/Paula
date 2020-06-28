@@ -56,7 +56,7 @@ class CheckoutForm extends Component {
           <div className="right-column">
             <Input textController={this.textUpdater} type="email" value={this.cart.email} placeholder="Contact email" label="email" className="fill" />
             <Elements stripe={stripePromise}>
-              <CardPayment cart={this.cart} />
+              <CardPayment cart={this.cart} updateHistory={this.updateHistory} />
             </Elements>
           </div>
         </CreatePaymentIntent>

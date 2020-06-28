@@ -9,7 +9,7 @@ import * as serviceWorker from "./serviceWorker"
 
 import { ProtectedRoute } from "./components/atoms"
 import { UserProvider, CartProvider } from "./context-providers"
-import { About, Authentication, Checkout, Contact, GalleriesAdmin, Home, NotFound, ReviewOrder, Shipping, Store, Unauthorised } from "./pages"
+import * as pages from "./pages"
 import "./styles/global.sass"
 
 // import * as serviceWorker from './serviceWorker'
@@ -21,23 +21,26 @@ const App = () => {
         <CartProvider>
           <p id="notifier"> </p>
           <Switch>
-            {/* User Facing Routes */}
-            <Route exact path="/" component={Home} />
-            <Route exact path="/about" component={About} />
-            <Route exact path="/contact" component={Contact} />
-            <Route path="/shoot/:shootname" component={Home} />
-            <Route exact path="/shop" component={Store} />
-            <Route exact path="/shop/review" component={ReviewOrder} />
-            <Route exact path="/shop/shipping" component={Shipping} />
-            <Route exact path="/shop/checkout" component={Checkout} />
+            {/* General Routes */}
+            <Route exact path="/" component={pages.Home} />
+            <Route exact path="/about" component={pages.About} />
+            <Route exact path="/contact" component={pages.Contact} />
+            <Route path="/shoot/:shootname" component={pages.Home} />
+
+            {/* Store Routes */}
+            <Route exact path="/shop" component={pages.Store} />
+            <Route exact path="/shop/review" component={pages.ReviewOrder} />
+            <Route exact path="/shop/shipping" component={pages.Shipping} />
+            <Route exact path="/shop/checkout" component={pages.Checkout} />
+            <Route exact path="/shop/thank-you" component={pages.ThankYou} />
 
             {/* Administration Routes */}
-            <Route exact path="/admin/login" component={Authentication} />
-            <ProtectedRoute privileges="3" path="/admin/galleries" component={GalleriesAdmin}></ProtectedRoute>
+            <Route exact path="/admin/login" component={pages.Authentication} />
+            <ProtectedRoute privileges="3" path="/admin/galleries" component={pages.GalleriesAdmin}></ProtectedRoute>
 
             {/* Error Pages */}
-            <Route exact path="/unauthorised" component={Unauthorised} />
-            <Route path="*" component={NotFound} />
+            <Route exact path="/unauthorised" component={pages.Unauthorised} />
+            <Route path="*" component={pages.NotFound} />
           </Switch>
         </CartProvider>
       </UserProvider>
