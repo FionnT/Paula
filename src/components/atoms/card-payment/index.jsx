@@ -33,6 +33,7 @@ const CardPayment = props => {
   const [payable, changePayability] = useState(true)
   const stripe = useStripe()
   const elements = useElements()
+  const updateHistory = props.updateHistory.bind(this)
 
   // Handle real-time validation errors from the card Element.
   const handleChange = event => {
@@ -80,7 +81,7 @@ const CardPayment = props => {
     if (paymentConfirmation.error) {
       pageNotification(["false", paymentConfirmation.error.message + "<br />Please try again."])
       toggleStatus(true)
-    } else if (paymentConfirmation.paymentIntent.status === "succeeded") this.updateHistory("/shop/thank-you")
+    } else if (paymentConfirmation.paymentIntent.status === "succeeded") updateHistory("/shop/thank-you")
     // TODO: Add redirect to Thanks for your order page.
   }
 

@@ -1,10 +1,9 @@
 import About from "./about"
+import * as Admin from "./admin-pages"
 import Authentication from "./authentication"
 import Contact from "./contact"
+import * as Errors from "./error-pages"
 import Home from "./home"
+import * as Shop from "./shop-pages"
 
-import { GalleriesAdmin } from "./admin-pages"
-import { NotFound, Unauthorised } from "./error-pages"
-import { Checkout, ReviewOrder, Shipping, Store, ThankYou } from "./shop"
-
-export { About, Authentication, Contact, Checkout, GalleriesAdmin, Home, NotFound, ReviewOrder, Shipping, Store, ThankYou, Unauthorised }
+export { About, Admin, Authentication, Contact, Errors, Home, Shop }

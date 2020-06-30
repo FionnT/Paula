@@ -21,7 +21,7 @@ const emptyGallery = {
   _id: undefined
 }
 
-class GalleriesAdmin extends Component {
+class GalleryControl extends Component {
   constructor() {
     super()
     this.state = {
@@ -324,4 +324,4 @@ class GalleriesAdmin extends Component {
   }
 }
 
-export default GalleriesAdmin
+export default GalleryControl

@@ -5,10 +5,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { BrowserRouter, Switch, Route } from "react-router-dom"
-import * as serviceWorker from "./serviceWorker"
 
 import { ProtectedRoute } from "./components/atoms"
 import { UserProvider, CartProvider } from "./context-providers"
+
 import * as pages from "./pages"
 import "./styles/global.sass"
 
@@ -28,19 +28,19 @@ const App = () => {
             <Route path="/shoot/:shootname" component={pages.Home} />
 
             {/* Store Routes */}
-            <Route exact path="/shop" component={pages.Store} />
-            <Route exact path="/shop/review" component={pages.ReviewOrder} />
-            <Route exact path="/shop/shipping" component={pages.Shipping} />
-            <Route exact path="/shop/checkout" component={pages.Checkout} />
-            <Route exact path="/shop/thank-you" component={pages.ThankYou} />
+            <Route exact path="/shop" component={pages.Shop.Store} />
+            <Route exact path="/shop/review" component={pages.Shop.ReviewOrder} />
+            <Route exact path="/shop/shipping" component={pages.Shop.Shipping} />
+            <Route exact path="/shop/checkout" component={pages.Shop.Checkout} />
+            <Route exact path="/shop/thank-you" component={pages.Shop.ThankYou} />
 
             {/* Administration Routes */}
             <Route exact path="/admin/login" component={pages.Authentication} />
-            <ProtectedRoute privileges="3" path="/admin/galleries" component={pages.GalleriesAdmin}></ProtectedRoute>
+            <ProtectedRoute privileges="3" path="/admin/galleries" component={pages.Admin.GalleryControl}></ProtectedRoute>
 
             {/* Error Pages */}
-            <Route exact path="/unauthorised" component={pages.Unauthorised} />
-            <Route path="*" component={pages.NotFound} />
+            <Route exact path="/unauthorised" component={pages.Errors.Unauthorised} />
+            <Route path="*" component={pages.Errors.NotFound} />
           </Switch>
         </CartProvider>
       </UserProvider>
@@ -49,5 +49,3 @@ const App = () => {
 }
 
 ReactDOM.render(<App />, document.getElementById("root"))
-
-serviceWorker.unregister()
