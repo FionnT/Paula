@@ -32,6 +32,7 @@ const App = () => {
             <Route exact path="/shop/review" component={pages.Shop.ReviewOrder} />
             <Route exact path="/shop/shipping" component={pages.Shop.Shipping} />
             <Route exact path="/shop/checkout" component={pages.Shop.Checkout} />
+            <Route exact path="/shop/checkout/:orderid" component={pages.Shop.Checkout} />
             <Route exact path="/shop/thank-you" component={pages.Shop.ThankYou} />
 
             {/* Administration Routes */}

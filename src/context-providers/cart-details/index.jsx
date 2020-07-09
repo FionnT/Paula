@@ -99,6 +99,13 @@ export class CartProvider extends React.Component {
     let requiredCart = requiredDetails // Cloning base object
     newDetails = Object.assign(requiredCart, newDetails)
 
+    if (newDetails.hasOwnProperty("emptyCart")) {
+      Object.keys(newDetails).forEach(key => {
+        newDetails[key] = undefined
+      })
+      newDetails.items = [] // bug fix, must always be an array due to .map calls later on
+    }
+
     this.manageCookies(true, newDetails)
     this.setState({ cart: newDetails })
   }

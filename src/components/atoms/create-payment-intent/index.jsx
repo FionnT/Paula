@@ -7,10 +7,14 @@ class CreatePaymentIntent extends Component {
   constructor(props) {
     super(props)
     this.updateCart = props.updateCart.bind(this)
+    this.existingOrder = props.existingOrder
   }
 
   createPaymentIntent = () => {
     const { cart } = this.props
+
+    const intentData = JSON.stringify(cart)
+
     return new Promise((resolve, reject) => {
       let server = process.env.REACT_APP_API_URL + "/store/paymentintent"
       fetch(server, {
@@ -20,7 +24,7 @@ class CreatePaymentIntent extends Component {
           "Content-Type": "application/json"
         },
         mode: "cors",
-        body: JSON.stringify(cart)
+        body: intentData
       })
         .then(res => (res.ok ? res.json() : res))
         .then(res => {
@@ -29,6 +33,7 @@ class CreatePaymentIntent extends Component {
             reject(<Redirect to="/shop/review" />)
           } else {
             this.updateCart({ paymentIntent: res.paymentIntent })
+            cart.paymentIntent = res.paymentIntent
             resolve(true)
           }
         })

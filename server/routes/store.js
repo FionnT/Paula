@@ -45,7 +45,7 @@ server.post("/store/upload/update", jsonParser, (req, res) => {
 
 server.post("/store/resume-order", jsonParser, (req, res) => {
   const { orderID } = req.body
-  Order.findOne({ orderID }, (err, result) => {
+  Order.findOne({ orderID, status: "pending" }, (err, result) => {
     if (err) res.sendStatus(500)
     if (result) res.json(result)
     else res.sendStatus(404)
@@ -68,7 +68,7 @@ server.post("/store/paymentintent", jsonParser, async (req, res) => {
       // 2. Calculate purchase cost of items
 
       cart.items.forEach(item => {
-        purchase.items.push({ UUID: item.UUID, size: item.size, amount: item.amount, image: item.image })
+        purchase.items.push({ UUID: item.UUID, size: item.size, amount: item.amount, image: item.image, type: item.type })
       })
 
       results.forEach(result => {
@@ -88,20 +88,30 @@ server.post("/store/paymentintent", jsonParser, async (req, res) => {
           amount: purchase.cost,
           currency: "eur",
           metadata: {
-            orderID: orderID
+            orderID: cart.orderID ? cart.orderID : orderID // Use existing, or create a new one
           }
         })
         .catch(err => {
           res.json({ error: err })
         })
+
       if (paymentIntent) {
-        cart.orderID = orderID
         cart.items = purchase.items // Only store the ordered sizes, instead of all
         cart.purchaseCost = purchase.cost / 100
         cart.expireAt = Date.now() + threeDays
 
-        const order = new Order(cart)
-        order.save().then(res.json({ paymentIntent: paymentIntent.client_secret }).end())
+        // Only exists if we're resuming an order already attempted
+        if (!cart.orderID) {
+          cart.orderID = orderID
+          const order = new Order(cart)
+          order.save().then(res.json({ paymentIntent: paymentIntent.client_secret }).end())
+        } else {
+          delete cart._id
+          Order.findOneAndUpdate({ orderID }, cart, (err, data) => {
+            if (err) res.sendStatus(403)
+            else res.json({ paymentIntent: paymentIntent.client_secret }).end()
+          })
+        }
       }
     }
   })
@@ -132,6 +142,7 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
           sendOrderEmails(data, "payed")
           res.sendStatus(500)
         } else {
+          data.status = "payed"
           const order = new Order(data)
           order.save().then(() => {
             sendOrderEmails(data, "payed")
@@ -141,27 +152,34 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
       })
   }
 
-  // eslint-disable-next-line default-case
+  const orderID = event.data.object.metadata.orderID
+
   switch (event["type"]) {
     case "payment_intent.succeeded":
-      const orderID = event.data.object.metadata.orderID
-      Order.findOneAndUpdate({ orderID }, { $unset: { expireAt: "" } }, (err, data) => {
+      Order.findOne({ orderID }, (err, order) => {
+        console.log("Order: ", orderID)
         if (err) saveOrderThroughFallback(orderID)
-        else {
-          sendOrderEmails(data, "payed") // Payment and record update succeeded
-          res.sendStatus(200).end()
+        else if (order) {
+          order.status = "payed"
+          order.expireAt = ""
+          order.save().then(() => {
+            sendOrderEmails(order, "payed") // Payment and record update succeeded
+            res.sendStatus(200).end()
+          })
         }
       })
       return
-    case "payment_intent.payment_failed":
+    case "payment_intent.payment_failed" || "charge.failed":
       Order.findOne({ orderID })
         .lean()
         .exec((err, data) => {
           if (err) res.sendStatus(500)
-          else {
-            sendOrderEmails(data, "failed") // Payment failed
-          }
+          else if (data) sendOrderEmails(data, "failed") // Payment failed
         })
+      return
+    default:
+      res.sendStatus(202)
+      return
   }
 })
 

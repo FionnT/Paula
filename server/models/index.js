@@ -27,15 +27,19 @@ const adminSchema = new Schema(
 
 const orderSchema = new Schema(
   {
-    items: Array,
     name: String,
+    email: String,
     streetAddress: String,
     city: String,
     state: String,
     country: String,
     zip: String,
     purchaseCost: Number,
-    email: String,
+    items: Array,
+    status: {
+      type: String,
+      default: "pending"
+    },
     orderID: String,
     createdAt: { type: Date, default: Date.now },
     expireAt: { type: Date, default: undefined }

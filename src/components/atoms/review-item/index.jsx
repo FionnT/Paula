@@ -33,7 +33,7 @@ export default function ReviewItem(props) {
       <div className="item-description">
         <h3>{props.name}</h3>
         <p>
-          {props.type.replace(/^\w/, c => c.toUpperCase())} - {props.size}
+          {props.type?.replace(/^\w/, c => c.toUpperCase())} - {props.size}
         </p>
       </div>
       <div className="quantity-selector">
@@ -47,7 +47,7 @@ export default function ReviewItem(props) {
           <input className="noselect" value={amount} disabled />
         )}
       </div>
-      <h2>{amount * props.purchaseCost} &euro;</h2>
+      <h2>{amount * props.purchaseCost ? props.purchaseCost : props.cost} &euro;</h2>
       {!props.disabled ? (
         <div className="remove-item" onClick={() => updateCart({ removeID: props.UUID, size: props.size })}>
           <i className="las la-times"></i>

@@ -13,9 +13,12 @@ class CheckoutForm extends Component {
       email: this.props.cart.email,
       valid: false
     }
+
     this.cart = this.props.cart
     this.updateCart = this.props.updateCart.bind(this)
     this.updateHistory = this.props.updateHistory.bind(this)
+
+    if (this.cart.orderID) this.updateCart(this.cart)
   }
 
   textUpdater = event => {
@@ -56,7 +59,7 @@ class CheckoutForm extends Component {
           <div className="right-column">
             <Input textController={this.textUpdater} type="email" value={this.cart.email} placeholder="Contact email" label="email" className="fill" />
             <Elements stripe={stripePromise}>
-              <CardPayment cart={this.cart} updateHistory={this.updateHistory} />
+              <CardPayment cart={this.cart} updateCart={this.updateCart} updateHistory={this.updateHistory} />
             </Elements>
           </div>
         </CreatePaymentIntent>

@@ -5,10 +5,10 @@ const saltRounds = 10
 
 const privileged = require("./middleware/privileged")
 const authenticated = require("./middleware/authenticated")()
-const { Admin, Person } = require("../models/index")
+const { Admin } = require("../models/index")
 
 // authenticated, privileged(2),
-server.post("/admin/register", jsonParser, async (req, res) => {
+server.post("/admin/register", authenticated, privileged(2), jsonParser, async (req, res) => {
   const { email, password } = req.body
   await Admin.findOne({ email }, (err, result) => {
     if (err) res.sendStatus(502)
