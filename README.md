@@ -7,23 +7,23 @@ A completely free, responsive Photograpy site allowed for general use under CC-B
 To Setup
 --
 
-First amend models.js in server/models to point to your MongoDB instance, then start MongoDB
-Next, insert your relevant data in the .env.example files in root, and /server, then rename them .env
+1/ First amend models.js in server/models to point to your MongoDB instance, then start MongoDB
+2/ Next, insert your relevant data in the .env.example files in root, and /server, then rename them .env
 
-Start the Server: 
+3/ Start the Server: 
 
     cd server && npm install && npm start
 
-Next install the front end: 
+4/ Next install the front end: 
 
     cd ../ && npm install 
 
-Followed by: 
+5a/ Followed by: 
 
     npm start (for dev)
     npm run build (for prod)
 
-For production you may then serve it with a static server:
+5b/ For production you may then serve it with a static server:
 
     npm i -g serve
     serve -s ./build -p 9000
