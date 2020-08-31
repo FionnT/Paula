@@ -21,6 +21,8 @@ class StoreContainer extends Component {
     this.state = {
       visibleItems: props.availableItems,
       availableItems: props.availableItems,
+      selectedItem: undefined,
+      editorEnabled: false,
       search: undefined,
       valid: false
     }
@@ -33,6 +35,11 @@ class StoreContainer extends Component {
     })
   }
 
+  enableEditor = data => {
+    console.log(data)
+    this.setState({ selectedItem: data, editorEnabled: !this.state.editorEnabled })
+  }
+
   render() {
     return (
       <>
@@ -41,10 +48,10 @@ class StoreContainer extends Component {
           <Input type="search" name="search" value={this.state.search} className="admin" textController={e => this.textController(e)}></Input>
           <div id="store-items">
             {this.state.visibleItems.map(item => (
-              <AdminStoreItem {...item} />
+              <AdminStoreItem {...item} enableEditor={this.enableEditor} />
             ))}
           </div>
-          {/* <AdminItemEditor type="store" /> */}
+          {this.state.editorEnabled ? <AdminItemEditor type="store" data={this.state.selectedItem} enableEditor={this.enableEditor} /> : null}
         </div>
       </>
     )

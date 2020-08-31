@@ -6,6 +6,7 @@
   height: 100vh
   z-index: 100
   background: rgba(0,0,0,0.2)
+
   #editor
     width: 30%
     height: 65vh
@@ -15,6 +16,17 @@
     position: absolute
     top: 50%
     margin: -32.5vh 0 0 -15vw
+    .cancel 
+      float: right 
+      height: 25px 
+      font-size: 1.5em
+      padding: 15px 15px 0 0
+      transition: all 0.25s ease
+      cursor: pointer
+      margin-left: -39px 
+      &:hover 
+        color: coral 
+
     img
       width: scale-down
       height: 200px

@@ -5,7 +5,7 @@ class AdminStoreItem extends Component {
   constructor(props) {
     super(props)
     this.state = {}
-
+    this.enableEditor = this.props.enableEditor.bind(this)
     // Store props in State
     Object.keys(this.props).forEach(key => (this.state[key] = this.props[key]))
   }
@@ -18,8 +18,6 @@ class AdminStoreItem extends Component {
     this.state.isPublished ? this.setState({ isPublished: false }) : this.setState({ isPublished: true })
   }
 
-  enableEditor = () => this.props.enableEditor(this.state)
-
   render() {
     return (
       <>
@@ -30,7 +28,7 @@ class AdminStoreItem extends Component {
             <button onClick={this.togglePublish}>
               <i className={this.state.isPublished ? "lar la-eye" : "lar la-eye-slash"}></i>
             </button>
-            <button onClick={this.enableEditor}>
+            <button onClick={() => this.enableEditor(this.state)}>
               <i className="las la-cog"></i>
             </button>
             <button>

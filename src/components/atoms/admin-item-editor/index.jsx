@@ -5,17 +5,18 @@ import Input from "../input"
 class AdminItemEditor extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
-    // Store props in State
-    Object.keys(this.props).forEach(key => (this.state[key] = this.props[key]))
+    this.state = this.props.data
+    this.state.prefix = "/" + this.props.type + "/"
   }
 
   render() {
     return (
-      <div id="editor-wrapper">
+      <div id="editor-wrapper" className={this.props.enabled ? "enabled" : "disabled"}>
         <div id="editor">
-          <img src={"/store/893effd5-2043-46e3-9fe6-59a9b3f17044.jpg"}></img>
-
+          <div className="cancel" onClick={() => this.props.enableEditor(false)}>
+            <i className="las la-times"></i>
+          </div>
+          <img src={this.state.prefix + this.state.image} alt={this.state.name}></img>
           <Input placeholder="Name" />
           <Input placeholder="Name" />
           <Input placeholder="Name" />
