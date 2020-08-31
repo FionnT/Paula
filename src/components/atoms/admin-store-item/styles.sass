@@ -1,0 +1,103 @@
+#store-container 
+  .admin-store-item 
+    cursor: pointer
+    width: 100% 
+    margin: 0 auto
+    height: 75px
+    overflow: hidden
+    display: block
+    padding: 5px 0
+    transition: all 0.25s ease
+    &:hover
+      background: white
+      box-shadow: 0px 3px 10px -8px black
+    .item-image 
+      float: left
+      display: inline-block
+      width: 50px
+      margin: 0 5px
+      height: 100%
+      background-position: center
+      background-size: cover
+      background-repeat: no-repeat
+    p 
+      width: 50%
+      text-align: center
+      display: inline-block
+      height: auto
+      font-size: 1.15em
+      padding-top: 25px
+      position: relative
+    .controls 
+      width: 35% 
+      height: 75px 
+      float: right
+      display: inline-block
+      margin: 0 auto 
+      button
+        margin: 0 auto
+        padding: 0
+        height: 100%
+        background: transparent 
+        color: black
+        width: 33.5% 
+        &:hover 
+          color: #FF7F50
+        &:nth-child(2)
+          width: 33% 
+        
+  @media only screen and (max-width: 1200px)
+    .store-item
+      margin-right: 20px
+      &:first-of-type
+        margin-left: 20px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 40px
+  @media only screen and (max-width: 925px)
+    .store-item
+      margin-right: 20px
+      &:first-of-type
+        margin-left: 20px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 0px
+      &:nth-child(2n+1)
+        margin-left: 40px
+  @media only screen and (max-width: 907px)
+    .store-item
+      margin-right: 20px
+      &:nth-child(2n+1)
+        margin-left: 0px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 40px
+      &:first-of-type
+        margin-left: 40px
+  @media only screen and (max-width: 850px)
+    .store-item
+      margin-right: 20px
+      &:first-of-type
+        margin-left: 20px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 0px
+      &:nth-child(2n+1)
+        margin-left: 40px
+  @media only screen and (max-width: 580px)
+    .store-item
+      margin: 50px auto 50px
+      float: unset 
+      display: block
+      &:nth-child(2n+1)
+        margin-left: 0px
+      &:nth-child(4n+1)
+        margin-left: 0px
+      &:nth-child(3n+1)
+        margin-left: 0px
+      &:first-of-type
+        margin-left: 0px

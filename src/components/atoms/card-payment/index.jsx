@@ -86,7 +86,6 @@ const CardPayment = props => {
       updateCart({ emptyCart: true })
       updateHistory("/shop/thank-you")
     }
-    // TODO: Add redirect to Thanks for your order page.
   }
 
   return (

@@ -15,6 +15,12 @@ import "./styles/global.sass"
 // import * as serviceWorker from './serviceWorker'
 
 const App = () => {
+  // Resets scrolling because homepage controls it initially
+  ;(() => {
+    document.documentElement.style.overflow = "auto"
+    document.body.style.overflow = "auto"
+  })()
+
   return (
     <BrowserRouter>
       <UserProvider>
@@ -38,6 +44,7 @@ const App = () => {
             {/* Administration Routes */}
             <Route exact path="/admin/login" component={pages.Authentication} />
             <ProtectedRoute privileges="3" path="/admin/galleries" component={pages.Admin.GalleryControl}></ProtectedRoute>
+            <ProtectedRoute privileges="3" path="/admin/shop" component={pages.Admin.StoreControl}></ProtectedRoute>
 
             {/* Error Pages */}
             <Route exact path="/unauthorised" component={pages.Errors.Unauthorised} />

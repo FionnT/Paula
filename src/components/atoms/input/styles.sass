@@ -52,6 +52,31 @@ div.inputField
     &:active, &:focus
       outline: none
   
+
+div.inputField.admin
+  width: 85% 
+  height: 4vh
+  margin: 20px auto
+  display: block
+  position: relative
+  input
+    height: 100%
+    width: 90%
+    margin-left: 2%
+  &:before
+    display: inline-block
+    height: 100% 
+    width: 2.5%
+    margin-bottom: -15px 
+    content: ""
+    background: url("/search.png")
+    background-position: center
+    background-repeat: no-repeat
+    background-size: contain
+    overflow: none
+  p 
+    display: none
+
 @media only screen and (max-width:700px) 
   div.inputField 
     width: 100%

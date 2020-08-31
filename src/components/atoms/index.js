@@ -1,3 +1,5 @@
+import AdminStoreItem from "./admin-store-item"
+import AdminItemEditor from "./admin-item-editor"
 import Button from "./button"
 import CardPayment from "./card-payment"
 import CartItem from "./cart-item"
@@ -10,9 +12,12 @@ import Input from "./input"
 import IDealPayment from "./ideal-payment"
 import ProtectedRoute from "./protected-route"
 import ReviewItem from "./review-item"
+import StoreItem from "./store-item"
 import UserMenu from "./user-menu"
 
 export {
+  AdminStoreItem,
+  AdminItemEditor,
   Button,
   CardPayment,
   CartItem,
@@ -25,5 +30,6 @@ export {
   Input,
   ProtectedRoute,
   ReviewItem,
+  StoreItem,
   UserMenu
 }

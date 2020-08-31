@@ -46,9 +46,9 @@ class ContactForm extends Component {
   render() {
     return (
       <>
-        <Input type="email" textController={this.textUpdater} placeholder="Your email address *" autoComplete="email" name="email" label="Email" />
-        <Input type="name" textController={this.textUpdater} placeholder="Your name" autoComplete="name" label="Name" />
-        <Input type="text" textController={this.textUpdater} placeholder="Your message *" />
+        <Input type="email" value={this.state.email} textController={this.textUpdater} placeholder="Your email address *" autoComplete="email" name="email" label="Email" />
+        <Input type="name" value={this.state.name} textController={this.textUpdater} placeholder="Your name" autoComplete="name" label="Name" />
+        <Input type="text" value={this.state.text} textController={this.textUpdater} placeholder="Your message *" />
         <Button onSubmit={this.submit}>Submit Your message</Button>
       </>
     )

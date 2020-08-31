@@ -19,7 +19,7 @@ class Input extends Component {
   }
 
   render() {
-    const { className, defaultValue, immutable, immutableWidth, label, mutableWidth, name, placeholder, required, type, value } = this.props
+    const { className, immutable, immutableWidth, label, mutableWidth, name, placeholder, required, type, value } = this.props
     return (
       <div className={"inputField " + type + " " + className}>
         <p>{placeholder}</p>
@@ -34,7 +34,6 @@ class Input extends Component {
             style={{ width: mutableWidth }}
             required={required ? true : false}
             value={value ? value : ""} // Don't do exist check here, as when emptying the element it won't overwrite
-            defaultValue={defaultValue ? defaultValue : undefined}
             name={name ? name : null}
           />
         ) : (

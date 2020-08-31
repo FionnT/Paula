@@ -5,7 +5,6 @@ import FileDropZone from "./file-drop-zone"
 import Login from "./login"
 import ShippingForm from "./shipping-form"
 import CheckoutForm from "./checkout-form"
-import StoreItem from "./store-item"
 import UserProfileButton from "./user-profile-button"
 
-export { CartButton, CheckoutForm, ContactForm, FileDropZone, Login, Photoshoot, ShippingForm, StoreItem, UserProfileButton }
+export { CartButton, CheckoutForm, ContactForm, FileDropZone, Login, Photoshoot, ShippingForm, UserProfileButton }

@@ -11,7 +11,7 @@ const get = name => {
 }
 
 const set = (name, value) => {
-  cookies.set(name, value, { path: "/", expires: new Date(Date.now() + 14400000) }) // 4 Hours
+  cookies.set(name, value, { path: "/", SameSite: "lax", expires: new Date(Date.now() + 14400000) }) // 4 Hours
   return true
 }
 

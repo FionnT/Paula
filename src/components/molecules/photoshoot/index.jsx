@@ -89,7 +89,7 @@ class Photoshoot extends Component {
         case 1:
           image.style.height = "92%"
           image.style.width = maxUnopenedWidth + "px"
-          image.style.marginLeft = maxUnopenedWidth * -1 + "px" // Add 20 px to neg. margin to ensure no overflowing of wide images
+          image.style.marginLeft = maxUnopenedWidth * -1 + "px"
           image.style.marginTop = "2.5%" // Ye I dunno either, should be 4%
           image.style.marginRight = "0"
           return
@@ -132,23 +132,20 @@ class Photoshoot extends Component {
     const styles = window.getComputedStyle(e.target)
     const index = parseInt(e.target.dataset.index)
     let renderWidth = parseInt(styles.width)
-    let effectiveWidth
+    let effectiveWidth = renderWidth > realWidth ? realWidth : renderWidth
 
     if (this.state.activated !== "activated" && !isMobile) {
-      effectiveWidth = renderWidth > realWidth ? realWidth : renderWidth
       if (index === 0) {
         maxUnopenedWidth = effectiveWidth * 0.9
         e.target.dataset.effectiveWidth = effectiveWidth
         e.target.style.marginLeft = containerWidth - effectiveWidth / 2 + "px"
       } else {
         e.target.style.width = maxUnopenedWidth + "px"
-        e.target.style.marginLeft = maxUnopenedWidth * -1 + "px"
+        e.target.style.marginLeft = maxUnopenedWidth * -1 + -2 + "px" // Add -2 px to margin to ensure no overflowing of wide images
       }
     } else if (document.location.href.match(this.state.url)) {
       if (index === 0) {
-        // They are shrunk to 85% when activated, so we need to calculate their effective width differently
         renderWidth = (parseInt(styles.width) / 85) * 100
-        effectiveWidth = renderWidth > realWidth ? realWidth : renderWidth
         maxUnopenedWidth = effectiveWidth * 0.9
       }
     }

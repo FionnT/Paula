@@ -33,7 +33,7 @@ server.use(
       maxAge: maxSessionLength,
       httpOnly: false,
       secure: false,
-      sameSite: "none"
+      sameSite: "lax"
     },
     store: store,
     resave: true,

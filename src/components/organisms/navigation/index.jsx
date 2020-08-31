@@ -71,7 +71,7 @@ class Navigation extends Component {
                 if (
                   // Display in shop root, and only shop root
                   // Display outside the shop if we have items in cart, but not if we're already reviewing our order
-                  (document.location.pathname.match("shop") && !document.location.pathname.match("/shop/")) ||
+                  (document.location.pathname.match("shop") && !document.location.pathname.match("/shop/") && !document.location.pathname.match("/admin")) ||
                   (methods.cart.items.length && !document.location.pathname.match("shop"))
                 )
                   return (
