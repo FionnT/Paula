@@ -1,5 +1,4 @@
 import AdminStoreItem from "./admin-store-item"
-import AdminItemEditor from "./admin-item-editor"
 import Button from "./button"
 import CardPayment from "./card-payment"
 import CartItem from "./cart-item"
@@ -10,6 +9,7 @@ import ErrorPage from "./error-page"
 import GallerySelection from "./gallery-selection"
 import Input from "./input"
 import IDealPayment from "./ideal-payment"
+import PriceSetter from "./price-setter"
 import ProtectedRoute from "./protected-route"
 import ReviewItem from "./review-item"
 import StoreItem from "./store-item"
@@ -17,7 +17,6 @@ import UserMenu from "./user-menu"
 
 export {
   AdminStoreItem,
-  AdminItemEditor,
   Button,
   CardPayment,
   CartItem,
@@ -29,6 +28,7 @@ export {
   IDealPayment,
   Input,
   ProtectedRoute,
+  PriceSetter,
   ReviewItem,
   StoreItem,
   UserMenu

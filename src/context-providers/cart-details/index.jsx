@@ -15,7 +15,8 @@ export class CartProvider extends React.Component {
     this.state = {
       cart: requiredDetails,
       updateCart: this.updateCart,
-      availableItems: []
+      availableItems: [],
+      modifyAvailableItem: this.modifyAvailableItem
     }
   }
 
@@ -118,6 +119,16 @@ export class CartProvider extends React.Component {
         .then(res => {
           this.setState({ availableItems: res }, resolve(res))
         })
+    })
+  }
+
+  modifyAvailableItem = data => {
+    let newArray = [].concat(this.state.availableItems)
+    newArray.forEach((item, index) => {
+      if (item.UUID === data.UUID) {
+        newArray[index] = data
+        this.setState({ availableItems: newArray })
+      }
     })
   }
 
