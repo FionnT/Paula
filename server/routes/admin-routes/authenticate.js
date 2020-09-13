@@ -4,8 +4,8 @@ const jsonParser = require("body-parser").json()
 const session = require("express-session")
 const MongoDBStore = require("connect-mongodb-session")(session)
 const server = require("express")()
-const authenticated = require("./middleware/authenticated")()
-const { Admin, Person } = require("../models/index")
+const authenticated = require("../middleware/authenticated")()
+const { Admin, Person } = require("../../models/index")
 
 const maxSessionLength = 1000 * 60 * 60 * 4 // 4 hours
 const store = new MongoDBStore(
@@ -17,6 +17,7 @@ const store = new MongoDBStore(
     if (err) console.log(err)
   }
 )
+
 const public_metadata = {
   email: undefined,
   name: undefined,
@@ -36,33 +37,10 @@ server.use(
       sameSite: "lax"
     },
     store: store,
-    resave: true,
+    resave: false,
     saveUninitialized: true
   })
 )
-
-server.post("/shop/login", jsonParser, async (req, res) => {
-  const { email, password } = req.body
-  await Person.findOne({ email }, (err, user) => {
-    if (err) res.sendStatus(503)
-    else if (!user) res.sendStatus(403)
-    else {
-      bcrypt.compare(password, user.password, (err, success) => {
-        if (err) res.sendStatus(502)
-        else if (!success) res.sendStatus(403)
-        else {
-          for (let key in public_metadata) {
-            public_metadata[key] = user[key]
-          }
-          req.session.email = user.email
-          req.session.privileges = user.privileges
-          req.session.save()
-          res.json(public_metadata)
-        }
-      })
-    }
-  })
-})
 
 server.post("/admin/login", jsonParser, async (req, res) => {
   const { email, password } = req.body

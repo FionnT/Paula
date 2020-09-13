@@ -1,11 +1,11 @@
 const { Session } = require("../../models")
 
-const authenticated = level => {
+const authenticated = () => {
   return (req, res, next) => {
-    console.log(req.sessionID)
     Session.findById(req.sessionID)
       .lean() // converts mongoose document to JSON
       .exec((err, result) => {
+        // console.log(err, result)
         if (err) console.log(err)
         else if (result) {
           res.locals.email = result.session.email

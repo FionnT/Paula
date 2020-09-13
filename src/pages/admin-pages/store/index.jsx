@@ -49,34 +49,33 @@ class StoreContainer extends Component {
   }
 
   propagateChanges = data => {
+    let modifiableData = Object.assign({}, data)
+
     this.props.modifyAvailableItem(data) // Store it on client side, so we don't need to refresh
     this.enableEditor(false)
-    console.log(data)
+
     let submission = new FormData()
     let postLocation = data.isNew ? "/store/new" : "/store/update"
     let server = process.env.REACT_APP_API_URL + postLocation
 
-    if (data.image.match("data:")) submission.append(data.rawFile.name, data.rawFile)
-    delete data.backgroundImage
-    delete data.enableEditor
-    delete data.rawFile
+    if (data.image.match("data:")) {
+      submission.append(modifiableData.rawFile.name, modifiableData.rawFile)
+      delete modifiableData.image
+    }
 
-    submission.append("data", JSON.stringify(data))
+    delete modifiableData.backgroundImage
+    delete modifiableData.enableEditor
+    delete modifiableData.rawFile
+    delete modifiableData.isNew
 
-    console.log(submission)
+    submission.append("data", JSON.stringify(modifiableData))
 
-    // fetch(server, {
-    //   credentials: "include",
-    //   method: "POST",
-    //   mode: "cors",
-    //   body: submission
-    // }).then(res =>
-    //   res.ok
-    //     ? pageNotification([true, "Gallery Saved!"])
-    //     : res.status === 403
-    //     ? pageNotification([false, "Gallery URL is taken, try another one!"])
-    //     : pageNotification([false, "Server error, please try again!"])
-    // )
+    fetch(server, {
+      credentials: "include",
+      method: "POST",
+      mode: "cors",
+      body: submission
+    }).then(res => (res.ok ? pageNotification([true, "Update Saved"]) : pageNotification([false, "Server error, please try again!"])))
   }
 
   render() {

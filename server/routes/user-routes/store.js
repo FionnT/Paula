@@ -1,45 +1,16 @@
-const { v4: uuidv4 } = require("uuid")
 const server = require("express").Router()
+
 const jsonParser = require("body-parser").json()
 const textParser = require("body-parser").text({ type: "*/*" })
-const busboy = require("connect-busboy")()
 const stripe = require("stripe")(process.env.STRIPE_SERVER_SECRET)
 
-const sendOrderEmails = require("./utilities/order-emailer")
-const privileged = require("./middleware/privileged")
-const authenticated = require("./middleware/authenticated")()
-const { StoreItems, Order } = require("../models/index")
+const sendOrderEmails = require("../utilities/order-emailer")
+const { StoreItems, Order } = require("../../models/index")
 
 server.get("/store/items", (req, res) => {
   StoreItems.find({ isPublished: true }, (err, results) => {
     if (err) res.sendStatus(502)
     else res.json(results)
-  })
-})
-
-//, authenticated, privileged(2)
-server.post("/store/upload/json", jsonParser, (req, res) => {
-  return new Promise(resolve => {
-    const StoreItem = new StoreItems(req.body)
-    const extLocation = req.body.image.split(".").length - 1
-    const extension = req.body.image.split(".")[extLocation]
-    StoreItem.UUID = "893effd5-2043-46e3-9fe6-59a9b3f17044"
-    StoreItem.image = StoreItem.UUID + "." + extension
-    StoreItem.save()
-      .then(res.json({ UUID: StoreItem.UUID }))
-      .then(resolve())
-  })
-})
-
-server.post("/store/upload/update", jsonParser, (req, res) => {
-  return new Promise(resolve => {
-    StoreItems.findOne({ UUID: req.body.UUID }, (err, result) => {
-      if (err) res.sendStatus(500)
-      if (result) {
-        Object.assign(result, req.body)
-        result.save().then(res.sendStatus(200)).then(resolve())
-      } else res.sendStatus(403)
-    })
   })
 })
 
@@ -157,7 +128,6 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
   switch (event["type"]) {
     case "payment_intent.succeeded":
       Order.findOne({ orderID }, (err, order) => {
-        console.log("Order: ", orderID)
         if (err) saveOrderThroughFallback(orderID)
         else if (order) {
           order.status = "payed"

@@ -7,10 +7,10 @@ const fs = require("fs")
 const { v4: uuidv4 } = require("uuid")
 const bcrypt = require("bcrypt")
 
-const privileged = require("./middleware/privileged")
-const authenticated = require("./middleware/authenticated")()
+const privileged = require("../middleware/privileged")
+const authenticated = require("../middleware/authenticated")()
 
-const { Photoshoots } = require("../models/index")
+const { Photoshoots } = require("../../models/index")
 const saltRounds = 10
 
 const saveDir = path.join(__dirname, "../../public/galleries/")
@@ -32,7 +32,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
-  const tmpDir = path.join(__dirname, "../temp/", dirUUID)
+  const tmpDir = path.join(__dirname, "../../temp/", dirUUID)
   const minifiedDir = path.join(tmpDir, "minified")
   const response = { code: undefined }
   let galleryData
@@ -204,7 +204,6 @@ server.post("/galleries/delete", authenticated, privileged(2), jsonParser, async
   const response = { code: undefined }
   const { _id } = req.body
 
-  console.log(_id, req.body)
   Photoshoots.findOneAndDelete({ _id }, (err, photoshoot) => {
     if (err) {
       console.log(err)
@@ -222,7 +221,7 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
-  const tmpDir = path.join(__dirname, "../temp/", dirUUID)
+  const tmpDir = path.join(__dirname, "../../temp/", dirUUID)
   const minifiedDir = path.join(tmpDir, "minified")
   const response = { code: undefined }
   let galleryData
@@ -378,6 +377,28 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
       res.sendStatus(500)
     }
   })
+})
+
+server.get("/photoshoots/all", authenticated, privileged(2), (req, res) => {
+  Photoshoots.find({})
+    .sort("isInHomePosition")
+    .lean()
+    .exec((err, results) => {
+      if (err) res.sendStatus(502)
+      else {
+        let responseBody = {
+          homeGalleries: [],
+          privateGalleries: [],
+          unpublishedGalleries: []
+        }
+        results.forEach(photoshoot => {
+          if (photoshoot.isOnHomeScreen) responseBody.homeGalleries.push(photoshoot)
+          else if (photoshoot.isPublished) responseBody.privateGalleries.push(photoshoot)
+          else responseBody.unpublishedGalleries.push(photoshoot)
+        })
+        res.json(responseBody)
+      }
+    })
 })
 
 module.exports = server

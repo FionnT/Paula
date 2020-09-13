@@ -50,7 +50,6 @@ class AdminItemEditor extends Component {
     let reader = new FileReader()
 
     reader.onloadend = () => {
-      console.log("loadended")
       this.setState({ image: reader.result })
     }
 
@@ -58,10 +57,6 @@ class AdminItemEditor extends Component {
       reader.readAsDataURL(file)
       this.setState({ rawFile: file })
     }
-  }
-
-  onItemSubmit = () => {
-    this.propagateChanges(this.state)
   }
 
   render() {
@@ -75,7 +70,7 @@ class AdminItemEditor extends Component {
           <img id="itemImage" onClick={() => document.getElementById("filepicker").click()} src={this.state.image} alt={this.state.name}></img>
           <Input placeholder={"Name"} type="name" textController={e => this.textController(e, null, "name")} autocomplete="title" className="admin" value={this.state.name} />
           <PriceSetter data={this.state.sizes} addSize={this.addSize} removeSize={this.removeSize} textController={this.textController} />
-          <Button onSubmit={this.onItemSubmit} className="center">
+          <Button onSubmit={() => this.propagateChanges(this.state)} className="center">
             Save Changes
           </Button>
         </div>

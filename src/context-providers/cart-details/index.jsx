@@ -124,6 +124,7 @@ export class CartProvider extends React.Component {
 
   modifyAvailableItem = data => {
     let newArray = [].concat(this.state.availableItems)
+
     newArray.forEach((item, index) => {
       if (item.UUID === data.UUID) {
         newArray[index] = data
