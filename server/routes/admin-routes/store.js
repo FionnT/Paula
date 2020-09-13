@@ -14,10 +14,12 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
   const tmpDir = path.join(__dirname, "../../temp", dirUUID)
+  const minifiedDir = path.join(tmpDir, "/minified")
 
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
+  if (!fs.existsSync(minifiedDir)) fs.mkdirSync(minifiedDir)
 
-  let storeDir = "../../public/store"
+  let storeDir = path.join(__dirname, "../../../public/store")
   let itemData
   let itemUUID
   let fileInfo = {}
@@ -26,7 +28,6 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
   req.busboy.on("field", (fieldname, val) => {
     itemData = JSON.parse(val)
     itemUUID = itemData.UUID
-    fileInfo.old = itemData.image
     return
   })
 
@@ -43,11 +44,12 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
     new Promise(resolve => {
       StoreItems.findOne({ UUID: itemUUID })
         .lean()
-        .exec(err => {
+        .exec((err, result) => {
           if (err) {
             response.code = 404
             resolve()
           } else {
+            fileInfo.old = result.image
             response.code = 200
             resolve()
           }
@@ -57,21 +59,28 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
   const minifyFile = async () => {
     await (async function minify() {
       const fileLocation = path.join(tmpDir, fileInfo.new)
-      const minifiedFile = path.join(storeDir, fileInfo.new)
-      await sharp(fileLocation).resize(null, 300).toFile(minifiedFile)
+      fileInfo.new = path.join(minifiedDir, fileInfo.new)
+      await sharp(fileLocation).resize(null, 300).toFile(fileInfo.new)
       return
     })()
 
     return
   }
 
-  const deleteOriginalFile = () => {
-    console.log("here")
-    fs.rmdirSync(path.join(storeDir, itemData.image))
+  const implementChanges = async () =>
+    new Promise((resolve, reject) => {
+      const fileName = fileInfo.new.split("\\").slice(-1)[0]
+      fs.renameSync(fileInfo.new, path.join(storeDir, fileName))
+      itemData.image = fileName
+      resolve()
+    })
+
+  const cleanupFiles = async () => {
+    fs.unlinkSync(path.join(storeDir, fileInfo.old))
+    fs.rmdirSync(tmpDir, { recursive: true })
   }
 
   const storeUpdates = async () => {
-    if (fileInfo.new) itemData.image = fileInfo.new
     await StoreItems.findOne({ UUID: itemUUID }, (err, result) => {
       if (err) response.code = 500
       else if (result) {
@@ -89,11 +98,10 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
   req.busboy.on("finish", async () => {
     await checkItemExists()
     if (response.code === 200) {
-      if (fileInfo.new) {
-        await minifyFile()
-        await deleteOriginalFile()
-      }
+      if (fileInfo.new) await minifyFile()
+      await implementChanges()
       await storeUpdates()
+      if (fileInfo.old) await cleanupFiles()
       res.sendStatus(response.code)
     } else res.sendStatus(response.code)
   })

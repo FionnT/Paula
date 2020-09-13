@@ -302,7 +302,6 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
                 response.code = 500
                 reject(err)
               } else {
-                console.log(hash)
                 galleryData.password = hash
                 resolve()
               }
