@@ -8,10 +8,13 @@ export default function StoreItem(props) {
     props.updateCart({ items: [{ ...item, size: currentDetails.measurements, type: currentDetails.type, purchaseCost: currentDetails.cost, amount: 1 }] })
   }
 
+  // Reflect changes made by an admin without the need to refresh the page
+  const backgroundImage = { backgroundImage: props.item.image.match("data:") ? "url(" + props.item.image + ")" : "url(/store/" + props.item.image + ")" }
+
   return (
     <>
       <div className="store-item">
-        <div className="item-image" style={{ backgroundImage: "url(/store/" + props.item.image + ")" }}></div>
+        <div className="item-image" style={backgroundImage}></div>
         <div className="item-options">
           {props.item.sizes.map(size => {
             return (
