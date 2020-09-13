@@ -14,7 +14,7 @@ class PriceSetter extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.sizes.toString() != this.props.data.toString()) this.setState({ sizes: this.props.data })
+    if (this.state.sizes.toString() !== this.props.data.toString()) this.setState({ sizes: this.props.data })
   }
 
   render() {

@@ -32,7 +32,7 @@ class StoreContainer extends Component {
   componentDidUpdate() {
     let boolean = false
     this.state.availableItems.forEach((item, index) => {
-      if (JSON.stringify(item) != JSON.stringify(this.props.availableItems[index])) boolean = true
+      if (JSON.stringify(item) !== JSON.stringify(this.props.availableItems[index])) boolean = true
     })
     if (boolean) this.setState({ availableItems: this.props.availableItems, visibleItems: this.props.availableItems })
   }
@@ -51,8 +51,32 @@ class StoreContainer extends Component {
   propagateChanges = data => {
     this.props.modifyAvailableItem(data) // Store it on client side, so we don't need to refresh
     this.enableEditor(false)
+    console.log(data)
+    let submission = new FormData()
+    let postLocation = data.isNew ? "/store/new" : "/store/update"
+    let server = process.env.REACT_APP_API_URL + postLocation
+
+    if (data.image.match("data:")) submission.append(data.rawFile.name, data.rawFile)
     delete data.backgroundImage
     delete data.enableEditor
+    delete data.rawFile
+
+    submission.append("data", JSON.stringify(data))
+
+    console.log(submission)
+
+    // fetch(server, {
+    //   credentials: "include",
+    //   method: "POST",
+    //   mode: "cors",
+    //   body: submission
+    // }).then(res =>
+    //   res.ok
+    //     ? pageNotification([true, "Gallery Saved!"])
+    //     : res.status === 403
+    //     ? pageNotification([false, "Gallery URL is taken, try another one!"])
+    //     : pageNotification([false, "Server error, please try again!"])
+    // )
   }
 
   render() {

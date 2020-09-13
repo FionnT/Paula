@@ -17,18 +17,20 @@ class AdminItemEditor extends Component {
   }
 
   textController = (e, index, field) => {
+    let value = e.target.value
     const numbersOnly = /^[0-9\b]+$/
     const dimensionsOnly = /^[0-9, x\b]+$/
     const textOnly = /^[A-Z, a-z\b]+$/
-    let value = e.target.value
 
-    if (field === "cost" && !numbersOnly.test(value)) return
-    if (field === "measurements" && !dimensionsOnly.test(value)) return
-    if ((field === "type" || field === "name") && !textOnly.test(value)) return
+    if (field !== "name") {
+      if (field === "cost" && !numbersOnly.test(value)) return
+      if (field === "measurements" && !dimensionsOnly.test(value)) return
+      if (field === "type" && !textOnly.test(value)) return
 
-    let newArray = [].concat(this.state.sizes)
-    newArray[index][field] = value
-    this.setState({ sizes: newArray })
+      let newArray = [].concat(this.state.sizes)
+      newArray[index][field] = value
+      this.setState({ sizes: newArray })
+    } else this.setState({ name: value })
   }
 
   addSize = () => {
@@ -71,7 +73,7 @@ class AdminItemEditor extends Component {
           </div>
           <input id="filepicker" onChange={this.renderImageToPreview} style={{ display: "none" }} type="file" accept="jpg,png,jpeg,gif,bmp"></input>
           <img id="itemImage" onClick={() => document.getElementById("filepicker").click()} src={this.state.image} alt={this.state.name}></img>
-          <Input placeholder={"Name"} type="name" autocomplete="title" className="admin" value={this.state.name} />
+          <Input placeholder={"Name"} type="name" textController={e => this.textController(e, null, "name")} autocomplete="title" className="admin" value={this.state.name} />
           <PriceSetter data={this.state.sizes} addSize={this.addSize} removeSize={this.removeSize} textController={this.textController} />
           <Button onSubmit={this.onItemSubmit} className="center">
             Save Changes
