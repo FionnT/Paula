@@ -10,6 +10,9 @@ const privileged = require("../middleware/privileged")
 const authenticated = require("../middleware/authenticated")()
 const { StoreItems } = require("../../models/index")
 
+const baseFileDir = "../../../build"
+// const baseFileDIr = "../../../public"
+
 server.get("/store/items/all", (req, res) => {
   StoreItems.find({}, (err, results) => {
     if (err) res.sendStatus(502)
@@ -42,7 +45,7 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
   if (!fs.existsSync(minifiedDir)) fs.mkdirSync(minifiedDir)
 
-  let storeDir = path.join(__dirname, "../../../public/store")
+  let storeDir = path.join(__dirname, baseFileDir, "/store")
   let itemData
   let itemUUID
   let fileInfo = {}
@@ -185,7 +188,7 @@ server.post("/store/delete-item", authenticated, privileged(2), jsonParser, asyn
       console.log(err)
       res.sendStatus(500)
     } else if (result) {
-      const itemImage = path.join(__dirname, "../../../public/store", result.image)
+      const itemImage = path.join(__dirname, baseFileDir, "/store", result.image)
       fs.unlinkSync(itemImage)
       res.sendStatus(200)
     } else res.sendStatus(404)

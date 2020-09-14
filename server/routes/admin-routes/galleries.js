@@ -13,7 +13,10 @@ const authenticated = require("../middleware/authenticated")()
 const { Photoshoots } = require("../../models/index")
 const saltRounds = 10
 
-const saveDir = path.join(__dirname, "../../public/galleries/")
+const baseFileDir = "../../../build"
+// const baseFileDIr = "../../../public"
+
+const saveDir = path.join(__dirname, baseFileDir, "/galleries/")
 
 let acceptableInputData = {
   itemOrder: undefined,
@@ -27,7 +30,6 @@ let acceptableInputData = {
   url: String
 }
 
-// authenticated, privileged(2),
 server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) => {
   req.pipe(req.busboy)
 
@@ -235,7 +237,7 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
   req.busboy.on("field", (fieldname, val) => {
     galleryData = JSON.parse(val)
     galleryFiles = galleryData.itemOrder
-    galleryDir = path.join(__dirname, "../../public/galleries", galleryData.url)
+    galleryDir = path.join(__dirname, baseFileDir, "/galleries", galleryData.url)
     return
   })
 
