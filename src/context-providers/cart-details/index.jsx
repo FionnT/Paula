@@ -16,7 +16,9 @@ export class CartProvider extends React.Component {
       cart: requiredDetails,
       updateCart: this.updateCart,
       availableItems: [],
-      modifyAvailableItem: this.modifyAvailableItem
+      addItem: this.addItem,
+      modifyAvailableItem: this.modifyAvailableItem,
+      removeAvailableItem: this.removeAvailableItem
     }
   }
 
@@ -113,7 +115,8 @@ export class CartProvider extends React.Component {
 
   fetchStoreItems = () => {
     return new Promise(resolve => {
-      let server = process.env.REACT_APP_API_URL + "/store/items"
+      let route = Cookie.get("userCookie").privileges > 0 ? "/store/items/all" : "/store/items"
+      let server = process.env.REACT_APP_API_URL + route
       fetch(server)
         .then(res => (res.ok ? res.json() : res))
         .then(res => {
@@ -124,10 +127,25 @@ export class CartProvider extends React.Component {
 
   modifyAvailableItem = data => {
     let newArray = [].concat(this.state.availableItems)
+    newArray.forEach((item, index) => {
+      if (item.UUID === data.UUID) {
+        Object.assign(newArray[index], data)
+        this.setState({ availableItems: newArray })
+      }
+    })
+  }
+
+  addItem = data => {
+    let newArray = [data].concat(this.state.availableItems)
+    this.setState({ availableItems: newArray })
+  }
+
+  removeAvailableItem = data => {
+    let newArray = [].concat(this.state.availableItems)
 
     newArray.forEach((item, index) => {
       if (item.UUID === data.UUID) {
-        newArray[index] = data
+        newArray.splice(index, 1)
         this.setState({ availableItems: newArray })
       }
     })

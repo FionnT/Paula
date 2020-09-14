@@ -11,15 +11,17 @@ const corsOptions = {
 }
 
 server.use(cors(corsOptions))
-server.get("/", (req, res) => res.sendStatus(200))
-
-server.use("/", require("./routes/admin-routes/register"))
-server.use("/", require("./routes/admin-routes/authenticate"))
-server.use("/", require("./routes/admin-routes/galleries"))
-server.use("/", require("./routes/admin-routes/store"))
 
 server.use("/", require("./routes/user-routes/contactform"))
 server.use("/", require("./routes/user-routes/galleries"))
 server.use("/", require("./routes/user-routes/store"))
+
+server.use("/", require("./routes/admin-routes/authenticate"))
+
+server.use("/", require("./routes/admin-routes/store"))
+server.use("/", require("./routes/admin-routes/galleries"))
+server.use("/", require("./routes/admin-routes/register"))
+
+server.get("/", (req, res) => res.sendStatus(200))
 
 server.listen(port, () => console.log(`Server listening on port ${port}!`))

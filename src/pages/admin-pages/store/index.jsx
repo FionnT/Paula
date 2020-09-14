@@ -2,18 +2,27 @@ import React, { Component } from "react"
 import { validateText, pageNotification } from "../../../utilities"
 import { Navigation } from "../../../components/organisms"
 import { AdminItemEditor } from "../../../components/molecules"
-import { AdminStoreItem, Input } from "../../../components/atoms"
+import { AdminStoreItem, Button, Input } from "../../../components/atoms"
 import { CartConsumer } from "../../../context-providers/cart-details"
 import "./styles.sass"
 
 function Store() {
   return (
     <CartConsumer>
-      {({ cart, updateCart, availableItems, modifyAvailableItem }) => {
-        return <StoreContainer availableItems={availableItems} modifyAvailableItem={modifyAvailableItem} />
+      {({ cart, updateCart, availableItems, addItem, modifyAvailableItem, removeAvailableItem }) => {
+        return <StoreContainer availableItems={availableItems} addItem={addItem} modifyAvailableItem={modifyAvailableItem} removeAvailableItem={removeAvailableItem} />
       }}
     </CartConsumer>
   )
+}
+
+const blankItem = {
+  UUID: false,
+  sizes: [{}],
+  image: "add-image.png",
+  name: "",
+  isNew: true,
+  isPublished: true
 }
 
 class StoreContainer extends Component {
@@ -24,9 +33,13 @@ class StoreContainer extends Component {
       availableItems: props.availableItems,
       selectedItem: undefined,
       editorEnabled: false,
+      deleteDialogEnabled: false,
       search: undefined,
       valid: false
     }
+    this.addItem = this.props.addItem.bind(this)
+    this.modifyAvailableItem = this.props.modifyAvailableItem.bind(this)
+    this.removeAvailableItem = this.props.removeAvailableItem.bind(this)
   }
 
   componentDidUpdate() {
@@ -51,7 +64,10 @@ class StoreContainer extends Component {
   propagateChanges = data => {
     let modifiableData = Object.assign({}, data)
 
-    this.props.modifyAvailableItem(data) // Store it on client side, so we don't need to refresh
+    // Store it on client side, so we don't need to refresh
+    if (!data.isNew) this.modifyAvailableItem(data)
+    else this.addItem(data)
+
     this.enableEditor(false)
 
     let submission = new FormData()
@@ -61,12 +77,14 @@ class StoreContainer extends Component {
     if (data.image.match("data:")) {
       submission.append(modifiableData.rawFile.name, modifiableData.rawFile)
       delete modifiableData.image
+      delete modifiableData.backgroundImage
+      delete modifiableData.rawFile
+    } else {
+      // Cleanup any changes we made to the image field to make it work client side
+      modifiableData.image = modifiableData.image.match("/") ? modifiableData.image.split("/").slice(-1)[0] : modifiableData.image
     }
 
-    delete modifiableData.backgroundImage
     delete modifiableData.enableEditor
-    delete modifiableData.rawFile
-    delete modifiableData.isNew
 
     submission.append("data", JSON.stringify(modifiableData))
 
@@ -75,7 +93,50 @@ class StoreContainer extends Component {
       method: "POST",
       mode: "cors",
       body: submission
-    }).then(res => (res.ok ? pageNotification([true, "Update Saved"]) : pageNotification([false, "Server error, please try again!"])))
+    }).then(res => {
+      if (res.ok) {
+        if (modifiableData.isNew) pageNotification([true, "Item added"])
+        else pageNotification([true, "Update Saved"])
+      } else pageNotification([false, "Server error, please try again!"])
+    })
+  }
+
+  toggleDeleteDialog = data => this.setState({ selectedItem: data, deleteDialogEnabled: !this.state.deleteDialogEnabled })
+
+  confirmDeletion = data => {
+    let UUID = data.UUID
+    let server = process.env.REACT_APP_API_URL + "/store/delete-item"
+
+    fetch(server, {
+      credentials: "include",
+      method: "POST", // or 'PUT'
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ UUID })
+    }).then(res => {
+      if (res.ok) {
+        this.removeAvailableItem({ UUID })
+        pageNotification([true, "Item deleted"])
+        this.toggleDeleteDialog(false)
+      } else pageNotification([false, "Server error, please try again!"])
+    })
+  }
+
+  togglePublishState = (UUID, isPublished) => {
+    this.modifyAvailableItem({ UUID, isPublished })
+    let server = process.env.REACT_APP_API_URL + "/store/toggle-publish"
+
+    fetch(server, {
+      method: "POST", // or 'PUT'
+      credentials: "include",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ UUID, isPublished })
+    }).then(res => (res.ok ? pageNotification([true, "Publish state changed"]) : pageNotification([false, "Server error, please try again!"])))
   }
 
   render() {
@@ -86,11 +147,25 @@ class StoreContainer extends Component {
           <Input type="search" name="search" value={this.state.search} className="searchbar" textController={e => this.textController(e)}></Input>
           <div id="store-items">
             {this.state.visibleItems.map((item, index) => (
-              <AdminStoreItem {...item} enableEditor={this.enableEditor} key={index} />
+              <AdminStoreItem {...item} enableEditor={this.enableEditor} toggleDeleteDialog={this.toggleDeleteDialog} togglePublishState={this.togglePublishState} key={index} />
             ))}
+          </div>
+          <div id="add-new-item" onClick={() => this.enableEditor(blankItem)}>
+            <span>
+              <i className="las la-plus"></i>
+            </span>
           </div>
           {this.state.editorEnabled ? (
             <AdminItemEditor type="store" data={this.state.selectedItem} enableEditor={this.enableEditor} propagateChanges={this.propagateChanges} />
+          ) : null}
+          {this.state.deleteDialogEnabled ? (
+            <div id="confirm-deletion">
+              <h2>Are you sure you want to delete {this.state.selectedItem.name} ? </h2>
+              <div>
+                <Button onSubmit={() => this.confirmDeletion(this.state.selectedItem)}>Yes</Button>
+                <Button onSubmit={() => this.toggleDeleteDialog(false)}>No</Button>
+              </div>
+            </div>
           ) : null}
         </div>
       </>

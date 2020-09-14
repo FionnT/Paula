@@ -369,7 +369,7 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
         await saveGalleryChanges()
         await deleteTmpFiles()
       }
-      if (response.code === 500) await cleanUpAfterError() // Delete our work if we created it, but could not complete it, 500 is only used for issues completing work
+      if (response.code === 500) await deleteTmpFiles() // Delete our work if we created it, but could not complete it, 500 is only used for issues completing work
       res.sendStatus(response.code)
     } catch (error) {
       console.log(error)

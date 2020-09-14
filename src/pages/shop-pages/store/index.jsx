@@ -10,13 +10,7 @@ export default function Store() {
       <Navigation />
       <CartConsumer>
         {({ cart, updateCart, availableItems }) => {
-          return (
-            <div id="store-container">
-              {availableItems.map(item => (
-                <StoreItem updateCart={updateCart} item={item} key={item.UUID} />
-              ))}
-            </div>
-          )
+          return <div id="store-container">{availableItems.map(item => (item.isPublished ? <StoreItem updateCart={updateCart} item={item} key={item.UUID} /> : null))}</div>
         }}
       </CartConsumer>
     </>

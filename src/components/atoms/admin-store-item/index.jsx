@@ -37,23 +37,19 @@ class AdminStoreItem extends Component {
     this.setState({ currentDetails: size })
   }
 
-  togglePublish = () => {
-    this.state.isPublished ? this.setState({ isPublished: false }) : this.setState({ isPublished: true })
-  }
-
   render() {
     return (
       <div className="admin-store-item">
         <div className="item-image" style={this.state.backgroundImage} alt="Item"></div>
         <p>{this.state.name}</p>
         <div className="controls">
-          <button onClick={this.togglePublish}>
+          <button onClick={() => this.props.togglePublishState(this.state.UUID, !this.state.isPublished)}>
             <i className={this.state.isPublished ? "lar la-eye" : "lar la-eye-slash"}></i>
           </button>
           <button onClick={() => this.enableEditor(this.state)}>
             <i className="las la-cog"></i>
           </button>
-          <button>
+          <button onClick={() => this.props.toggleDeleteDialog(this.state)}>
             <i className="las la-trash"></i>
           </button>
         </div>

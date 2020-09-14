@@ -36,7 +36,7 @@ class Navigation extends Component {
     links.forEach(link => {
       const linkPath = link.attributes.href.value
       const currentPath = document.location.pathname
-      if (currentPath.match(linkPath) && linkPath !== "/") link.style.color = "coral"
+      if (currentPath.match(linkPath) && linkPath !== "/" && !currentPath.match("/admin")) link.style.color = "coral"
     })
   }
 
