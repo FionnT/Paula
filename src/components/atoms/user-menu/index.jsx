@@ -13,9 +13,9 @@ export default function UserMenu(props) {
           <li>
             <Link to="/admin/galleries">Galleries</Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/admin/users">Users</Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/admin/shop">Shop</Link>
           </li>
