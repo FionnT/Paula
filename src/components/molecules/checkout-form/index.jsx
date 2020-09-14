@@ -4,7 +4,7 @@ import { Elements } from "@stripe/react-stripe-js"
 import { validateText } from "../../../utilities"
 import { CardPayment, CreatePaymentIntent, ReviewItem, Input } from "../../../components/atoms"
 
-const stripePromise = loadStripe(process.allowedNodeEnvironmentFlags.REACT_APP_STRIPE_CLIENT_KEY)
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT_KEY)
 
 class CheckoutForm extends Component {
   constructor(props) {
