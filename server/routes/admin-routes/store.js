@@ -86,6 +86,7 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
     await (async function minify() {
       const fileLocation = path.join(tmpDir, fileInfo.new)
       fileInfo.new = path.join(storeDir, fileInfo.new)
+      console.log(fileInfo.new)
       await sharp(fileLocation).resize(null, 300).toFile(fileInfo.new)
       itemData.image = fileInfo.new.split("\\").slice(-1)[0]
       return
