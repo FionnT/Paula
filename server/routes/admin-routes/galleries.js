@@ -317,6 +317,8 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
   const implementChanges = async () => {
     let galleryFilesClone = galleryFiles.slice()
 
+    if (!fs.existsSync(galleryDir)) fs.mkdirSync(galleryDir)
+
     // Replace the old filenames with the new ones, and maintain positioning
     newFiles.forEach(file => {
       galleryFiles.forEach((item, index) => {
