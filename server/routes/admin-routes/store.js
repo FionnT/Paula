@@ -135,7 +135,7 @@ server.post("/store/new", authenticated, privileged(2), busboy, (req, res) => {
 
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
 
-  let storeDir = path.join(__dirname, "../../../public/store")
+  let storeDir = path.join(__dirname, baseFileDir, "/store")
   let itemData = {}
   let fileInfo = {}
   let response = { code: undefined }
