@@ -103,8 +103,14 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
     return
   }
 
+  const orderID = event.data.object.metadata.orderID
+
+  console.log(orderID)
+
   const saveOrderThroughFallback = orderID => {
     // Create and save a new order instead, old one will auto-expire
+    console.log(orderID)
+
     Order.find({ orderID })
       .lean()
       .exec((err, data) => {
@@ -123,10 +129,10 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
       })
   }
 
-  const orderID = event.data.object.metadata.orderID
-
   switch (event["type"]) {
     case "payment_intent.succeeded":
+      console.log(orderID)
+
       Order.findOne({ orderID }, (err, order) => {
         if (err) saveOrderThroughFallback(orderID)
         else if (order) {

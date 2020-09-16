@@ -1,22 +1,8 @@
 const bcrypt = require("bcrypt")
-const cookieParser = require("cookie-parser")
 const jsonParser = require("body-parser").json()
-const session = require("express-session")
-const MongoDBStore = require("connect-mongodb-session")(session)
 const server = require("express")()
 const authenticated = require("../middleware/authenticated")()
 const { Admin, Person } = require("../../models/index")
-
-const maxSessionLength = 1000 * 60 * 60 * 4 // 4 hours
-const store = new MongoDBStore(
-  {
-    uri: "mongodb://localhost:27017/paula",
-    collection: "sessions"
-  },
-  err => {
-    if (err) console.log(err)
-  }
-)
 
 const public_metadata = {
   email: undefined,
@@ -24,23 +10,6 @@ const public_metadata = {
   filename: undefined,
   privileges: undefined
 }
-
-server.use(cookieParser())
-
-server.use(
-  session({
-    secret: process.env.LOGIN_SECRET,
-    cookie: {
-      maxAge: maxSessionLength,
-      httpOnly: false,
-      secure: false,
-      sameSite: "lax"
-    },
-    store: store,
-    resave: false,
-    saveUninitialized: true
-  })
-)
 
 server.post("/admin/login", jsonParser, async (req, res) => {
   const { email, password } = req.body

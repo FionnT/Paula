@@ -11,7 +11,7 @@ const authenticated = require("../middleware/authenticated")()
 const { StoreItems } = require("../../models/index")
 
 const baseFileDir = "../../../build"
-// const baseFileDIr = "../../../public"
+// const baseFileDir = "../../../public"
 
 server.get("/store/items/all", (req, res) => {
   StoreItems.find({}, (err, results) => {

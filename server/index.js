@@ -1,8 +1,38 @@
 const server = require("express")()
 const port = 9001
 const dotenv = require("dotenv").config()
-
+const session = require("express-session")
+const cookieParser = require("cookie-parser")
+const MongoDBStore = require("connect-mongodb-session")(session)
 const cors = require("cors")
+
+const maxSessionLength = 1000 * 60 * 60 * 4 // 4 hours
+const store = new MongoDBStore(
+  {
+    uri: "mongodb://localhost:27017/paula",
+    collection: "sessions"
+  },
+  err => {
+    if (err) console.log(err)
+  }
+)
+
+server.use(cookieParser())
+
+server.use(
+  session({
+    secret: process.env.LOGIN_SECRET,
+    cookie: {
+      maxAge: maxSessionLength,
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax"
+    },
+    store: store,
+    resave: false,
+    saveUninitialized: true
+  })
+)
 
 const corsOptions = {
   origin: process.env.REACT_ORIGIN_DOMAIN,
@@ -12,15 +42,14 @@ const corsOptions = {
 
 server.use(cors(corsOptions))
 
-server.use("/", require("./routes/user-routes/contactform"))
-server.use("/", require("./routes/user-routes/galleries"))
-server.use("/", require("./routes/user-routes/store"))
-
 server.use("/", require("./routes/admin-routes/authenticate"))
-
 server.use("/", require("./routes/admin-routes/store"))
 server.use("/", require("./routes/admin-routes/galleries"))
 server.use("/", require("./routes/admin-routes/register"))
+
+server.use("/", require("./routes/user-routes/contactform"))
+server.use("/", require("./routes/user-routes/galleries"))
+server.use("/", require("./routes/user-routes/store"))
 
 server.get("/", (req, res) => res.sendStatus(200))
 
