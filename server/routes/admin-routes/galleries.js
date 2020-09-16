@@ -13,10 +13,9 @@ const authenticated = require("../middleware/authenticated")()
 const { Photoshoots } = require("../../models/index")
 const saltRounds = 10
 
-const baseFileDir = "../../../build"
-// const baseFileDIr = "../../../public"
-
-const saveDir = path.join(__dirname, baseFileDir, "/galleries/")
+const mediaDir = process.env.mediaDir
+const baseTempDir = path.join(mediaDir, "/temp")
+const baseGalleriesDir = path.join(mediaDir, "/galleries")
 
 let acceptableInputData = {
   itemOrder: undefined,
@@ -34,7 +33,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
-  const tmpDir = path.join(__dirname, "../../temp/", dirUUID)
+  const tmpDir = path.join(baseTempDir, dirUUID)
   const minifiedDir = path.join(tmpDir, "minified")
   const response = { code: undefined }
   let galleryData
@@ -46,7 +45,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
 
   req.busboy.on("field", (fieldname, val) => {
     galleryData = JSON.parse(val)
-    galleryDir = path.join(saveDir, galleryData.url)
+    galleryDir = path.join(baseGalleriesDir, galleryData.url)
   })
 
   req.busboy.on("file", async (fieldname, file, fileName) => {
@@ -134,7 +133,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
       .save()
       .then(
         galleryFiles.forEach(file => {
-          fs.renameSync(path.join(tmpDir, "/minified/", file), path.join(galleryDir, file))
+          fs.renameSync(path.join(minifiedDir, file), path.join(galleryDir, file))
         })
       )
       .then((response.code = 200))
@@ -177,53 +176,11 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
     }
   })
 })
-
-server.post("/galleries/update-positions", authenticated, privileged(2), jsonParser, async (req, res) => {
-  Photoshoots.find({}, (err, data) => {
-    if (err) res.sendStatus(500)
-    else {
-      const existingPhotoshoots = data
-      const newPhotoshoots = req.body
-      existingPhotoshoots.forEach(Photoshoot => {
-        newPhotoshoots.forEach(newPhotoshoot => {
-          // Sometimes React/We send null in the array \__0__/
-          if (newPhotoshoot) {
-            let existingID = Photoshoot._id.toString()
-            let submittedID = newPhotoshoot._id.toString()
-            if (existingID === submittedID && Photoshoot.isInHomePosition !== newPhotoshoot.isInHomePosition) {
-              Photoshoot.isInHomePosition = newPhotoshoot.isInHomePosition
-              Photoshoot.save()
-            }
-          }
-        })
-      })
-      res.sendStatus(200)
-    }
-  })
-})
-
-server.post("/galleries/delete", authenticated, privileged(2), jsonParser, async (req, res) => {
-  const response = { code: undefined }
-  const { _id } = req.body
-
-  Photoshoots.findOneAndDelete({ _id }, (err, photoshoot) => {
-    if (err) {
-      console.log(err)
-      response.code = 500
-    } else if (photoshoot) {
-      const galleryDir = path.join(saveDir, photoshoot.url)
-      if (fs.existsSync(galleryDir)) fs.rmdirSync(galleryDir, { recursive: true })
-      response.code = 200
-    } else response.code = 404
-    res.sendStatus(response.code)
-  })
-})
-
 server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res) => {
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
-  const tmpDir = path.join(__dirname, "../../temp/", dirUUID)
+  const tmpDir = path.join(baseTempDir, dirUUID)
   const minifiedDir = path.join(tmpDir, "minified")
   const response = { code: undefined }
   let galleryData
@@ -237,7 +194,7 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
   req.busboy.on("field", (fieldname, val) => {
     galleryData = JSON.parse(val)
     galleryFiles = galleryData.itemOrder
-    galleryDir = path.join(__dirname, baseFileDir, "/galleries", galleryData.url)
+    galleryDir = path.join(baseGalleriesDir, galleryData.url)
     return
   })
 
@@ -332,7 +289,7 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
 
     try {
       newFiles.forEach(file => {
-        fs.renameSync(path.join(tmpDir, "/minified/", file.new), path.join(galleryDir, file.new))
+        fs.renameSync(path.join(minifiedDir, file.new), path.join(galleryDir, file.new))
       })
     } catch (err) {
       console.log(err)
@@ -379,6 +336,47 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
       console.log(error)
       res.sendStatus(500)
     }
+  })
+})
+
+server.post("/galleries/update-positions", authenticated, privileged(2), jsonParser, async (req, res) => {
+  Photoshoots.find({}, (err, data) => {
+    if (err) res.sendStatus(500)
+    else {
+      const existingPhotoshoots = data
+      const newPhotoshoots = req.body
+      existingPhotoshoots.forEach(Photoshoot => {
+        newPhotoshoots.forEach(newPhotoshoot => {
+          // Sometimes React/We send null in the array \__0__/
+          if (newPhotoshoot) {
+            let existingID = Photoshoot._id.toString()
+            let submittedID = newPhotoshoot._id.toString()
+            if (existingID === submittedID && Photoshoot.isInHomePosition !== newPhotoshoot.isInHomePosition) {
+              Photoshoot.isInHomePosition = newPhotoshoot.isInHomePosition
+              Photoshoot.save()
+            }
+          }
+        })
+      })
+      res.sendStatus(200)
+    }
+  })
+})
+
+server.post("/galleries/delete", authenticated, privileged(2), jsonParser, async (req, res) => {
+  const response = { code: undefined }
+  const { _id } = req.body
+
+  Photoshoots.findOneAndDelete({ _id }, (err, photoshoot) => {
+    if (err) {
+      console.log(err)
+      response.code = 500
+    } else if (photoshoot) {
+      const galleryDir = path.join(baseGalleriesDir, photoshoot.url)
+      if (fs.existsSync(galleryDir)) fs.rmdirSync(galleryDir, { recursive: true })
+      response.code = 200
+    } else response.code = 404
+    res.sendStatus(response.code)
   })
 })
 

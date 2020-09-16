@@ -6,7 +6,7 @@ export default function UserMenu(props) {
   return (
     <>
       <p>
-        <i class="las la-square-full"></i>
+        <i className="las la-square-full"></i>
       </p>
       <div className="profilemenu">
         <ul>

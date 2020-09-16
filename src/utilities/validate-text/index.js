@@ -66,6 +66,7 @@ const validateText = (event, collection, state, _callback, elementCount) => {
       if (key !== "valid") {
         let selector = '[type="' + key + '"]'
         let elements = document.querySelectorAll(selector)
+
         // Feel free to replace with a for loop, but state management might get messy
         if (elements.length > 1) throw new Error("Found multiple inputs of the same type (prop) in your collection. Assign a new type, or remove the secondary element.")
         checkAgainstRules(elements[0])

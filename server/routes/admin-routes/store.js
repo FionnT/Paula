@@ -10,42 +10,20 @@ const privileged = require("../middleware/privileged")
 const authenticated = require("../middleware/authenticated")()
 const { StoreItems } = require("../../models/index")
 
-const baseFileDir = "../../../build"
-// const baseFileDir = "../../../public"
-
-server.get("/store/items/all", (req, res) => {
-  StoreItems.find({}, (err, results) => {
-    if (err) res.sendStatus(502)
-    else if (results) res.json(results)
-    else res.sendStatus(404)
-  })
-})
-
-server.post("/store/toggle-publish", jsonParser, (req, res) => {
-  let UUID = req.body.UUID
-  let isPublished = req.body.isPublished
-  StoreItems.findOne({ UUID }, (err, result) => {
-    if (err) {
-      console.log(err)
-      res.sendStatus(502)
-    } else if (result) {
-      result.isPublished = isPublished
-      result.save().then(res.sendStatus(200))
-    } else res.sendStatus(404)
-  })
-})
+const mediaDir = process.env.mediaDir
+const baseTempDir = path.join(mediaDir, "/temp")
+const baseStoreDir = path.join(mediaDir, "/store")
 
 server.post("/store/update", authenticated, privileged(2), busboy, (req, res) => {
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
-  const tmpDir = path.join(__dirname, "../../temp", dirUUID)
+  const tmpDir = path.join(baseTempDir, dirUUID)
   const minifiedDir = path.join(tmpDir, "/minified")
 
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
   if (!fs.existsSync(minifiedDir)) fs.mkdirSync(minifiedDir)
 
-  let storeDir = path.join(__dirname, baseFileDir, "/store")
   let itemData
   let itemUUID
   let fileInfo = {}
@@ -85,7 +63,7 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
   const minifyFile = async () => {
     await (async function minify() {
       const fileLocation = path.join(tmpDir, fileInfo.new)
-      fileInfo.new = path.join(storeDir, fileInfo.new)
+      fileInfo.new = path.join(baseStoreDir, fileInfo.new)
       await sharp(fileLocation).resize(null, 300).toFile(fileInfo.new)
       itemData.image = fileInfo.new.split("\\").slice(-1)[0]
       return
@@ -95,7 +73,7 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
   }
 
   const cleanupFiles = async () => {
-    fs.unlinkSync(path.join(storeDir, fileInfo.old))
+    fs.unlinkSync(path.join(baseStoreDir, fileInfo.old))
     fs.rmdirSync(tmpDir, { recursive: true })
   }
 
@@ -126,16 +104,14 @@ server.post("/store/update", authenticated, privileged(2), busboy, (req, res) =>
     res.sendStatus(response.code)
   })
 })
-
 server.post("/store/new", authenticated, privileged(2), busboy, (req, res) => {
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
-  const tmpDir = path.join(__dirname, "../../temp", dirUUID)
+  const tmpDir = path.join(baseTempDir, dirUUID)
 
   if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir)
 
-  let storeDir = path.join(__dirname, baseFileDir, "/store")
   let itemData = {}
   let fileInfo = {}
   let response = { code: undefined }
@@ -156,7 +132,7 @@ server.post("/store/new", authenticated, privileged(2), busboy, (req, res) => {
   const minifyFile = async () => {
     await (async function minify() {
       const originalFile = path.join(tmpDir, fileInfo.new)
-      const minifiedFile = path.join(storeDir, fileInfo.new)
+      const minifiedFile = path.join(baseStoreDir, fileInfo.new)
       await sharp(originalFile).resize(null, 300).toFile(minifiedFile)
       return
     })()
@@ -180,7 +156,6 @@ server.post("/store/new", authenticated, privileged(2), busboy, (req, res) => {
     res.end()
   })
 })
-
 server.post("/store/delete-item", authenticated, privileged(2), jsonParser, async (req, res) => {
   let UUID = req.body.UUID
   StoreItems.findOneAndDelete({ UUID }, (err, result) => {
@@ -188,9 +163,31 @@ server.post("/store/delete-item", authenticated, privileged(2), jsonParser, asyn
       console.log(err)
       res.sendStatus(500)
     } else if (result) {
-      const itemImage = path.join(__dirname, baseFileDir, "/store", result.image)
+      const itemImage = path.join(baseStoreDir, result.image)
       fs.unlinkSync(itemImage)
       res.sendStatus(200)
+    } else res.sendStatus(404)
+  })
+})
+
+server.get("/store/items/all", (req, res) => {
+  StoreItems.find({}, (err, results) => {
+    if (err) res.sendStatus(502)
+    else if (results) res.json(results)
+    else res.sendStatus(404)
+  })
+})
+
+server.post("/store/toggle-publish", jsonParser, (req, res) => {
+  let UUID = req.body.UUID
+  let isPublished = req.body.isPublished
+  StoreItems.findOne({ UUID }, (err, result) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(502)
+    } else if (result) {
+      result.isPublished = isPublished
+      result.save().then(res.sendStatus(200))
     } else res.sendStatus(404)
   })
 })

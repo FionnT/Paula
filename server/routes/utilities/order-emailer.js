@@ -9,8 +9,10 @@ const path = require("path")
 const nodemailer = require("nodemailer")
 const sesTransport = require("nodemailer-ses-transport")
 
-const imagesLocation = path.join(__dirname, "../../../build/store/")
 const emailTemplate = path.join(__dirname, "../../emails/email.pug")
+
+const mediaDir = process.env.mediaDir
+const imagesLocation = path.join(mediaDir, "/store/")
 
 const messages = {
   payed: {
@@ -84,10 +86,26 @@ const sendOrderEmails = async (orderData, orderStatus) => {
     html
   }
 
+  const mailOptionsInternalNotifier = {
+    to: process.env.ORDER_FORWARDER,
+    from: "Paula Trojner <" + process.env.STORE_EMAIL + ">",
+    replyTo: process.env.STORE_EMAIL,
+    subject: orderData.status,
+    attachments,
+    html
+  }
+
   sesTransporter.sendMail(mailOptions, err => {
     if (err) console.log(err)
     else return
   })
+
+  if (orderStatus === "payed") {
+    sesTransporter.sendMail(mailOptionsInternalNotifier, err => {
+      if (err) console.log(err)
+      else return
+    })
+  }
 }
 
 module.exports = sendOrderEmails

@@ -3,6 +3,7 @@ import { useState } from "react"
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import { Button } from "../../../components/atoms"
 import { pageNotification } from "../../../utilities"
+
 import "./styles.sass"
 
 // Custom styling can be passed to options when creating an Element.
@@ -70,6 +71,7 @@ const CardPayment = props => {
     event.preventDefault()
 
     if (!payable || !stripe || !elements) return
+
     changePayability(false)
     toggleStatus(false, "Verifying Card", "processing")
 

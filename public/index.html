@@ -3,6 +3,7 @@
 
 <head>
   <script>
+    // Make sure we require HTTPS on live server
     if (document.location.hostname.match("paulatrojner.com") && document.location.protocol != "https:") {
       document.location = document.location.href.replace("http:", "https:")
     }

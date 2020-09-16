@@ -40,6 +40,7 @@ class GalleryControl extends Component {
     document.documentElement.style.overflow = "auto"
     document.body.style.overflow = "unset"
   }
+
   fetchGalleries = () => {
     let server = process.env.REACT_APP_API_URL + "/photoshoots/all"
     return new Promise(resolve => {

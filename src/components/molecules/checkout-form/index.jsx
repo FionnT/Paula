@@ -1,30 +1,19 @@
 import React, { Component } from "react"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements } from "@stripe/react-stripe-js"
-import { validateText } from "../../../utilities"
-import { CardPayment, CreatePaymentIntent, ReviewItem, Input } from "../../../components/atoms"
+import { CardPayment, CreatePaymentIntent, ReviewItem } from "../../../components/atoms"
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_CLIENT_KEY)
 
 class CheckoutForm extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      email: this.props.cart.email,
-      valid: false
-    }
 
     this.cart = this.props.cart
     this.updateCart = this.props.updateCart.bind(this)
     this.updateHistory = this.props.updateHistory.bind(this)
 
     if (this.cart.orderID) this.updateCart(this.cart)
-  }
-
-  textUpdater = event => {
-    validateText(event, false, this.state, data => {
-      this.updateCart({ email: data.email })
-    })
   }
 
   render() {
@@ -39,10 +28,13 @@ class CheckoutForm extends Component {
               <p>{this.cart.city},</p>
               <p>{this.cart.zip},</p>
               <p>{this.cart.country}</p>
+              <p>-</p>
+              <p>{this.cart.email}</p>
               <p className="edit" onClick={() => this.updateHistory("/shop/shipping")}>
-                Edit Shipping
+                Edit Details
               </p>
             </div>
+
             <div id="items-container">
               {this.cart.items.map(item => (
                 <ReviewItem {...item} updateCart={null} key={item.UUID + item.size} disabled="true" />
@@ -57,9 +49,8 @@ class CheckoutForm extends Component {
             </div>
           </div>
           <div className="right-column">
-            <Input textController={this.textUpdater} type="email" value={this.cart.email} placeholder="Contact email" label="email" className="fill" />
             <Elements stripe={stripePromise}>
-              <CardPayment cart={this.cart} updateCart={this.updateCart} updateHistory={this.updateHistory} />
+              <CardPayment cart={this.cart} updateCart={this.updateCart} updateHistory={this.updateHistory} email={this.cart.email} />
             </Elements>
           </div>
         </CreatePaymentIntent>

@@ -49,7 +49,9 @@ class Gallery extends Component {
 
   componentWillUnmount() {
     window.onpopstate = undefined
-    this.handleScrollAbility(false)
+    document.documentElement.style.overflow = "auto"
+    document.body.style.overflow = "auto"
+    document.getElementById("root").style.overflow = "auto"
     document.body.removeEventListener("wheel", this.handleScrollWheel)
   }
 

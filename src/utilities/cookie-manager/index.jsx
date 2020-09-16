@@ -15,9 +15,15 @@ const set = (name, value) => {
   return true
 }
 
+const remove = (name, value) => {
+  cookies.remove(name, value)
+  return true
+}
+
 const Cookie = {
   get,
-  set
+  set,
+  remove
 }
 
 export default Cookie

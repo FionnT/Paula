@@ -11,8 +11,12 @@
 /public/galleries/* 
 !/public/galleries/.gitkeep 
 
-/server/temp/*
-!/server/temp/.gitkeep 
+/public/store/* 
+!/public/store/.gitkeep 
+!/public/store/add-image.png
+
+/public/temp/*
+!/public/temp/.gitkeep 
 
 
 # Logs
@@ -91,6 +95,8 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+.env.prod
+.env.local 
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

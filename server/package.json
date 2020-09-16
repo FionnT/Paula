@@ -5,7 +5,8 @@
   "description": "Backend of the Paula website, handling authentication, contact, and data fetching",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "prod": "echo \"Launching in Production Mode\" && forever -c \"nodemon --exitcrash\" index.js"
   },
   "license": "CC-BA-4.0",
   "dependencies": {

@@ -106,7 +106,11 @@ export class CartProvider extends React.Component {
       Object.keys(newDetails).forEach(key => {
         newDetails[key] = undefined
       })
+      Cookie.remove("addressCookie", addressCookie)
+      Cookie.remove("cartCookie", cartCookie)
+      Cookie.remove("paymentCookie", paymentCookie)
       newDetails.items = [] // bug fix, must always be an array due to .map calls later on
+      delete newDetails.emptyCart
     }
 
     this.manageCookies(true, newDetails)

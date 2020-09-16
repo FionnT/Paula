@@ -33,6 +33,13 @@ class Home extends Component {
     if (this.props.location.state && this.props.location.state.shootname !== this.state.shootname) this.setState({ shootname: this.props.location.state.shootname })
   }
 
+  componentWillUnmount() {
+    console.log("test")
+    document.documentElement.style.overflow = "auto"
+    document.body.style.overflow = "auto"
+    document.getElementById("root").style.overflow = "auto"
+  }
+
   render() {
     return (
       <>

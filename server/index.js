@@ -1,10 +1,18 @@
 const server = require("express")()
 const port = 9001
 const dotenv = require("dotenv").config()
+const cors = require("cors")
+
+const corsOptions = {
+  origin: process.env.REACT_ORIGIN_DOMAIN,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true
+}
+server.use(cors(corsOptions))
+
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
 const MongoDBStore = require("connect-mongodb-session")(session)
-const cors = require("cors")
 
 const maxSessionLength = 1000 * 60 * 60 * 4 // 4 hours
 const store = new MongoDBStore(
@@ -33,14 +41,6 @@ server.use(
     saveUninitialized: true
   })
 )
-
-const corsOptions = {
-  origin: process.env.REACT_ORIGIN_DOMAIN,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  credentials: true
-}
-
-server.use(cors(corsOptions))
 
 server.use("/", require("./routes/admin-routes/authenticate"))
 server.use("/", require("./routes/admin-routes/store"))
