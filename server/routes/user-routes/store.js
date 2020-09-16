@@ -99,6 +99,7 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
     event = stripe.webhooks.constructEvent(body, sig, endpointSecret)
   } catch (err) {
     // invalid signature
+    console.log("test")
     res.sendStatus(500).end()
     return
   }
