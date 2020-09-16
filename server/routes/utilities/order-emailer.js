@@ -9,7 +9,7 @@ const path = require("path")
 const nodemailer = require("nodemailer")
 const sesTransport = require("nodemailer-ses-transport")
 
-const imagesLocation = path.join(__dirname, "../../../public/store/")
+const imagesLocation = path.join(__dirname, "../../../build/store/")
 const emailTemplate = path.join(__dirname, "../../emails/email.pug")
 
 const messages = {
