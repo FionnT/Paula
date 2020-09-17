@@ -10,6 +10,11 @@ To Setup
 1/ First amend models.js in server/models to point to your MongoDB instance, then start MongoDB  
 2/ Next, insert your relevant data in the .env.example files in root, and /server, then rename them .env
 
+2a/ For the mediaDir, I would recommend using the below
+
+    Local: "__dirname, ../../../public" 
+    Prod: "/var/www/media"
+
 3/ Start the Server: 
 
     cd server && npm install && npm start
@@ -23,10 +28,15 @@ To Setup
     npm start (for dev)
     npm run build (for prod)
 
-5b/ For production you may then serve it with a static server:
+5b/ For production you should then serve it with a static server, such as nginx:
 
-    npm i -g serve
-    serve -s ./build -p 9000
+    sudo apt-get install nginx 
+    nginx
+
+5c/ For nginx on Prod, see nginx.conf in root and modify accordingly
+
+    Rename nginx.conf to default, and store here: 
+      /etc/nginx/sites-available
 
 Find out more about deployment here:
 
