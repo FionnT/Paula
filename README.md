@@ -17,30 +17,23 @@ To Setup
 
 3/ Start the Server: 
 
-    cd server && npm install && npm start
+    Local: cd server && npm install && npm start
+    Prod: 
+      1/ npm i forever -g && npm i nodemon -g 
+      2/ cd server && npm install && npm run prod 
 
-4/ Next install the front end: 
+4/ Next install & start the front end: 
 
-    cd ../ && npm install 
+    Local: cd ../ && npm install && npm start
+    Prod: npm run build
 
-5a/ Followed by: 
-
-    npm start (for dev)
-    npm run build (for prod)
-
-5b/ For production you should then serve it with a static server, such as nginx:
+4a/ For production you should then serve it with a static server, such as nginx:
 
     sudo apt-get install nginx 
     nginx
-
-5c/ For nginx on Prod, see nginx.conf in root and modify accordingly
-
-    Rename nginx.conf to default, and store here: 
+    Update nginx.conf in root to match your configuration
+    Rename "nginx.conf" in root to "default", and overwrite the file here: 
       /etc/nginx/sites-available
-
-Find out more about deployment here:
-
-  bit.ly/CRA-deploy
 
 
 License
