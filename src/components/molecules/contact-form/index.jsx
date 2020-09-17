@@ -21,7 +21,15 @@ class ContactForm extends Component {
       body: JSON.stringify(this.state)
     })
       .then(res => {
-        this.emailNotification(parseInt(res.status))
+        this.setState(
+          {
+            email: undefined,
+            name: undefined,
+            text: undefined,
+            valid: false
+          },
+          this.emailNotification(parseInt(res.status))
+        )
       })
       .catch(err => {
         this.emailNotification(502)
