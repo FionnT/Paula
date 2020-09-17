@@ -37,7 +37,7 @@ class Input extends Component {
             name={name ? name : null}
           />
         ) : (
-          <textarea type={type} onInput={e => this.props.textController(e)}></textarea>
+          <textarea required={required ? true : false} type={type} value={value ? value : ""} onChange={e => this.props.textController(e)}></textarea>
         )}
       </div>
     )

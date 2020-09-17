@@ -9,8 +9,18 @@ class ContactForm extends Component {
     valid: false
   }
 
-  submit = () => {
-    if (this.state.valid !== true) return
+  onSubmit = () => {
+    let valid
+
+    validateText(false, this.state, this.state, data => {
+      valid = data.valid
+    })
+
+    if (!valid) {
+      pageNotification([false, "Please fill out all fields!"])
+      return
+    }
+
     // We won't get here unless everything was entererd correctly
     let server = process.env.REACT_APP_API_URL + "/contact"
     fetch(server, {
@@ -54,10 +64,19 @@ class ContactForm extends Component {
   render() {
     return (
       <>
-        <Input type="email" value={this.state.email} textController={this.textUpdater} placeholder="Your email address *" autoComplete="email" name="email" label="Email" />
-        <Input type="name" value={this.state.name} textController={this.textUpdater} placeholder="Your name" autoComplete="name" label="Name" />
-        <Input type="text" value={this.state.text} textController={this.textUpdater} placeholder="Your message *" />
-        <Button onSubmit={this.submit}>Submit Your message</Button>
+        <Input
+          required="true"
+          type="email"
+          value={this.state.email}
+          textController={this.textUpdater}
+          placeholder="Your email address *"
+          autoComplete="email"
+          name="email"
+          label="Email"
+        />
+        <Input required="true" type="name" value={this.state.name} textController={this.textUpdater} placeholder="Your name" autoComplete="name" label="Name" />
+        <Input required="true" type="text" value={this.state.text} textController={this.textUpdater} placeholder="Your message *" />
+        <Button onSubmit={this.onSubmit}>Submit Your message</Button>
       </>
     )
   }
