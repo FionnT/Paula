@@ -45,7 +45,7 @@ server.use(
 server.use("/", require("./routes/admin-routes/authenticate"))
 server.use("/", require("./routes/admin-routes/store"))
 server.use("/", require("./routes/admin-routes/galleries"))
-server.use("/", require("./routes/admin-routes/register"))
+server.use("/", require("./routes/admin-routes/users"))
 
 server.use("/", require("./routes/user-routes/contactform"))
 server.use("/", require("./routes/user-routes/galleries"))

@@ -33,9 +33,10 @@ class App extends React.Component {
 
               {/* Administration Routes */}
               <Route exact path="/admin/login" component={pages.Authentication} />
-              <ProtectedRoute privileges="3" path="/admin/galleries" component={pages.Admin.GalleryControl}></ProtectedRoute>
-              <ProtectedRoute privileges="3" path="/admin/shop" component={pages.Admin.StoreControl}></ProtectedRoute>
-
+              <ProtectedRoute privileges="1" path="/admin/galleries" component={pages.Admin.GalleryControl}></ProtectedRoute>
+              <ProtectedRoute privileges="2" path="/admin/shop" component={pages.Admin.StoreControl}></ProtectedRoute>
+              <ProtectedRoute privileges="2" path="/admin/orders" component={pages.Admin.OrderControl}></ProtectedRoute>
+              <ProtectedRoute privileges="3" path="/admin/users" component={pages.Admin.UserControl}></ProtectedRoute>
               {/* Error Pages */}
               <Route exact path="/unauthorised" component={pages.Errors.Unauthorised} />
               <Route path="*" component={pages.Errors.NotFound} />

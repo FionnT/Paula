@@ -107,33 +107,31 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
 
   const saveOrderThroughFallback = orderID => {
     // Create and save a new order instead, old one will auto-expire
-    Order.find({ orderID })
-      .lean()
-      .exec((err, data) => {
-        if (err) {
-          console.log(err)
-          sendOrderEmails(data, "payed")
-          res.sendStatus(500)
-        } else {
-          data.status = "payed"
-          const order = new Order(data)
-          order.save().then(() => {
-            sendOrderEmails(data, "payed")
-            res.sendStatus(200).end()
-          })
-        }
-      })
+    Order.find({ orderID }, (err, data) => {
+      if (err) {
+        console.log(err)
+        sendOrderEmails(data, "payed")
+        res.sendStatus(500)
+      } else {
+        data.status = "payed"
+        const order = new Order(data)
+        order.save().then(() => {
+          sendOrderEmails(data.toObject(), "payed")
+          res.sendStatus(200).end()
+        })
+      }
+    })
   }
 
   switch (event["type"]) {
     case "payment_intent.succeeded":
-      Order.findOne({ orderID }, (err, order) => {
+      Order.findOne({ orderID }, (err, data) => {
         if (err) saveOrderThroughFallback(orderID)
-        else if (order) {
-          order.status = "payed"
-          order.expireAt = ""
-          order.save().then(() => {
-            sendOrderEmails(order, "payed") // Payment and record update succeeded
+        else if (data) {
+          data.status = "payed"
+          data.expireAt = ""
+          data.save().then(() => {
+            sendOrderEmails(data.toObject(), "payed") // Payment and record update succeeded
             res.sendStatus(200).end()
           })
         }

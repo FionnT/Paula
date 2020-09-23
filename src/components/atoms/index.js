@@ -1,4 +1,5 @@
 import AdminStoreItem from "./admin-store-item"
+import AdminUserItem from "./admin-user-item"
 import Button from "./button"
 import CardPayment from "./card-payment"
 import CartItem from "./cart-item"
@@ -17,6 +18,7 @@ import UserMenu from "./user-menu"
 
 export {
   AdminStoreItem,
+  AdminUserItem,
   Button,
   CardPayment,
   CartItem,

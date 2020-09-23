@@ -13,12 +13,17 @@ export default function UserMenu(props) {
           <li>
             <Link to="/admin/galleries">Galleries</Link>
           </li>
-          {/* <li>
-            <Link to="/admin/users">Users</Link>
-          </li> */}
+
+          <li>
+            <Link to="/admin/orders">Orders</Link>
+          </li>
           <li>
             <Link to="/admin/shop">Shop</Link>
           </li>
+          <li>
+            <Link to="/admin/users">Users</Link>
+          </li>
+
           <li>
             <Link to="/" onClick={() => props.updateUser({})}>
               Logout

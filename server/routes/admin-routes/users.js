@@ -37,4 +37,34 @@ server.post("/admin/register", authenticated, privileged(2), jsonParser, async (
   })
 })
 
+server.get("/admin/users", authenticated, privileged(3), async (req, res) =>
+  Admin.find({})
+    .lean()
+    .exec((err, result) => {
+      if (err) res.sendStatus(502)
+      else if (result) res.json(result)
+      else res.sendStatus(500)
+    })
+)
+
+server.post("/admin/users/update", authenticated, privileged(3), jsonParser, async (req, res) => {
+  const update = req.body
+  await Admin.findById(update.UUID, (err, result) => {
+    if (err) res.sendStatus(404)
+    else if (result) {
+      Object.assign(result, update)
+      result.save().then(res.json(result))
+    } else res.sendStatus(500)
+  })
+})
+
+server.post("/admin/users/delete", authenticated, privileged(3), jsonParser, async (req, res) => {
+  const update = req.body
+  await Admin.findOneAndDelete({ _id: update.UUID }, (err, result) => {
+    if (err) res.sendStatus(404)
+    else if (result) res.sendStatus(200)
+    else res.sendStatus(500)
+  })
+})
+
 module.exports = server

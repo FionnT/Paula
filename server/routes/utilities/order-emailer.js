@@ -78,7 +78,7 @@ const sendOrderEmails = async (orderData, orderStatus) => {
   const html = pug.renderFile(emailTemplate, { order: orderData })
 
   const mailOptions = {
-    to: orderData.email,
+    to: orderData.email.toString(),
     from: "Paula Trojner <" + process.env.STORE_EMAIL + ">",
     replyTo: process.env.STORE_EMAIL,
     subject: orderData.status,
