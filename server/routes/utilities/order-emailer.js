@@ -26,6 +26,10 @@ const messages = {
   failed: {
     status: "Payment Failed",
     message: "Unfortunately the payment for your order has failed, and we won't be able to ship it to you. Click below to retry."
+  },
+  orderReceived: {
+    status: "New Order Received",
+    message: "You've received a new order! The payment was successful, and you can ship it!"
   }
 }
 
@@ -86,21 +90,27 @@ const sendOrderEmails = async (orderData, orderStatus) => {
     html
   }
 
-  const mailOptionsInternalNotifier = {
-    to: process.env.ORDER_FORWARDER,
-    from: "Paula Trojner <" + process.env.STORE_EMAIL + ">",
-    replyTo: process.env.STORE_EMAIL,
-    subject: orderData.status,
-    attachments,
-    html
-  }
-
   sesTransporter.sendMail(mailOptions, err => {
     if (err) console.log(err)
     else return
   })
 
+  // Send a notification of a new order to Store owner
   if (orderStatus === "payed") {
+    orderStatus = "orderReceived"
+    orderData.status = messages[orderStatus].status
+    orderData.message = messages[orderStatus].message
+    orderData.paymentSucceeded = orderStatus !== "failed" ? true : false
+    const html = pug.renderFile(emailTemplate, { order: orderData })
+    const mailOptionsInternalNotifier = {
+      to: process.env.ORDER_FORWARDER,
+      from: "Paula Trojner <" + process.env.STORE_EMAIL + ">",
+      replyTo: process.env.STORE_EMAIL,
+      subject: orderData.status,
+      attachments,
+      html
+    }
+
     sesTransporter.sendMail(mailOptionsInternalNotifier, err => {
       if (err) console.log(err)
       else return
