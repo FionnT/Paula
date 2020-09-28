@@ -38,7 +38,7 @@ class Dragger extends Component {
   }
 
   render() {
-    return <div id="drag-handler" onMouseDown={this.isGrabbing} onMouseUp={this.isGrabbing} className={this.state.isGrabbing}></div>
+    return <div id="drag-handler" onMouseDown={this.isGrabbing} onMouseUp={this.isGrabbing} className={this.state.isGrabbing.toString()}></div>
   }
 }
 
