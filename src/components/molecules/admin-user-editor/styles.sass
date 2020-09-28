@@ -1,0 +1,41 @@
+#editor-wrapper 
+  position: fixed
+  top: 0
+  left: 0
+  width: 100vw
+  height: 100vh
+  z-index: 100
+  background: rgba(0,0,0,0.2)
+  #editor
+    width: 30%
+    height: 65vh
+    background: white
+    box-shadow: 0px 3px 10px -8px black
+    left: 50%
+    position: absolute
+    top: 50%
+    margin: -32.5vh 0 0 -15vw
+    border-radius: 3px
+    overflow: auto
+    .cancel 
+      float: right 
+      height: 25px 
+      font-size: 1.5em
+      padding: 15px 15px 0 0
+      transition: all 0.25s ease
+      cursor: pointer
+      margin-left: -39px 
+      &:hover 
+        color: coral 
+    img
+      width: scale-down
+      height: 200px
+      margin: 25px auto 15px
+      cursor: pointer
+      display: block
+      transition: all 0.35s ease
+      border-radius: 100%
+      &:hover 
+        opacity: 0.5
+    button 
+      margin-bottom: 30px

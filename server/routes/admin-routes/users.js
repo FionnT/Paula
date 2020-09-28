@@ -8,7 +8,7 @@ const authenticated = require("../middleware/authenticated")()
 
 const { Admin } = require("../../models/index")
 
-server.post("/admin/register", authenticated, privileged(2), jsonParser, async (req, res) => {
+server.post("/admin/register", authenticated, privileged(1), jsonParser, async (req, res) => {
   const { email, password } = req.body
   await Admin.findOne({ email }, (err, result) => {
     if (err) res.sendStatus(502)
@@ -37,7 +37,7 @@ server.post("/admin/register", authenticated, privileged(2), jsonParser, async (
   })
 })
 
-server.get("/admin/users", authenticated, privileged(3), async (req, res) =>
+server.get("/admin/users", authenticated, privileged(1), async (req, res) =>
   Admin.find({})
     .lean()
     .exec((err, result) => {
@@ -47,18 +47,20 @@ server.get("/admin/users", authenticated, privileged(3), async (req, res) =>
     })
 )
 
-server.post("/admin/users/update", authenticated, privileged(3), jsonParser, async (req, res) => {
+server.post("/admin/users/update", authenticated, privileged(1), jsonParser, async (req, res) => {
   const update = req.body
-  await Admin.findById(update.UUID, (err, result) => {
+  await Admin.findById(update._id, (err, result) => {
     if (err) res.sendStatus(404)
     else if (result) {
-      Object.assign(result, update)
-      result.save().then(res.json(result))
+      if (res.locals.privileges >= result.privileges) {
+        Object.assign(result, update)
+        result.save().then(res.json(result))
+      } else res.sendStatus(403)
     } else res.sendStatus(500)
   })
 })
 
-server.post("/admin/users/delete", authenticated, privileged(3), jsonParser, async (req, res) => {
+server.post("/admin/users/delete", authenticated, privileged(2), jsonParser, async (req, res) => {
   const update = req.body
   await Admin.findOneAndDelete({ _id: update.UUID }, (err, result) => {
     if (err) res.sendStatus(404)

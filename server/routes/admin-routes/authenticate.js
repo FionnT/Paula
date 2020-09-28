@@ -13,25 +13,27 @@ const public_metadata = {
 
 server.post("/admin/login", jsonParser, async (req, res) => {
   const { email, password } = req.body
-  await Admin.findOne({ email }, (err, user) => {
-    if (err) console.log(err)
-    else if (!user) res.sendStatus(400)
-    else {
-      bcrypt.compare(password, user.password, (err, success) => {
-        if (err) console.log(err)
-        else if (!success) res.sendStatus(403)
-        else {
-          for (let key in public_metadata) {
-            public_metadata[key] = user[key]
+  await Admin.findOne({ email })
+    .select("+password") // Field is not returned by default, only this route should have access to it
+    .exec((err, user) => {
+      if (err) console.log(err)
+      else if (!user) res.sendStatus(400)
+      else {
+        bcrypt.compare(password, user.password, (err, success) => {
+          if (err) console.log(err)
+          else if (!success) res.sendStatus(403)
+          else {
+            for (let key in public_metadata) {
+              public_metadata[key] = user[key]
+            }
+            req.session.email = user.email
+            req.session.privileges = user.privileges
+            req.session.save()
+            res.json(public_metadata)
           }
-          req.session.email = user.email
-          req.session.privileges = user.privileges
-          req.session.save()
-          res.json(public_metadata)
-        }
-      })
-    }
-  })
+        })
+      }
+    })
 })
 
 // The authenticated middleware will tell us if we have an active session for this connectSID

@@ -7,8 +7,8 @@ class Home extends Component {
     this.updateHistory = this.updateHistory.bind(this)
 
     this.state = {
-      shootname: undefined,
-      chevronState: "downonly"
+      lastPositionX: 0,
+      currentX: 0
     }
   }
 
@@ -28,16 +28,10 @@ class Home extends Component {
 
   componentDidMount() {
     if (this.props.match.params && this.props.match.params.shootname !== this.state.shootname) this.setState({ shootname: this.props.match.params.shootname })
+    document.body.addEventListener("drag", e => console.log(e))
   }
   componentDidUpdate() {
     if (this.props.location.state && this.props.location.state.shootname !== this.state.shootname) this.setState({ shootname: this.props.location.state.shootname })
-  }
-
-  componentWillUnmount() {
-    console.log("test")
-    document.documentElement.style.overflow = "auto"
-    document.body.style.overflow = "auto"
-    document.getElementById("root").style.overflow = "auto"
   }
 
   render() {

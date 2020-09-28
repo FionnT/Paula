@@ -18,16 +18,7 @@ function Users() {
           <Async promiseFn={fetchAllUsers}>
             {({ data, err, isLoading }) => {
               if (isLoading) return <img src="/loading.gif" className="loading-image" alt="Page is loading" />
-              else
-                return (
-                  <AdminUserController
-                    allUsers={data}
-                    availableItems={availableItems}
-                    addItem={addItem}
-                    modifyAvailableItem={modifyAvailableItem}
-                    removeAvailableItem={removeAvailableItem}
-                  />
-                )
+              else return <AdminUserController allUsers={data} />
             }}
           </Async>
         )

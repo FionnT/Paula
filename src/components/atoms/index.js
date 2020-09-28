@@ -1,3 +1,4 @@
+import AdminOrderItem from "./admin-order-item"
 import AdminStoreItem from "./admin-store-item"
 import AdminUserItem from "./admin-user-item"
 import Button from "./button"
@@ -17,6 +18,7 @@ import StoreItem from "./store-item"
 import UserMenu from "./user-menu"
 
 export {
+  AdminOrderItem,
   AdminStoreItem,
   AdminUserItem,
   Button,

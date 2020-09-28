@@ -150,7 +150,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
     new Promise(async (resolve, reject) => {
       if (fs.existsSync(tmpDir)) await deleteTmpFiles()
       if (fs.existsSync(galleryDir)) fs.rmdirSync(galleryDir, { recursive: true })
-      await Photoshoots.findOneAndRemove({ url: galleryData.url }) // We create a fake ID on client side, which does not reflect real ID
+      await Photoshoots.findOneAndDelete({ url: galleryData.url }) // We create a fake ID on client side, which does not reflect real ID
         .then(resolve())
         .catch(err => {
           console.log(err)
@@ -176,6 +176,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
     }
   })
 })
+
 server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res) => {
   req.pipe(req.busboy)
 

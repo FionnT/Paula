@@ -52,6 +52,17 @@ class ShippingForm extends Component {
           <Input
             textController={this.textUpdater}
             className="fill"
+            type="email"
+            value={this.state.email}
+            placeholder="Email"
+            label="email"
+            autocomplete="email"
+            name="email"
+            required
+          />
+          <Input
+            textController={this.textUpdater}
+            className="fill"
             type="name"
             value={this.state.name}
             placeholder="Full Name"
@@ -84,17 +95,6 @@ class ShippingForm extends Component {
           />
           <Input textController={this.textUpdater} type="country" value={this.state.country} placeholder="Country" label="Country" autoComplete="country" name="country" required />
           <Input textController={this.textUpdater} type="zip" value={this.state.zip} placeholder="Zip" label="Zip" autoComplete="postal-code" name="postal-code" required />
-          <Input
-            textController={this.textUpdater}
-            className="fill"
-            type="email"
-            value={this.state.email}
-            placeholder="Email"
-            label="email"
-            autocomplete="email"
-            name="email"
-            required
-          />
         </div>
         <div>
           <Button className="center" onSubmit={() => this.validationCheck(this.updateCart, this.state)}>

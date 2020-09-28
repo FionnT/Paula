@@ -10,7 +10,7 @@ export default function ProtectedRoute(props) {
       {({ user }) => {
         if (!user.privileges) return <Redirect to="/admin/login" state={{ redirect: props.path }}></Redirect>
         else if (user.privileges && user.privileges < privileges) return <Redirect to="/unauthorised"></Redirect>
-        else if (user.privileges && user.privileges >= privileges) return <Route path={props.path} component={props.component} />
+        else if (user.privileges && user.privileges >= privileges) return <Route {...props} />
       }}
     </UserConsumer>
   )

@@ -1,0 +1,99 @@
+#store-container.admin.manage
+  #order-status
+    width: auto
+    height: 25px 
+    margin: 2vh auto 3vh
+    text-transform: capitalize
+    text-align: center
+    font-size: 1.5em
+    cursor: default 
+    p  
+      &.shipped 
+        color: green
+      &.payed 
+        color: coral 
+      &.cancelled, &.pending
+        color: red
+  #items-container
+    width: 100%
+    margin: 0 auto
+    padding: 25px 0
+    .total-cost 
+      width: 85%
+      border-top: 1px solid black
+      height: auto 
+      overflow: auto
+      display: block
+      p 
+        font-size: 1.15em
+        margin-top: 15px 
+        float: left 
+        display: inline-block
+        &:last-of-type
+          float: right
+          margin-right: 18px
+    .total-cost
+      width: 100%
+    h2 
+      margin-left: 14%
+    .item.admin 
+      .item-description
+        width: 40% 
+        padding-left: 6%
+  #shipping-details
+    display: block
+    width: 100%
+    height: auto
+    overflow: auto
+    padding-bottom: 50px 
+    h2 
+      text-align: center 
+      font-size: 1.25em
+      padding-bottom: 25px
+      cursor: default
+    .text-wrapper 
+      &:nth-of-type(n+2)
+        height: 90px 
+      width: 75% 
+      float: left
+      height: 145px
+      overflow: auto
+      display: block
+      p
+        text-align: left 
+        line-height: 26px 
+        height: 26px 
+        font-size: 1em 
+        float: left
+        width: 100%
+        margin-bottom: 1px
+        &.edit 
+          margin-top: 4px
+          text-align: left 
+          color: coral 
+          cursor: pointer 
+    .copy 
+      &:last-of-type
+        height: 65px 
+        padding-top: 25px 
+      width: 15% 
+      height: 145px 
+      float: right
+      display: inline-block
+      transition: all 0.35s ease
+      i 
+        float: right
+        cursor: pointer
+        font-size: 1.5em
+        &:hover 
+          transition: all 0.35s cubic-bezier(0.02, 1.13, 0.58, 1.22)
+          color: coral
+          font-size: 1.7em
+  #controls 
+    padding-top: 50px 
+    display: flex 
+    justify-content: space-around
+    button 
+      width: 45%
+    button.cancel
+      background: #c01212

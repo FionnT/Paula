@@ -1,50 +1,77 @@
 import React, { Component } from "react"
+import { UserConsumer } from "../../../context-providers"
 import "./styles.sass"
+
+let englishPrivileges = {
+  0: "Assistant",
+  1: "Manager",
+  2: "Owner",
+  3: "Web Admin"
+}
 
 class AdminUserItem extends Component {
   constructor(props) {
     super(props)
     this.state = {}
     this.enableEditor = this.props.enableEditor.bind(this)
+
     // Store props in State
     Object.keys(this.props).forEach(key => (this.state[key] = this.props[key]))
 
-    // Check if it's a data image, or if we already fixed the URL
-    // let newUrl = this.props.image.match("data:") || this.props.image.match("store") ? "url(" + this.props.image + ")" : "url(/store/" + this.props.image + ")"
-
-    // this.state.backgroundImage = { backgroundImage: newUrl } // required or the style doesn't update
+    this.state.backgroundImage = { backgroundImage: "url(/users/" + this.props.filename + ")" } // required or the style doesn't update
+    this.state.privileges = englishPrivileges[this.props.privileges]
   }
 
-  componentDidUpdate() {
-    // Parse image special case
-    // if (this.props.image.toString() !== this.state.image.toString()) {
-    //   let newUrl = this.props.image.match("data:") || this.props.image.match("store") ? "url(" + this.props.image + ")" : "url(/store/" + this.props.image + ")"
-    //   this.setState({ image: this.props.image, backgroundImage: { backgroundImage: newUrl } })
-    // }
-    // // Parse every other case
-    // let modified = {}
-    // Object.keys(this.props).forEach(key => {
-    //   if (key !== "image" && key !== "backgroundImage" && this.props[key] !== this.state[key]) {
-    //     modified[key] = this.props[key]
-    //   }
-    // })
-    // if (Object.keys(modified).length) this.setState(modified)
+  componentDidUpdate(prevProps) {
+    let modified = {}
+    Object.keys(this.props).forEach(key => {
+      if (this.props[key] !== this.state[key] && key !== "privileges") {
+        modified[key] = this.props[key]
+      } else if (key === "privileges" && this.props.privileges !== prevProps.privileges) modified.privileges = englishPrivileges[this.props.privileges]
+    })
+
+    if (Object.keys(modified).length) this.setState(modified)
   }
 
   render() {
     return (
       <div className="admin-user-item">
         <div className="user-image" style={this.state.backgroundImage} alt="Item"></div>
-        <p>{this.state.name}</p>
-        <p>{this.state.email}</p>
-        <p>{this.state.priveleges}</p>
+        <div className="text-wrapper">
+          <p>{this.state.name}</p>
+          <p>|</p>
+          <p>{this.state.email}</p>
+          <p>|</p>
+          <p>{this.state.privileges}</p>
+        </div>
         <div className="controls">
-          <button onClick={() => this.enableEditor(this.state)}>
-            <i className="las la-cog"></i>
-          </button>
-          <button onClick={() => this.props.toggleDeleteDialog(this.state)}>
-            <i className="las la-trash"></i>
-          </button>
+          <UserConsumer>
+            {({ user }) => {
+              let canModify
+              let canDelete
+
+              if (user.privileges >= this.props.privileges) {
+                canModify = (
+                  <button onClick={() => this.enableEditor(this.state)}>
+                    <i className="las la-cog"></i>
+                  </button>
+                )
+              }
+              if (user.privileges > this.props.privileges) {
+                canDelete = (
+                  <button onClick={() => this.props.toggleDeleteDialog(this.state)}>
+                    <i className="las la-trash"></i>
+                  </button>
+                )
+              }
+              return (
+                <>
+                  {canModify}
+                  {canDelete}
+                </>
+              )
+            }}
+          </UserConsumer>
         </div>
       </div>
     )

@@ -1,8 +1,7 @@
+import OrderController from "./order-controller"
 import GalleryControl from "./galleries"
 import StoreControl from "./store"
 import UserControl from "./users"
-// import HomeAdmin from "./home"
-// import ShopAdmin from "./shop"
-// import UserAdmin from "./users"
+import Orders from "./orders"
 
-export { GalleryControl, StoreControl, UserControl }
+export { OrderController, GalleryControl, Orders, StoreControl, UserControl }

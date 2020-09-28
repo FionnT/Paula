@@ -1,7 +1,19 @@
+#drag-handler 
+  width: 100% 
+  height: 76vh
+  position: fixed
+  top: 14vh 
+  left: 0
+  display: none 
+  cursor: grab
+  &.activated 
+    display: block
+  &.true 
+    cursor: grabbing
+    
 .photoshoot
   height: 84vh
   padding-bottom: 2vh
-
   display: block
   overflow: visible
   h2

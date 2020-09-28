@@ -16,11 +16,13 @@ server.get("/store/items", (req, res) => {
 
 server.post("/store/resume-order", jsonParser, (req, res) => {
   const { orderID } = req.body
-  Order.findOne({ orderID, status: "pending" }, (err, result) => {
-    if (err) res.sendStatus(500)
-    if (result) res.json(result)
-    else res.sendStatus(404)
-  })
+  Order.findOne({ orderID, status: "pending" })
+    .lean()
+    .exec((err, result) => {
+      if (err) res.sendStatus(500)
+      if (result) res.json(result)
+      else res.sendStatus(404)
+    })
 })
 
 server.post("/store/paymentintent", jsonParser, async (req, res) => {
@@ -105,45 +107,65 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
 
   const orderID = event.data.object.metadata.orderID
 
-  const saveOrderThroughFallback = orderID => {
+  const saveOrderThroughFallback = (orderID, status) => {
     // Create and save a new order instead, old one will auto-expire
     Order.find({ orderID }, (err, data) => {
       if (err) {
         console.log(err)
-        sendOrderEmails(data, "payed")
         res.sendStatus(500)
       } else {
-        data.status = "payed"
+        // We don't need to disable expiry here, because we never set it
+        // It only gets set when a placeholder order is created via payment intent route
+        data.status = status
         const order = new Order(data)
         order.save().then(() => {
-          sendOrderEmails(data.toObject(), "payed")
+          sendOrderEmails(data.toObject(), true)
           res.sendStatus(200).end()
         })
       }
     })
   }
-
+  console.log(event.data.object.id)
   switch (event["type"]) {
     case "payment_intent.succeeded":
       Order.findOne({ orderID }, (err, data) => {
-        if (err) saveOrderThroughFallback(orderID)
+        if (err) saveOrderThroughFallback(orderID, "pending")
         else if (data) {
-          data.status = "payed"
+          data.status = "pending"
           data.expireAt = ""
           data.save().then(() => {
-            sendOrderEmails(data.toObject(), "payed") // Payment and record update succeeded
+            sendOrderEmails(data.toObject(), false) // Payment and record update succeeded
+            res.sendStatus(200).end()
+          })
+        }
+      })
+      return
+    case "charge.succeeded":
+      Order.findOne({ orderID }, (err, data) => {
+        if (err) saveOrderThroughFallback(orderID, "payed")
+        else if (data) {
+          data.status = "payed"
+          data.chargeID = event.data.object.id
+          data.expireAt = ""
+          data.save().then(() => {
+            sendOrderEmails(data.toObject(), true) // Payment and record update succeeded
             res.sendStatus(200).end()
           })
         }
       })
       return
     case "payment_intent.payment_failed" || "charge.failed":
-      Order.findOne({ orderID })
-        .lean()
-        .exec((err, data) => {
-          if (err) res.sendStatus(500)
-          else if (data) sendOrderEmails(data, "failed") // Payment failed
-        })
+      Order.findOne({ orderID }, (err, data) => {
+        if (err) saveOrderThroughFallback(orderID, "failed")
+        else if (data) {
+          data.status = "failed"
+          data.expireAt = ""
+          data.save().then(() => {
+            sendOrderEmails(data.toObject(), false) // Payment and record update succeeded
+            res.sendStatus(200).end()
+          })
+        }
+      })
       return
     default:
       res.sendStatus(202)

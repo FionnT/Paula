@@ -28,7 +28,7 @@ export default function ReviewItem(props) {
   }
 
   return (
-    <div className="item noselect" key={props.UUID}>
+    <div className={"item noselect " + props.className} key={props.UUID}>
       <div className="item-image" style={{ backgroundImage: "url(/store/" + props.image + ")" }}></div>
       <div className="item-description">
         <h3>{props.name}</h3>

@@ -31,6 +31,7 @@ const CARD_ELEMENT_OPTIONS = {
 const CardPayment = props => {
   const [error, setError] = useState(null)
   const [status, updateStatus] = useState("Checkout")
+  const [listenerSet, toggleListenerBool] = useState(false)
   const [payable, changePayability] = useState(true)
   const stripe = useStripe()
   const elements = useElements()
@@ -39,29 +40,37 @@ const CardPayment = props => {
 
   // Handle real-time validation errors from the card Element.
   const handleChange = event => {
+    toggleStatus(false, "Checkout") // Block user from navigating as soon as they start entering card details
     if (event.error) {
       setError(event.error.message)
-      toggleStatus(true)
     } else {
       setError(null)
     }
   }
 
-  const toggleStatus = (resetting, message, className) => {
-    // Don't let the user close the tab
-    const preventUnload = e => {
-      e.preventDefault()
-      return (e.returnValue = "") // You can't actually change the message
-    }
+  function preventUnload(e) {
+    e.preventDefault()
+    e.returnValue = "" // You can't actually change the message
+  }
 
+  const toggleStatus = (resetting, message, className) => {
     const button = document.getElementById("checkout-button")
+
     if (resetting) {
-      window.removeEventListener("beforeunload", preventUnload)
+      console.log("should be gone")
+      // Look, try adding an event listener instead
+      // Then try fucking removing it!
+      window.onbeforeunload = undefined
+      toggleListenerBool(false)
       button.classList = "center"
       updateStatus("Checkout")
       changePayability(true)
     } else {
-      window.addEventListener("beforeunload", preventUnload)
+      // Don't let the user close the tab
+      if (!listenerSet) {
+        window.onbeforeunload = preventUnload
+        toggleListenerBool(true)
+      }
       button.classList.add(className)
       updateStatus(message)
     }
@@ -71,7 +80,6 @@ const CardPayment = props => {
     event.preventDefault()
 
     if (!payable || !stripe || !elements) return
-
     changePayability(false)
     toggleStatus(false, "Verifying Card", "processing")
 
@@ -83,8 +91,8 @@ const CardPayment = props => {
 
     if (paymentConfirmation.error) {
       pageNotification(["false", paymentConfirmation.error.message + "<br />Please try again."])
-      toggleStatus(true)
     } else if (paymentConfirmation.paymentIntent.status === "succeeded") {
+      toggleStatus(true)
       updateCart({ emptyCart: true })
       updateHistory("/shop/thank-you")
     }

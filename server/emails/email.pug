@@ -3,10 +3,10 @@ include includes/header.pug
 #confirmation(style="width: 100%;height: auto;background: white; max-width: 650px; margin: 0 auto; ")
   h3(style="font-size: 1.25em;padding-top: 25px; text-align: center;")=order.status
   p(style="font-size: 0.9em; max-width: 80%;display: block;margin: 0 auto;padding: 15px 0 35px;text-align: center;")=order.message
-  if !order.paymentSucceeded 
+  if order.shouldRetryPayment
     #retry-button(style="margin: 0 auto; width: 200px;height: 35px;padding: 0 0 20px 0;")
       a(href="https://paulatrojner.com/shop/checkout/" + order.orderID)
-        button(style="border-radius: 15px;height: 35px; width: 100%;margin: 0 auto; background: coral;color: white;font-weight: 400;font-size: 0.95em;font-family: 'Source Sans Pro', sans-serif;border: none; outline: none;cursor: pointer;")="Retry payment"
+        button(style="border-radius: 15px;height: 35px; width: 100%;margin: 0 auto; background: coral;color: white;font-weight: 400;font-size: 0.95em;font-family: 'Source Sans Pro', sans-serif;border: none; outline: none;cursor: pointer;")="Retry"
 
 if order.items
   .order-information(style="width: 100%; height: auto; overflow: auto; max-width: 650px; margin: 0 auto; background: #f3f3f3")

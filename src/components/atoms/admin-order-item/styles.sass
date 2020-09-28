@@ -1,7 +1,7 @@
 #users
-  .admin-user-item 
+  .admin-order-item 
     cursor: pointer
-    width: 820px
+    width: 725px
     margin: 0 auto
     height: 75px
     overflow: hidden
@@ -22,14 +22,14 @@
       background-size: cover
       background-repeat: no-repeat
     .text-wrapper 
-      width: 540px
+      width: 600px
       height: 100%
       display: inline-block
       float: left
       justify-content: space-between
       padding: 0 25px 0 10px
       p 
-        width: 250px 
+        width: 120px 
         text-overflow: ellipsis
         overflow: hidden
         text-align: center
@@ -38,16 +38,26 @@
         font-size: 1.15em
         padding-top: 25px
         position: relative
+        &.shipped
+          color: green
+        &.payed
+          color: coral 
+        &.pending, &.cancelled
+          color: red  
         &:nth-of-type(1)
-          width: 125px
+          width: 90px
+          padding-left: 10px
+          text-transform: capitalize
+        &:nth-of-type(5)
+          width: 250px
         &:last-child
-          width: 100px
+          width: 50px
         &:nth-child(even)
           color: coral
           width: auto
           margin: 0 10px
     .controls 
-      width: 150px
+      width: 75px
       height: 75px 
       float: left
       display: flex

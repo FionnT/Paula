@@ -19,7 +19,11 @@ const messages = {
     status: "Payment Succeeded",
     message: "Thank you for your order! The payment was successful, and we'll be shipping it soon!"
   },
-  received: {
+  shipped: {
+    status: "Order Shipped",
+    message: "Thank you for your order! We've just shipped it to you, and it will be with you soon!"
+  },
+  pending: {
     status: "Order Received",
     message: "Thank you for your purchase! We've received your order, and your payment will be processed shortly. You can view your order details below."
   },
@@ -27,7 +31,11 @@ const messages = {
     status: "Payment Failed",
     message: "Unfortunately the payment for your order has failed, and we won't be able to ship it to you. Click below to retry."
   },
-  orderReceived: {
+  cancelled: {
+    status: "Order Cancelled",
+    message: "We've succesfully cancelled your order, and your refund is on it's way to your account."
+  },
+  notifyOwnerOfOrder: {
     status: "New Order Received",
     message: "You've received a new order! The payment was successful, and you can ship it!"
   }
@@ -50,10 +58,11 @@ const itemImagesToBase64 = async items => {
   return items
 }
 
-const sendOrderEmails = async (orderData, orderStatus) => {
-  orderData.status = messages[orderStatus].status
-  orderData.message = messages[orderStatus].message
-  orderData.paymentSucceeded = orderStatus !== "failed" ? true : false
+const sendOrderEmails = async (orderData, shouldNotifyStoreOwner) => {
+  let state = orderData.status
+  orderData.status = messages[state].status
+  orderData.message = messages[state].message
+  orderData.shouldRetryPayment = orderData.status !== "failed" || "cancelled" ? false : true
 
   const attachments = [
     {
@@ -96,11 +105,11 @@ const sendOrderEmails = async (orderData, orderStatus) => {
   })
 
   // Send a notification of a new order to Store owner
-  if (orderStatus === "payed") {
-    orderStatus = "orderReceived"
-    orderData.status = messages[orderStatus].status
-    orderData.message = messages[orderStatus].message
-    orderData.paymentSucceeded = orderStatus !== "failed" ? true : false
+  if (shouldNotifyStoreOwner) {
+    orderData.status = messages["notifyOwnerOfOrder"].status
+    orderData.message = messages["notifyOwnerOfOrder"].message
+    orderData.shouldRetryPayment = false
+
     const html = pug.renderFile(emailTemplate, { order: orderData })
     const mailOptionsInternalNotifier = {
       to: process.env.ORDER_FORWARDER,

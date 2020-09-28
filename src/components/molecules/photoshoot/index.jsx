@@ -1,9 +1,48 @@
 // eslint-disable-file
 import React, { Component } from "react"
-import "./styles.sass"
 import { isEdge, isMobile, isIOS13, isIPad13, isIPhone13, isIPod13 } from "react-device-detect"
+import clickdrag from "react-clickdrag"
+import "./styles.sass"
 
 let maxUnopenedWidth
+
+class Dragger extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      lastPositionX: 0,
+      currentX: 0,
+      isGrabbing: false
+    }
+  }
+
+  isGrabbing = () => {
+    this.setState({ isGrabbing: !this.state.isGrabbing })
+  }
+  componentWillReceiveProps(nextProps) {
+    // Changing directions mid-drag won't work. This is fine.
+    const movingGalleryToTheLeft = nextProps.dataDrag.moveDeltaX <= 0 ? true : false
+    const newPosition = this.state.currentX + nextProps.dataDrag.moveDeltaX
+    const newCoordinates = Math.round((newPosition / 80000) * -1) // Why 2300? You tell me
+    if (movingGalleryToTheLeft) {
+      if (nextProps.dataDrag.isMoving) {
+        this.setState({ lastPositionX: this.state.currentX, currentX: newPosition })
+        document.body.scrollLeft += newCoordinates
+      }
+    } else if (!movingGalleryToTheLeft) {
+      if (nextProps.dataDrag.isMoving) {
+        this.setState({ currentX: newPosition, lastPositionX: this.state.currentX })
+        document.body.scrollLeft += newCoordinates * -1
+      }
+    }
+  }
+
+  render() {
+    return <div id="drag-handler" onMouseDown={this.isGrabbing} onMouseUp={this.isGrabbing} className={this.props.className + " " + this.state.isGrabbing}></div>
+  }
+}
+
+const DragWrapper = clickdrag(Dragger, { touch: true })
 
 class Photoshoot extends Component {
   constructor(props) {
@@ -11,7 +50,6 @@ class Photoshoot extends Component {
     this.handlePageNavigation = this.props.handlePageNavigation.bind(this) // handles actual page/url navigation
     this.state = this.props.data
   }
-
   componentDidUpdate() {
     if (this.props && this.props.data.activated !== this.state.activated) this.setState({ activated: this.props.data.activated })
     if (this.props && this.props.scrolling !== this.state.scrolling) this.setState({ scrolling: this.props.scrolling })
@@ -174,22 +212,25 @@ class Photoshoot extends Component {
 
   render() {
     return (
-      <div id={this.state.url} className={"photoshoot " + this.state.activated}>
-        <h2>{this.state.title}</h2>
-        <div
-          className="photo-wrapper"
-          onMouseOver={() => this.handleHover(true)}
-          onMouseMove={() => this.handleHover(true)} // Handle moving mouse after scrolling
-          onMouseLeave={() => this.handleHover()}
-          onMouseDown={() => this.handlePageNavigation(this.state.url)}
-        >
-          {this.handleRender()}
+      <>
+        <DragWrapper className={this.state.activated} />
+        <div id={this.state.url} className={"photoshoot " + this.state.activated} ref>
+          <h2>{this.state.title}</h2>
+          <div
+            className="photo-wrapper"
+            onMouseOver={() => this.handleHover(true)}
+            onMouseMove={() => this.handleHover(true)} // Handle moving mouse after scrolling
+            onMouseLeave={() => this.handleHover()}
+            onMouseDown={() => this.handlePageNavigation(this.state.url)}
+          >
+            {this.handleRender()}
+          </div>
+          <div className="gallery-back">
+            <p onClick={() => this.handlePageNavigation(false)}>Go Back</p>
+            <span></span>
+          </div>
         </div>
-        <div className="gallery-back">
-          <p onClick={() => this.handlePageNavigation(false)}>Go Back</p>
-          <span></span>
-        </div>
-      </div>
+      </>
     )
   }
 }

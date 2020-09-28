@@ -9,7 +9,9 @@
 !/server/db/.gitkeep 
 
 /public/galleries/* 
+
 !/public/galleries/.gitkeep 
+
 
 /public/store/* 
 !/public/store/.gitkeep 
@@ -18,6 +20,8 @@
 /public/temp/*
 !/public/temp/.gitkeep 
 
+/public/users/* 
+!/public/galleries/.gitkeep
 
 # Logs
 logs
