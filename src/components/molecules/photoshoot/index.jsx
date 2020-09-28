@@ -38,7 +38,7 @@ class Dragger extends Component {
   }
 
   render() {
-    return <div id="drag-handler" onMouseDown={this.isGrabbing} onMouseUp={this.isGrabbing} className={this.props.className + " " + this.state.isGrabbing}></div>
+    return <div id="drag-handler" onMouseDown={this.isGrabbing} onMouseUp={this.isGrabbing} className={this.state.isGrabbing}></div>
   }
 }
 
@@ -213,7 +213,7 @@ class Photoshoot extends Component {
   render() {
     return (
       <>
-        <DragWrapper className={this.state.activated} />
+        {this.state.activated ? <DragWrapper /> : null}
         <div id={this.state.url} className={"photoshoot " + this.state.activated} ref>
           <h2>{this.state.title}</h2>
           <div
