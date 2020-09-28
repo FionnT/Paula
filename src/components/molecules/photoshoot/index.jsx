@@ -16,9 +16,6 @@ class Dragger extends Component {
     }
   }
 
-  isGrabbing = () => {
-    this.setState({ isGrabbing: !this.state.isGrabbing })
-  }
   componentWillReceiveProps(nextProps) {
     // Changing directions mid-drag won't work. This is fine.
     const movingGalleryToTheLeft = nextProps.dataDrag.moveDeltaX <= 0 ? true : false
@@ -38,7 +35,9 @@ class Dragger extends Component {
   }
 
   render() {
-    return <div id="drag-handler" onMouseDown={this.isGrabbing} onMouseUp={this.isGrabbing} className={this.state.isGrabbing.toString()}></div>
+    return (
+      <div id="drag-handler" onMouseDown={() => this.setState({ isGrabbing: true })} onMouseUp={() => this.setState({ isGrabbing: false })} className={this.state.isGrabbing}></div>
+    )
   }
 }
 
