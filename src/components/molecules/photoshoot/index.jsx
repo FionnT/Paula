@@ -20,7 +20,7 @@ class Dragger extends Component {
     // Changing directions mid-drag won't work. This is fine.
     const movingGalleryToTheLeft = nextProps.dataDrag.moveDeltaX <= 0 ? true : false
     const newPosition = this.state.currentX + nextProps.dataDrag.moveDeltaX
-    const newCoordinates = Math.round((newPosition / 40000) * -1) // Why 2300? You tell me
+    const newCoordinates = Math.round((newPosition / 20000) * -1) // Why 2300? You tell me
     if (movingGalleryToTheLeft) {
       if (nextProps.dataDrag.isMoving) {
         this.setState({ lastPositionX: this.state.currentX, currentX: newPosition })
