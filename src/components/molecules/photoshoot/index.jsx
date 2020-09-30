@@ -217,7 +217,7 @@ class Photoshoot extends Component {
   render() {
     return (
       <>
-        {this.state.activated ? <DragWrapper /> : null}
+        {this.state.activated === "activated" ? <DragWrapper /> : null}
         <div id={this.state.url} className={"photoshoot " + this.state.activated} ref>
           <h2>{this.state.title}</h2>
           <div
