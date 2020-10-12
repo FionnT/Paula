@@ -28,32 +28,7 @@ class GalleryConfiguration extends Component {
     this.state.creatingPassword = this.props.selected.password ? true : false // Used to make sure we don't swap to the UI used when there already is a password
   }
 
-  textUpdater = event => {
-    const isPassword = event.target.attributes.type.value.match("password") ? true : false
-    validateText(
-      event,
-      false,
-      this.state,
-      data => {
-        if (isPassword) {
-          const passwordFields = Array.from(document.querySelectorAll("input")).filter(element => element.attributes.type && element.attributes.type.value.match("password"))
-          let style
-          data.isPasswordProtected = true
-          data.creatingPassword = true
-          if (passwordFields[0].value !== passwordFields[1].value) {
-            style = "1px solid red"
-            data.valid = false
-          } else {
-            style = "1px solid gray"
-            data.valid = true
-          }
-          passwordFields.forEach(field => (field.style.borderBottom = style))
-        }
-        this.onGalleryDetailChange(data)
-      },
-      2
-    )
-  }
+  textUpdater = event => validateText(event, false, this.state, data => this.onGalleryDetailChange(data), 2)
 
   toggleType = (type, e) => {
     Array.from(document.querySelectorAll(".gallery-type div span")).forEach(element => element.classList.remove("active"))
@@ -158,9 +133,6 @@ class GalleryConfiguration extends Component {
           <div>
             <span onClick={e => this.toggleType("homeGalleries", e)} className={selected.isOnHomeScreen ? "active" : null}>
               Published
-            </span>
-            <span onClick={e => this.toggleType("privateGalleries", e)} className={selected.isOnHomeScreen ? null : selected.isPublished ? "active" : null}>
-              Private
             </span>
             <span onClick={e => this.toggleType("unpublishedGalleries", e)} className={selected.isOnHomeScreen ? null : selected.isPublished ? null : "active"}>
               Unpublished

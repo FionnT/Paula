@@ -6,6 +6,7 @@ import CardPayment from "./card-payment"
 import CartItem from "./cart-item"
 import ChevronNavigation from "./chevron-navigation"
 import CreatePaymentIntent from "./create-payment-intent"
+import DraggingBoard from "./dragging-board"
 import DropZoneImage from "./drop-zone-image"
 import ErrorPage from "./error-page"
 import GallerySelection from "./gallery-selection"
@@ -26,6 +27,7 @@ export {
   CartItem,
   ChevronNavigation,
   CreatePaymentIntent,
+  DraggingBoard,
   DropZoneImage,
   ErrorPage,
   GallerySelection,

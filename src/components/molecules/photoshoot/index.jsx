@@ -1,52 +1,10 @@
 // eslint-disable-file
 import React, { Component } from "react"
 import { isEdge, isMobile, isIOS13, isIPad13, isIPhone13, isIPod13 } from "react-device-detect"
-import clickdrag from "react-clickdrag"
+import { DraggingBoard } from "../../atoms"
 import "./styles.sass"
 
 let maxUnopenedWidth
-
-class Dragger extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      lastPositionX: 0,
-      currentX: 0,
-      isGrabbing: false
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Changing directions mid-drag won't work. This is fine.
-    const movingGalleryToTheLeft = nextProps.dataDrag.moveDeltaX <= 0 ? true : false
-    const newPosition = this.state.currentX + nextProps.dataDrag.moveDeltaX
-    const newCoordinates = Math.round((newPosition / 10000) * -1) // Why 2300? You tell me
-    if (movingGalleryToTheLeft) {
-      if (nextProps.dataDrag.isMoving) {
-        this.setState({ lastPositionX: this.state.currentX, currentX: newPosition })
-        document.body.scrollLeft += newCoordinates
-      }
-    } else if (!movingGalleryToTheLeft) {
-      if (nextProps.dataDrag.isMoving) {
-        this.setState({ currentX: newPosition, lastPositionX: this.state.currentX })
-        document.body.scrollLeft += newCoordinates * -1
-      }
-    }
-  }
-
-  render() {
-    return (
-      <div
-        id="drag-handler"
-        onMouseDown={() => this.setState({ className: "is-grabbing" })}
-        onMouseUp={() => this.setState({ className: "" })}
-        className={this.state.className}
-      ></div>
-    )
-  }
-}
-
-const DragWrapper = clickdrag(Dragger, { touch: true })
 
 class Photoshoot extends Component {
   constructor(props) {
@@ -217,7 +175,7 @@ class Photoshoot extends Component {
   render() {
     return (
       <>
-        {this.state.activated === "activated" ? <DragWrapper /> : null}
+        {this.state.activated === "activated" ? <DraggingBoard /> : null}
         <div id={this.state.url} className={"photoshoot " + this.state.activated} ref>
           <h2>{this.state.title}</h2>
           <div

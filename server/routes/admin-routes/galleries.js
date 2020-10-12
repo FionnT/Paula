@@ -5,13 +5,13 @@ const sharp = require("sharp")
 const path = require("path")
 const fs = require("fs")
 const { v4: uuidv4 } = require("uuid")
-const bcrypt = require("bcrypt")
+// const bcrypt = require("bcrypt")
 
 const privileged = require("../middleware/privileged")
 const authenticated = require("../middleware/authenticated")()
 
 const { Photoshoots } = require("../../models/index")
-const saltRounds = 10
+// const saltRounds = 10
 
 const mediaDir = process.env.mediaDir
 const baseTempDir = path.join(mediaDir, "/temp")
@@ -88,35 +88,35 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
     return
   }
 
-  // If the password field was selected, but no password entered, disable the password
-  // Otherwise create a hash, and store it
-  const hashPassword = async () => {
-    if (!filteredData.isPasswordProtected) return
-    else if (!filteredData.password) {
-      filteredData.isPasswordProtected = false
-      return
-    } else {
-      return new Promise((resolve, reject) => {
-        bcrypt.genSalt(saltRounds, async (err, salt) => {
-          if (err) {
-            response.code = 500
-            reject(err)
-          } else {
-            bcrypt.hash(filteredData.password, salt, (err, hash) => {
-              if (err) {
-                response.code = 500
-                reject(err)
-              } else {
-                console.log(hash)
-                filteredData.password = hash
-                resolve()
-              }
-            })
-          }
-        })
-      })
-    }
-  }
+  // // If the password field was selected, but no password entered, disable the password
+  // // Otherwise create a hash, and store it
+  // const hashPassword = async () => {
+  //   if (!filteredData.isPasswordProtected) return
+  //   else if (!filteredData.password) {
+  //     filteredData.isPasswordProtected = false
+  //     return
+  //   } else {
+  //     return new Promise((resolve, reject) => {
+  //       bcrypt.genSalt(saltRounds, async (err, salt) => {
+  //         if (err) {
+  //           response.code = 500
+  //           reject(err)
+  //         } else {
+  //           bcrypt.hash(filteredData.password, salt, (err, hash) => {
+  //             if (err) {
+  //               response.code = 500
+  //               reject(err)
+  //             } else {
+  //               console.log(hash)
+  //               filteredData.password = hash
+  //               resolve()
+  //             }
+  //           })
+  //         }
+  //       })
+  //     })
+  //   }
+  // }
 
   const saveGallery = async () => {
     Object.keys(acceptableInputData).forEach(acceptableField => {
@@ -164,7 +164,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
       if (response.code !== 200) await deleteTmpFiles()
       else {
         await minifyFiles()
-        await hashPassword()
+        // await hashPassword()
         await saveGallery()
         await deleteTmpFiles()
       }
@@ -245,32 +245,32 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
     return
   }
 
-  const hashPassword = async () => {
-    if (!galleryData.isPasswordProtected) return
-    else if (!galleryData.password) {
-      galleryData.isPasswordProtected = false
-      return
-    } else {
-      return new Promise((resolve, reject) => {
-        bcrypt.genSalt(saltRounds, async (err, salt) => {
-          if (err) {
-            response.code = 500
-            reject(err)
-          } else {
-            bcrypt.hash(galleryData.password, salt, (err, hash) => {
-              if (err) {
-                response.code = 500
-                reject(err)
-              } else {
-                galleryData.password = hash
-                resolve()
-              }
-            })
-          }
-        })
-      })
-    }
-  }
+  // const hashPassword = async () => {
+  //   if (!galleryData.isPasswordProtected) return
+  //   else if (!galleryData.password) {
+  //     galleryData.isPasswordProtected = false
+  //     return
+  //   } else {
+  //     return new Promise((resolve, reject) => {
+  //       bcrypt.genSalt(saltRounds, async (err, salt) => {
+  //         if (err) {
+  //           response.code = 500
+  //           reject(err)
+  //         } else {
+  //           bcrypt.hash(galleryData.password, salt, (err, hash) => {
+  //             if (err) {
+  //               response.code = 500
+  //               reject(err)
+  //             } else {
+  //               galleryData.password = hash
+  //               resolve()
+  //             }
+  //           })
+  //         }
+  //       })
+  //     })
+  //   }
+  // }
 
   const implementChanges = async () => {
     let galleryFilesClone = galleryFiles.slice()
@@ -326,7 +326,7 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
       if (response.code !== 200) await deleteTmpFiles()
       else {
         await minifyFiles()
-        await hashPassword()
+        // await hashPassword()
         await implementChanges()
         await saveGalleryChanges()
         await deleteTmpFiles()

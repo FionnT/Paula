@@ -61,7 +61,7 @@ class AdminItemEditor extends Component {
 
   render() {
     return (
-      <div id="editor-wrapper" className={this.props.enabled ? "enabled" : "disabled"}>
+      <div id="editor-wrapper" className={this.props.enabled ? "item enabled" : "item disabled"}>
         <div id="editor">
           <div className="cancel" onClick={() => this.props.enableEditor(false)}>
             <i className="las la-times"></i>

@@ -29,9 +29,6 @@ export default function GallerySelection(props) {
         <li data-type="homeGalleries" onClick={e => toggleType(e, "homeGalleries")}>
           Home Page
         </li>
-        <li data-type="privateGalleries" onClick={e => toggleType(e, "privateGalleries")}>
-          Private
-        </li>
         <li data-type="unpublishedGalleries" onClick={e => toggleType(e, "unpublishedGalleries")}>
           Unpublished
         </li>
