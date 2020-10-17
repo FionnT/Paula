@@ -57,7 +57,6 @@ const CardPayment = props => {
     const button = document.getElementById("checkout-button")
 
     if (resetting) {
-      console.log("should be gone")
       // Look, try adding an event listener instead
       // Then try fucking removing it!
       window.onbeforeunload = undefined

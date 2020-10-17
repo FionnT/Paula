@@ -125,7 +125,7 @@ server.post("/store/confirm-order", textParser, async (req, res) => {
       }
     })
   }
-  console.log(event.data.object.id)
+
   switch (event["type"]) {
     case "payment_intent.succeeded":
       Order.findOne({ orderID }, (err, data) => {

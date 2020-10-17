@@ -29,7 +29,7 @@ let acceptableInputData = {
   url: String
 }
 
-server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) => {
+server.post("/galleries/new", authenticated, privileged(0), busboy, (req, res) => {
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
@@ -177,7 +177,7 @@ server.post("/galleries/new", authenticated, privileged(2), busboy, (req, res) =
   })
 })
 
-server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res) => {
+server.post("/galleries/update", authenticated, privileged(0), busboy, (req, res) => {
   req.pipe(req.busboy)
 
   const dirUUID = uuidv4() // Regenerates a new UUID each call, so call once to store one UUID
@@ -340,7 +340,7 @@ server.post("/galleries/update", authenticated, privileged(2), busboy, (req, res
   })
 })
 
-server.post("/galleries/update-positions", authenticated, privileged(2), jsonParser, async (req, res) => {
+server.post("/galleries/update-positions", authenticated, privileged(0), jsonParser, async (req, res) => {
   Photoshoots.find({}, (err, data) => {
     if (err) res.sendStatus(500)
     else {
@@ -381,7 +381,7 @@ server.post("/galleries/delete", authenticated, privileged(2), jsonParser, async
   })
 })
 
-server.get("/photoshoots/all", authenticated, privileged(2), (req, res) => {
+server.get("/photoshoots/all", authenticated, privileged(0), (req, res) => {
   Photoshoots.find({})
     .sort("isInHomePosition")
     .lean()

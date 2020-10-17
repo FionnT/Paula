@@ -37,6 +37,17 @@ server.post("/admin/register", authenticated, privileged(1), jsonParser, async (
   })
 })
 
+server.post("/admin/user", authenticated, privileged(1), jsonParser, async (req, res) => {
+  let user = req.body._id
+  Admin.findById(user)
+    .lean()
+    .exec((err, result) => {
+      if (err) res.sendStatus(502)
+      else if (result) res.json(result)
+      else res.sendStatus(500)
+    })
+})
+
 server.get("/admin/users", authenticated, privileged(1), async (req, res) =>
   Admin.find({})
     .lean()

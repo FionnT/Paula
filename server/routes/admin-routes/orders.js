@@ -54,7 +54,7 @@ server.post("/admin/orders/confirm-shipment", authenticated, privileged(0), json
   })
 })
 
-server.post("/admin/orders/cancel", authenticated, privileged(0), jsonParser, (req, res) => {
+server.post("/admin/orders/cancel", authenticated, privileged(1), jsonParser, (req, res) => {
   let orderID = req.body.orderID
   Order.findOne({ orderID }, async (err, result) => {
     if (err) res.sendStatus(502)
@@ -79,7 +79,7 @@ server.post("/admin/orders/cancel", authenticated, privileged(0), jsonParser, (r
   })
 })
 
-server.post("/admin/orders/delete", authenticated, privileged(0), jsonParser, async (req, res) => {
+server.post("/admin/orders/delete", authenticated, privileged(2), jsonParser, async (req, res) => {
   let orderID = req.body.orderID
   Order.findOneAndDelete({ orderID, status: "cancelled" }, (err, result) => {
     if (err) res.sendStatus(502)

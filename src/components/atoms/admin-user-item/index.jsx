@@ -13,11 +13,10 @@ class AdminUserItem extends Component {
   constructor(props) {
     super(props)
     this.state = {}
-    this.enableEditor = this.props.enableEditor.bind(this)
 
     // Store props in State
     Object.keys(this.props).forEach(key => (this.state[key] = this.props[key]))
-
+    this.updateHistory = this.props.updateHistory.bind(this)
     this.state.backgroundImage = { backgroundImage: "url(/users/" + this.props.filename + ")" } // required or the style doesn't update
     this.state.privileges = englishPrivileges[this.props.privileges]
   }
@@ -47,29 +46,23 @@ class AdminUserItem extends Component {
         <div className="controls">
           <UserConsumer>
             {({ user }) => {
-              let canModify
-              let canDelete
+              let priveleges = []
 
               if (user.privileges >= this.props.privileges) {
-                canModify = (
-                  <button onClick={() => this.enableEditor(this.state)}>
+                priveleges.push(
+                  <button onClick={() => this.updateHistory("/admin/users/" + this.state._id)}>
                     <i className="las la-cog"></i>
                   </button>
                 )
               }
-              if (user.privileges > this.props.privileges) {
-                canDelete = (
+              if (user.privileges >= 2) {
+                priveleges.push(
                   <button onClick={() => this.props.toggleDeleteDialog(this.state)}>
                     <i className="las la-trash"></i>
                   </button>
                 )
               }
-              return (
-                <>
-                  {canModify}
-                  {canDelete}
-                </>
-              )
+              return priveleges
             }}
           </UserConsumer>
         </div>

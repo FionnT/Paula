@@ -1,9 +1,8 @@
 import React from "react"
 import { Async } from "react-async"
-import { UserConsumer } from "../../../context-providers/user-details"
-import { AdminUserController } from "../../../components/organisms"
+import { AdminUserList } from "../../../components/organisms"
 
-function Users() {
+function Users(props) {
   const fetchAllUsers = () => {
     let server = process.env.REACT_APP_API_URL + "/admin/users"
     return new Promise((resolve, reject) => {
@@ -11,19 +10,15 @@ function Users() {
     })
   }
 
+  const updateHistory = location => props.history.push(location)
+
   return (
-    <UserConsumer>
-      {({ cart, updateCart, availableItems, addItem, modifyAvailableItem, removeAvailableItem }) => {
-        return (
-          <Async promiseFn={fetchAllUsers}>
-            {({ data, err, isLoading }) => {
-              if (isLoading) return <img src="/loading.gif" className="loading-image" alt="Page is loading" />
-              else return <AdminUserController allUsers={data} />
-            }}
-          </Async>
-        )
+    <Async promiseFn={fetchAllUsers}>
+      {({ data, err, isLoading }) => {
+        if (isLoading) return <img src="/loading.gif" className="loading-image" alt="Page is loading" />
+        else return <AdminUserList allUsers={data} updateHistory={updateHistory} />
       }}
-    </UserConsumer>
+    </Async>
   )
 }
 

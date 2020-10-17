@@ -11,18 +11,13 @@ class Dragger extends Component {
     }
   }
 
-  componentDidMount() {
-    const a = browserName
-    console.log(a)
-  }
-
   browserSpecificModification = () => {
     let scrollModifier = {
       Firefox: 8,
       Chrome: 8,
       Edge: 15,
       Opera: 10,
-      Safari: 10
+      Safari: 15
     }
     return scrollModifier[browserName]
   }
@@ -33,8 +28,6 @@ class Dragger extends Component {
 
     if (draggingToTheRight) {
       this.setState({ currentX: newPosition, lastPositionX: this.state.currentX })
-      console.log(newPosition)
-      console.log(document.body.scrollLeft)
       document.body.scrollLeft += newPosition * -1
     } else if (!draggingToTheRight) {
       this.setState({ lastPositionX: this.state.currentX, currentX: newPosition })
@@ -54,6 +47,6 @@ class Dragger extends Component {
   }
 }
 
-const DraggingBoard = clickdrag(Dragger, { touch: true })
+const DraggingBoard = clickdrag(Dragger, { touch: false })
 
 export default DraggingBoard

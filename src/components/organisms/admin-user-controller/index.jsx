@@ -1,96 +1,133 @@
 import React, { Component } from "react"
-import { validateText, pageNotification } from "../../../utilities"
-import { Navigation } from "../../../components/organisms"
-import { AdminUserEditor } from "../../../components/molecules"
-import { AdminUserItem, Button, Input } from "../../../components/atoms"
-
+import { Async } from "react-async"
+import { Redirect } from "react-router-dom"
+import { Button, Input } from "../../../components/atoms"
+import { UserConsumer } from "../../../context-providers"
+import { pageNotification, validateText } from "../../../utilities"
 import "./styles.sass"
 
-const blankUser = {
-  privileges: null,
-  email: "",
-  image: "add-image.png",
-  name: "",
-  isNew: true,
-  isPublished: true
+let privileges = {
+  Assistant: { 0: "Can view and ship orders", 2: "Can view and manage galleries", 1: "Can view and manage store items", 3: "Can view and manage users" },
+  Manager: { 0: "Can view, ship, and refund orders", 2: "Can view and manage galleries", 4: "Can view and manage store items", 6: "Can view and manage users" },
+  Owner: {
+    0: "Can view, ship, refund, and delete orders",
+    2: "Can view, manage, and delete galleries",
+    4: "Can view, manage, and delete store items",
+    6: "Can view, manage, and delete users"
+  },
+  "Web Admin": {
+    0: "Can view, ship, refund, and delete orders",
+    2: "Can view, manage, and delete galleries",
+    4: "Can view, manage, and delete store items",
+    6: "Can view, manage, and delete users"
+  }
 }
 
 class AdminUserController extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      visibleUsers: props.allUsers,
-      allUsers: props.allUsers,
-      selectedUser: undefined,
-      editorEnabled: false,
-      deleteDialogEnabled: false,
-      search: undefined,
-      valid: false
+      valid: false,
+      privilegeMenu: false
     }
   }
 
-  textController = e => {
-    validateText(e, false, this.state, data => {
-      data.visibleUsers = this.state.allUsers.filter(item => item.name.toLowerCase().match(data.search.toLowerCase()) || item.email.toLowerCase().match(data.search.toLowerCase()))
+  componentDidMount() {}
+
+  fetchUser = () => {
+    let server = process.env.REACT_APP_API_URL + "/admin/user"
+    return new Promise((resolve, reject) => {
+      fetch(server, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ _id: this.props.userid })
+      })
+        .then(res => (res.ok ? res.json() : res))
+        .then(res => {
+          this.setState(res, resolve(true))
+        })
+        .catch(err => console.log(err))
+    }).catch(err => console.log(err))
+  }
+
+  textController = event => {
+    validateText(event, false, this.state, data => {
       this.setState(data)
     })
   }
 
-  enableEditor = data => {
-    this.setState({ selectedItem: data, editorEnabled: !this.state.editorEnabled })
-  }
-
-  toggleDeleteDialog = data => this.setState({ selectedItem: data, deleteDialogEnabled: !this.state.deleteDialogEnabled })
-
-  confirmDeletion = data => {
-    let _id = data._id
-    let server = process.env.REACT_APP_API_URL + "/store/delete-item"
-
-    fetch(server, {
-      credentials: "include",
-      method: "POST", // or 'PUT'
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ _id })
-    }).then(res => {
-      if (res.ok) pageNotification([true, "User deleted"])
-      else pageNotification([false, "Server error, please try again!"])
+  saveChanges = () =>
+    new Promise((resolve, reject) => {
+      let server = process.env.REACT_APP_API_URL + "/admin/users/update"
+      fetch(server, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(this.state)
+      })
+        .then(res => (res.ok ? pageNotification([true, "Updates saved"]) : pageNotification([false, "Something went wrong, try again!"])))
+        .catch(err => pageNotification([false, "Something went wrong, try again!"]))
     })
-  }
 
   render() {
     return (
-      <>
-        <Navigation />
-        <div id="store-container" className="admin">
-          <Input type="search" name="search" value={this.state.search} className="searchbar" textController={e => this.textController(e)}></Input>
-          <div id="users">
-            {this.state.visibleUsers.map((item, index) => (
-              <AdminUserItem {...item} enableEditor={this.enableEditor} toggleDeleteDialog={this.toggleDeleteDialog} key={index} />
-            ))}
-          </div>
-          <div id="add-new-item" onClick={() => this.enableEditor(blankUser)}>
-            <span>
-              <i className="las la-plus"></i>
-            </span>
-          </div>
-
-          {this.state.editorEnabled ? (
-            <AdminUserEditor type="store" data={this.state.selectedItem} enableEditor={this.enableEditor} propagateChanges={this.propagateChanges} />
-          ) : null}
-          {this.state.deleteDialogEnabled ? (
-            <div id="confirm-deletion">
-              <h2>Are you sure you want to delete {this.state.selectedItem.name} ? </h2>
-              <div>
-                <Button onSubmit={() => this.confirmDeletion(this.state.selectedItem)}>Yes</Button>
-                <Button onSubmit={() => this.toggleDeleteDialog(false)}>No</Button>
-              </div>
-            </div>
-          ) : null}
-        </div>
-      </>
+      <Async promiseFn={this.fetchUser}>
+        {({ data, err, isLoading }) => {
+          if (data) {
+            let privilege = Object.keys(privileges)[this.state.privileges]
+            return (
+              <>
+                <img src={"/users/" + this.state.filename} alt="" />
+                <Input label="name" textController={this.textController} placeholder="Name" required type="name" value={this.state.name} />
+                <Input label="email" textController={this.textController} placeholder="Email" required type="email" value={this.state.email} />
+                <div id="privileges" onMouseEnter={() => this.setState({ privilegeMenu: true })} onMouseLeave={() => this.setState({ privilegeMenu: false })}>
+                  <div className="chevron">
+                    <i className="las la-angle-down"></i>
+                  </div>
+                  <p>{privilege}</p>
+                  <UserConsumer>
+                    {({ user }) => {
+                      let options = []
+                      Object.keys(privileges).forEach((key, index) => {
+                        if (key !== privilege && index <= user.privileges)
+                          options.push(
+                            <p key={key} onClick={() => this.setState({ privileges: index })} className={this.state.privilegeMenu.toString()}>
+                              {key}
+                            </p>
+                          )
+                      })
+                      return options
+                    }}
+                  </UserConsumer>
+                </div>
+                <div className="permissions">
+                  <div className="row">
+                    {Object.keys(privileges[privilege]).map(key => {
+                      return (
+                        <div key={key}>
+                          <p>
+                            <i className={key % 2 ? "las la-times-circle" : "las la-check-circle"}></i> {privileges[privilege][key]}
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+                <div className="controls">
+                  <UserConsumer>{({ user }) => (user.privileges >= 2 ? <Button className="delete">Delete</Button> : null)}</UserConsumer>
+                  <Button onSubmit={this.saveChanges}>Save Changes</Button>
+                </div>
+              </>
+            )
+          } else if (err) return <Redirect to="/admin/users"></Redirect>
+          else if (isLoading) return <img src="/loading.gif" style={{ marginTop: "15%" }} className="loading-image" alt="Page is loading" />
+        }}
+      </Async>
     )
   }
 }

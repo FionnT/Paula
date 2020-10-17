@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import { UserConsumer } from "../../../context-providers"
 import "./styles.sass"
 
 class AdminStoreItem extends Component {
@@ -49,9 +50,16 @@ class AdminStoreItem extends Component {
           <button onClick={() => this.enableEditor(this.state)}>
             <i className="las la-cog"></i>
           </button>
-          <button onClick={() => this.props.toggleDeleteDialog(this.state)}>
-            <i className="las la-trash"></i>
-          </button>
+          <UserConsumer>
+            {({ user }) => {
+              if (user.privileges >= 2)
+                return (
+                  <button onClick={() => this.props.toggleDeleteDialog(this.state)}>
+                    <i className="las la-trash"></i>
+                  </button>
+                )
+            }}
+          </UserConsumer>
         </div>
       </div>
     )

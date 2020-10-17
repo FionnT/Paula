@@ -4,6 +4,7 @@ import { Button, Input } from "../../atoms"
 import { FileDropZone } from "../../molecules"
 import { pageNotification } from "../../../utilities"
 import "./styles.sass"
+import { UserConsumer } from "../../../context-providers"
 
 const defaultState = {
   title: undefined,
@@ -112,9 +113,16 @@ class GalleryConfiguration extends Component {
           <Button onSubmit={() => this.deleteGallery("cancel")}>No</Button>
         </div>
         <h2>{selected.title}</h2>
-        <span className="delete-button" onClick={() => this.deleteGallery("open")}>
-          <i className="las la-trash"></i>
-        </span>
+        <UserConsumer>
+          {({ user }) => {
+            if (user.privileges >= 2)
+              return (
+                <span className="delete-button" onClick={() => this.deleteGallery("open")}>
+                  <i className="las la-trash"></i>
+                </span>
+              )
+          }}
+        </UserConsumer>
         <div className="gallery-input-fields">
           <Input type="title" textController={this.textUpdater} placeholder="Gallery Name *" value={selected.title ? selected.title : ""} required="true" />
           <Input

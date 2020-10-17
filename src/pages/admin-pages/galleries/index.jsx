@@ -28,12 +28,12 @@ class GalleryControl extends Component {
       galleries: undefined,
       selectedGalleries: undefined,
       selectedType: undefined,
-      selectedPhotoshoot: undefined
+      selectedGallery: undefined
     }
   }
 
   componentDidUpdate() {
-    if (!this.state.selectedPhotoshoot._id) this.onAddGallery()
+    if (!this.state.selectedGallery._id) this.onAddGallery()
   }
 
   componentDidMount() {
@@ -52,7 +52,7 @@ class GalleryControl extends Component {
               galleries: res,
               selectedGalleries: res.homeGalleries, // Set defaults
               selectedType: "homeGalleries",
-              selectedPhotoshoot: res.homeGalleries[0]?._id ? res.homeGalleries[0] : { _id: undefined } // _id is required for render => Case: 0 galleries exist
+              selectedGallery: res.homeGalleries[0]?._id ? res.homeGalleries[0] : { _id: undefined } // _id is required for render => Case: 0 galleries exist
             },
             () => {
               resolve(res)
@@ -96,7 +96,7 @@ class GalleryControl extends Component {
     collection.push(newGallery) // Collection is an array
     let updatedMaster = Object.assign(galleries, collection) // Clone original, and update it
 
-    this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedPhotoshoot: newGallery }, () => {
+    this.setState({ galleries: updatedMaster, selectedGalleries: collection, selectedGallery: newGallery }, () => {
       let galleries = Array.from(document.querySelectorAll(".gallery-selector-container"))
       if (galleries.length) {
         let newGallerySelector = galleries[galleries.length - 1].childNodes[0]
@@ -108,7 +108,7 @@ class GalleryControl extends Component {
 
   onActivateGallery = gallery => {
     gallery.isNew = false
-    this.setState({ selectedPhotoshoot: gallery })
+    this.setState({ selectedGallery: gallery })
   }
 
   onDeleteGallery = _id => {
@@ -120,7 +120,10 @@ class GalleryControl extends Component {
       if (gallery._id === _id) galleryIndex = index
     })
 
+    // Delete the gallery
     collection.splice(galleryIndex, 1)
+
+    // Reset the order/indexes to reflect the gallery not existing anymore
     if (this.state.selectedType === "homeGalleries") {
       collection.forEach((photoshoot, index) => {
         photoshoot.isInHomePosition = index + 1
@@ -168,16 +171,16 @@ class GalleryControl extends Component {
 
   onToggleSelectedGalleriesType = (selectedType, forceSelected) => {
     let selectedGalleries = this.state.galleries[selectedType]
-    let selectedPhotoshoot
+    let selectedGallery
 
     // 0 is falsey, and an array index
-    if (selectedGalleries.length && typeof forceSelected === "undefined") selectedPhotoshoot = selectedGalleries[0]
-    else if (selectedGalleries.length) selectedPhotoshoot = selectedGalleries[forceSelected]
-    else selectedPhotoshoot = false // used to display different UI if there are no galleries in that category
+    if (selectedGalleries.length && typeof forceSelected === "undefined") selectedGallery = selectedGalleries[0]
+    else if (selectedGalleries.length) selectedGallery = selectedGalleries[forceSelected]
+    else selectedGallery = false // used to display different UI if there are no galleries in that category
 
-    if (selectedPhotoshoot) selectedPhotoshoot.isNew = false
+    if (selectedGallery) selectedGallery.isNew = false
 
-    this.setState({ selectedGalleries, selectedPhotoshoot, selectedType }, () => {
+    this.setState({ selectedGalleries, selectedGallery, selectedType }, () => {
       if (typeof forceSelected !== "undefined") {
         // Maintain highlighting on the select element
         let availableGalleries = document.querySelectorAll(".gallery-selector-container")
@@ -254,7 +257,7 @@ class GalleryControl extends Component {
         if (gallery.isInHomePosition === originalPosition - 1) gallery.isInHomePosition += 1
         else if (gallery.isInHomePosition === originalPosition) gallery.isInHomePosition -= 1
       })
-    } else if (originalPosition !== homeGalleries.length + 1 && direction === "down") {
+    } else if (originalPosition !== homeGalleries.length && direction === "down") {
       homeGalleries.forEach(gallery => {
         if (gallery.isInHomePosition === originalPosition + 1) gallery.isInHomePosition -= 1
         else if (gallery.isInHomePosition === originalPosition) gallery.isInHomePosition += 1
@@ -305,10 +308,10 @@ class GalleryControl extends Component {
                     onAddGallery={this.onAddGallery}
                     onToggleSelectedGalleriesType={this.onToggleSelectedGalleriesType}
                     submitHomePositionChanges={this.submitHomePositionChanges}
-                    selectedID={this.state.selectedPhotoshoot._id}
+                    selectedID={this.state.selectedGallery._id}
                   />
                   <GalleryConfiguration
-                    selected={this.state.selectedPhotoshoot}
+                    selected={this.state.selectedGallery}
                     selectedType={this.state.selectedType}
                     onGalleryDetailChange={this.onGalleryDetailChange}
                     onToggleGalleryType={this.onToggleGalleryType}

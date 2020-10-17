@@ -18,19 +18,30 @@ class AdminItemEditor extends Component {
 
   textController = (e, index, field) => {
     let value = e.target.value
-    const numbersOnly = /^[0-9\b]+$/
-    const dimensionsOnly = /^[0-9, x\b]+$/
-    const textOnly = /^[A-Z, a-z\b]+$/
 
-    if (field !== "name") {
-      if (field === "cost" && !numbersOnly.test(value)) return
-      if (field === "measurements" && !dimensionsOnly.test(value)) return
-      if (field === "type" && !textOnly.test(value)) return
+    const onlyNumbers = /^[0-9\b]+$/
+    const onlyDimensions = /^[0-9, x\b]+$/
+    const onlyText = /^[A-Z, a-z\b]+$/
+    const emptyValue = /^(?![\s\S])+$/
 
-      let newArray = [].concat(this.state.sizes)
-      newArray[index][field] = value
-      this.setState({ sizes: newArray })
-    } else this.setState({ name: value })
+    switch (field) {
+      case "type":
+        if (!emptyValue.test(value) && !onlyText.test(value)) return
+        break
+      case "measurements":
+        if (!emptyValue.test(value) && !onlyDimensions.test(value)) return
+        break
+      case "cost":
+        if (!emptyValue.test(value) && !onlyNumbers.test(value)) return
+        break
+      default:
+        // No limiters on the name
+        this.setState({ name: value })
+    }
+
+    let newArray = [].concat(this.state.sizes)
+    newArray[index][field] = value
+    this.setState({ sizes: newArray })
   }
 
   addSize = () => {

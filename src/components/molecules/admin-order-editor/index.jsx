@@ -17,7 +17,6 @@ class AdminOrderEditor extends Component {
   componentDidMount() {}
 
   copyText = ref => {
-    console.log(this[ref])
     let text = this[ref].innerText
     copy(text)
     pageNotification([true, "Copied"])
@@ -157,11 +156,11 @@ class AdminOrderEditor extends Component {
                       <Button onSubmit={this.cancelOrder} className="cancel">
                         Cancel & Refund
                       </Button>
-                    ) : (
+                    ) : user.privileges >= 2 ? (
                       <Button onSubmit={this.deleteOrder} className="cancel">
                         Delete Order
                       </Button>
-                    )
+                    ) : null
                   ) : null}
                 </>
               )
