@@ -13,7 +13,7 @@ server.use(cors(corsOptions))
 const RateLimit = require("express-rate-limit")
 const limiter = new RateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 5
+  max: 60
 })
 server.use(limiter)
 
