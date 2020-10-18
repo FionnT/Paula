@@ -10,6 +10,13 @@ const corsOptions = {
 }
 server.use(cors(corsOptions))
 
+const RateLimit = require("express-rate-limit")
+const limiter = new RateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5
+})
+server.use(limiter)
+
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
 const MongoDBStore = require("connect-mongodb-session")(session)
@@ -42,10 +49,13 @@ server.use(
   })
 )
 
+// apply rate limiter to all requests
+
 server.use("/", require("./routes/admin-routes/authenticate"))
 server.use("/", require("./routes/admin-routes/store"))
 server.use("/", require("./routes/admin-routes/galleries"))
 server.use("/", require("./routes/admin-routes/users"))
+server.use("/", require("./routes/admin-routes/temp"))
 server.use("/", require("./routes/admin-routes/orders"))
 
 server.use("/", require("./routes/user-routes/contactform"))

@@ -36,7 +36,7 @@ class AdminUserList extends Component {
 
   confirmDeletion = data => {
     let _id = data._id
-    let server = process.env.REACT_APP_API_URL + "/store/delete-item"
+    let server = process.env.REACT_APP_API_URL + "/admin/users/delete"
 
     fetch(server, {
       credentials: "include",
@@ -47,8 +47,10 @@ class AdminUserList extends Component {
       },
       body: JSON.stringify({ _id })
     }).then(res => {
-      if (res.ok) pageNotification([true, "User deleted"])
-      else pageNotification([false, "Server error, please try again!"])
+      if (res.ok) {
+        pageNotification([true, "User deleted"])
+        document.location.reload()
+      } else pageNotification([false, "Server error, please try again!"])
     })
   }
 

@@ -23,20 +23,35 @@ let privileges = {
   }
 }
 
+let newUser = {
+  email: undefined,
+  name: undefined,
+  filename: "placeholder.png",
+  privileges: 0,
+  isNew: true
+}
+
 class AdminUserController extends Component {
   constructor(props) {
     super(props)
     this.state = {
       valid: false,
-      privilegeMenu: false
+      privilegeMenu: false,
+      password1: false,
+      password2: false,
+      rawFile: undefined
     }
   }
 
   componentDidMount() {}
 
   fetchUser = () => {
-    let server = process.env.REACT_APP_API_URL + "/admin/user"
+    let server = process.env.REACT_APP_API_URL + "/admin/users/fetch"
     return new Promise((resolve, reject) => {
+      if (this.props.userid === "new") {
+        this.setState(newUser)
+        resolve(true)
+      }
       fetch(server, {
         method: "POST",
         credentials: "include",
@@ -59,20 +74,69 @@ class AdminUserController extends Component {
     })
   }
 
-  saveChanges = () =>
-    new Promise((resolve, reject) => {
-      let server = process.env.REACT_APP_API_URL + "/admin/users/update"
-      fetch(server, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(this.state)
-      })
-        .then(res => (res.ok ? pageNotification([true, "Updates saved"]) : pageNotification([false, "Something went wrong, try again!"])))
-        .catch(err => pageNotification([false, "Something went wrong, try again!"]))
+  renderImageToPreview = e => {
+    let file = e.target.files[0]
+    let reader = new FileReader()
+
+    reader.onloadend = () => {
+      this.setState({ filename: reader.result })
+    }
+
+    if (file) {
+      this.setState({ rawFile: file }, reader.readAsDataURL(file))
+    }
+  }
+
+  saveChanges = () => {
+    let submission = new FormData()
+    let location = this.state.isNew ? "/admin/users/new" : "/admin/users/update"
+    let server = process.env.REACT_APP_API_URL + location
+    let update = Object.assign({}, this.state)
+
+    if (this.state.isNew) {
+      if (this.state.password1 || this.state.password2) {
+        if (this.state.password1 !== this.state.password2) {
+          pageNotification([false, "Passwords must match!"])
+          return
+        }
+      } else {
+        pageNotification([false, "You must enter a password!"])
+        return
+      }
+    } else if (this.state.password1 || this.state.password2) {
+      if (this.state.password1 !== this.state.password2) {
+        pageNotification([false, "Passwords must match!"])
+        return
+      }
+    }
+
+    update.password = this.state.password1
+    delete update.password1
+    delete update.password2
+
+    let file = this.state.rawFile
+
+    if (file?.name) {
+      submission.append(file.name, file)
+      delete update.filename
+    }
+
+    submission.append("data", JSON.stringify(update))
+
+    fetch(server, {
+      method: "POST",
+      credentials: "include",
+      mode: "cors",
+      body: submission
     })
+      .then(res => {
+        if (res.ok) {
+          pageNotification([true, this.state.isNew ? "User Saved " : "Updates saved"])
+          // if (this.state.isNew) document.location.href = "/admin/users"
+        } else pageNotification([false, "Something went wrong, please try again!"])
+      })
+      .catch(err => pageNotification([false, "Something went wrong, try again!"]))
+  }
 
   render() {
     return (
@@ -82,9 +146,42 @@ class AdminUserController extends Component {
             let privilege = Object.keys(privileges)[this.state.privileges]
             return (
               <>
-                <img src={"/users/" + this.state.filename} alt="" />
+                <input type="file" id="fileinput" onChange={this.renderImageToPreview} accept="png,jpg,gif,bmp" />
+                <img
+                  src={this.state.filename.match("data:") ? this.state.filename : "/users/" + this.state.filename}
+                  alt=""
+                  onClick={() => document.getElementById("fileinput").click()}
+                />
                 <Input label="name" textController={this.textController} placeholder="Name" required type="name" value={this.state.name} />
                 <Input label="email" textController={this.textController} placeholder="Email" required type="email" value={this.state.email} />
+                <UserConsumer>
+                  {({ user }) => {
+                    return (
+                      <>
+                        {user.privileges >= this.state.privileges || user.email === this.state.email ? (
+                          <>
+                            <Input
+                              label="Password"
+                              name="password1"
+                              textController={this.textController}
+                              placeholder="Update Password"
+                              type="password"
+                              value={this.state.password1}
+                            />
+                            <Input
+                              label="Password"
+                              name="password2"
+                              textController={this.textController}
+                              placeholder="Confirm Password"
+                              type="password"
+                              value={this.state.password2}
+                            />
+                          </>
+                        ) : null}
+                      </>
+                    )
+                  }}
+                </UserConsumer>
                 <div id="privileges" onMouseEnter={() => this.setState({ privilegeMenu: true })} onMouseLeave={() => this.setState({ privilegeMenu: false })}>
                   <div className="chevron">
                     <i className="las la-angle-down"></i>
