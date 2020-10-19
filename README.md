@@ -2,7 +2,7 @@
 
 A completely free, responsive Photograpy site allowed for general use under CC-BA 4.0
 
-Attribution must be in the form of retaing the Copyright notice link in the bottom left of the page. The copyright notice page itself may be altered, but the license cannot be changed, must be displayed, and you must indicate if changes were made to any portion of this project. You may not suggest that I, the licensor endorses you or your use.
+See below for attribution requirements.
 
 To Setup
 --
@@ -49,7 +49,7 @@ The licensor cannot revoke these freedoms as long as you follow the license term
 
 Under the following terms:
 
-1. Attribution — Attribution must be in the form of retaing the Copyright notice link in the bottom left of the page. The copyright notice page itself may be altered, but the license cannot be changed, and you must indicate if changes were made to this project. You may not suggest that I, the licensor endorses you or your use.
+1. Attribution — Attribution must be in the form of retaing the Copyright notice link in the bottom left of the page. The copyright notice page itself may be altered, but the license cannot be changed, must be displayed, and must contain a clearly visible link to this repository. You must also indicate if changes were made to any portion of this project. You may not suggest that I, the licensor endorses you or your use.
 2. No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
 Notices:
