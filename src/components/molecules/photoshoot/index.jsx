@@ -167,7 +167,7 @@ class Photoshoot extends Component {
       let photo = <img key={i} src={src} alt="" data-index={i} data-true-src={photoURL} onLoad={this.handleOnLoad.bind(this)} style={{ zIndex: length - i }} />
       result.push(photo)
     }
-    let padding = <img src="../blank_1px.png" ref="img" alt="empty padding" key="padding" />
+    let padding = <img src="../blank_1px.png" className="padding-image" ref="img" alt="empty padding" key="padding" />
     result.push(padding)
     return result
   }
