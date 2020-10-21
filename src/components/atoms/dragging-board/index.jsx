@@ -47,6 +47,6 @@ class Dragger extends Component {
   }
 }
 
-const DraggingBoard = clickdrag(Dragger, { touch: false })
+const DraggingBoard = clickdrag(Dragger, { touch: true })
 
 export default DraggingBoard
