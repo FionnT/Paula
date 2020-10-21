@@ -175,7 +175,7 @@ class Photoshoot extends Component {
   render() {
     return (
       <>
-        {this.state.activated === "activated" ? <DraggingBoard /> : null}
+        {this.state.activated === "activated" ? !this.isNotDesktop() ? <DraggingBoard /> : null : null}
         <div id={this.state.url} className={"photoshoot " + this.state.activated} ref>
           <h2>{this.state.title}</h2>
           <div
