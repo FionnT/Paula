@@ -17,6 +17,9 @@
 !/public/store/.gitkeep 
 !/public/store/add-image.png
 
+/public/favicons/*
+!/public/favicons/.gitkeep
+
 /public/temp/*
 !/public/temp/.gitkeep 
 
