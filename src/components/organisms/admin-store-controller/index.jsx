@@ -21,8 +21,10 @@ class AdminStoreController extends Component {
     this.state = {
       visibleItems: props.availableItems,
       availableItems: props.availableItems,
+      privateItems: props.privateItems,
       selectedItem: undefined,
       editorEnabled: false,
+      moveEnabled: false,
       deleteDialogEnabled: false,
       search: undefined,
       valid: false
@@ -42,7 +44,7 @@ class AdminStoreController extends Component {
 
   textController = e => {
     validateText(e, false, this.state, data => {
-      data.visibleItems = this.state.availableItems.filter(item => item.name.toLowerCase().match(data.search.toLowerCase()))
+      data.visibleItems = this.state.allItems.filter(item => item.name.toLowerCase().match(data.search.toLowerCase()))
       this.setState(data)
     })
   }
@@ -116,8 +118,8 @@ class AdminStoreController extends Component {
 
   togglePublishState = (UUID, isPublished) => {
     this.modifyAvailableItem({ UUID, isPublished })
-    let server = process.env.REACT_APP_API_URL + "/store/toggle-publish"
 
+    let server = process.env.REACT_APP_API_URL + "/store/toggle-publish"
     fetch(server, {
       method: "POST", // or 'PUT'
       credentials: "include",
@@ -135,10 +137,39 @@ class AdminStoreController extends Component {
         <Navigation />
         <div id="store-container" className="admin">
           <Input type="search" name="search" value={this.state.search} className="searchbar" textController={e => this.textController(e)}></Input>
+          <div className="lock" onClick={() => this.setState({ moveEnabled: !this.state.moveEnabled })}>
+            {this.state.moveEnabled ? <i className="las la-lock-open"></i> : <i className="las la-lock"></i>}
+          </div>
           <div id="store-items">
-            {this.state.visibleItems.map((item, index) => (
-              <AdminStoreItem {...item} enableEditor={this.enableEditor} toggleDeleteDialog={this.toggleDeleteDialog} togglePublishState={this.togglePublishState} key={index} />
-            ))}
+            <span className="item-type">
+              <p></p>
+              <p className="active">Active</p>
+              <p></p>
+            </span>
+            {this.state.visibleItems.map((item, index) =>
+              item.isPublished ? (
+                <AdminStoreItem
+                  className="length"
+                  {...item}
+                  enableEditor={this.enableEditor}
+                  moveEnabled={this.state.moveEnabled}
+                  index={index}
+                  toggleDeleteDialog={this.toggleDeleteDialog}
+                  togglePublishState={this.togglePublishState}
+                  key={index}
+                />
+              ) : null
+            )}
+            <span className="item-type">
+              <p></p>
+              <p className="active">Hidden</p>
+              <p></p>
+            </span>
+            {this.state.privateItems.map((item, index) =>
+              !item.isPublished ? (
+                <AdminStoreItem {...item} enableEditor={this.enableEditor} toggleDeleteDialog={this.toggleDeleteDialog} togglePublishState={this.togglePublishState} key={index} />
+              ) : null
+            )}
           </div>
           <div id="add-new-item" onClick={() => this.enableEditor(blankItem)}>
             <span>

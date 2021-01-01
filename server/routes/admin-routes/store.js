@@ -173,8 +173,28 @@ server.post("/store/delete-item", authenticated, privileged(2), jsonParser, asyn
 server.get("/store/items/all", (req, res) => {
   StoreItems.find({}, (err, results) => {
     if (err) res.sendStatus(502)
-    else if (results) res.json(results)
-    else res.sendStatus(404)
+    else if (results) {
+      const response = {
+        published: [],
+        private: []
+      }
+      results.forEach(item => {
+        item.isPublished ? response.published.push(item) : response.private.push(item)
+      })
+      res.json(response)
+    } else res.sendStatus(404)
+  })
+})
+
+server.get("/store/items/fix", (req, res) => {
+  StoreItems.find({}, (err, results) => {
+    if (err) res.sendStatus(502)
+    else if (results) {
+      results.forEach((result, index) => {
+        console.log(result)
+      })
+      res.send(200)
+    } else res.sendStatus(404)
   })
 })
 

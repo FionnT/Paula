@@ -1,15 +1,12 @@
 const server = require("express")()
 const port = 9001
 const dotenv = require("dotenv").config()
-const cors = require("cors")
 
-const corsOptions = {
-  origin: process.env.REACT_ORIGIN_DOMAIN,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  credentials: true
-}
-server.use(cors(corsOptions))
+// Express Cookie handler
+const cookieParser = require("cookie-parser")
+server.use(cookieParser())
 
+// Rate Limiter, DDOS protection
 const RateLimit = require("express-rate-limit")
 const limiter = new RateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
@@ -17,10 +14,18 @@ const limiter = new RateLimit({
 })
 server.use(limiter)
 
-const session = require("express-session")
-const cookieParser = require("cookie-parser")
-const MongoDBStore = require("connect-mongodb-session")(session)
+// CORS implementation
+const cors = require("cors")
+const corsOptions = {
+  origin: process.env.REACT_ORIGIN_DOMAIN,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  credentials: true
+}
+server.use(cors(corsOptions))
 
+// Express Session & MongoDB storage of
+const session = require("express-session")
+const MongoDBStore = require("connect-mongodb-session")(session)
 const maxSessionLength = 1000 * 60 * 60 * 4 // 4 hours
 const store = new MongoDBStore(
   {
@@ -31,9 +36,6 @@ const store = new MongoDBStore(
     if (err) console.log(err)
   }
 )
-
-server.use(cookieParser())
-
 server.use(
   session({
     secret: process.env.LOGIN_SECRET,
@@ -49,7 +51,7 @@ server.use(
   })
 )
 
-// apply rate limiter to all requests
+// Express CORS sessions
 
 server.use("/", require("./routes/admin-routes/authenticate"))
 server.use("/", require("./routes/admin-routes/store"))

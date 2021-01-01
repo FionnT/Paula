@@ -35,6 +35,19 @@
       display: flex
       justify-content: space-around
       margin: 0 auto 
+      .order 
+        display: flex
+        justify-content: space-around
+        width: 40px
+        padding: 0 5px
+        button
+          pointer-events: all  
+        &.false 
+          button 
+            pointer-events: none
+            i 
+              color: rgba(128,128,128, 0.45)
+
       button
         margin: 0 auto
         padding: 0
@@ -46,7 +59,7 @@
           color: #FF7F50
         &:nth-child(2)
           width: 33% 
-        
+
   @media only screen and (max-width: 1200px)
     .store-item
       margin-right: 20px

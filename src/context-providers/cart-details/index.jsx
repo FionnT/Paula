@@ -18,7 +18,8 @@ export class CartProvider extends React.Component {
       availableItems: [],
       addItem: this.addItem,
       modifyAvailableItem: this.modifyAvailableItem,
-      removeAvailableItem: this.removeAvailableItem
+      removeAvailableItem: this.removeAvailableItem,
+      privateItems: []
     }
   }
 
@@ -119,12 +120,14 @@ export class CartProvider extends React.Component {
 
   fetchStoreItems = () => {
     return new Promise(resolve => {
-      let route = Cookie.get("userCookie").privileges > 0 ? "/store/items/all" : "/store/items"
-      let server = process.env.REACT_APP_API_URL + route
+      const privilege = Cookie.get("userCookie").privileges > 0
+      const route = privilege > 0 ? "/store/items/all" : "/store/items"
+      const server = process.env.REACT_APP_API_URL + route
       fetch(server)
         .then(res => (res.ok ? res.json() : res))
         .then(res => {
-          this.setState({ availableItems: res }, resolve(res))
+          const displayItems = privilege > 0 ? res.published : res
+          this.setState({ availableItems: displayItems, privateItems: res.private }, resolve(res))
         })
     })
   }

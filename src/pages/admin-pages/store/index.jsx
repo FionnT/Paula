@@ -5,8 +5,16 @@ import { AdminStoreController } from "../../../components/organisms"
 function Store() {
   return (
     <CartConsumer>
-      {({ cart, updateCart, availableItems, addItem, modifyAvailableItem, removeAvailableItem }) => {
-        return <AdminStoreController availableItems={availableItems} addItem={addItem} modifyAvailableItem={modifyAvailableItem} removeAvailableItem={removeAvailableItem} />
+      {({ cart, updateCart, availableItems, addItem, modifyAvailableItem, removeAvailableItem, privateItems }) => {
+        return (
+          <AdminStoreController
+            availableItems={availableItems}
+            privateItems={privateItems}
+            addItem={addItem}
+            modifyAvailableItem={modifyAvailableItem}
+            removeAvailableItem={removeAvailableItem}
+          />
+        )
       }}
     </CartConsumer>
   )

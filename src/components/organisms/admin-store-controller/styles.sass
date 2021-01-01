@@ -1,10 +1,44 @@
 #store-container.admin 
+  .lock 
+    width: 50px
+    height: 50px
+    float: right
+    position: relative
+    font-size: 24px
+    display: inline-block 
+    top: 50px
+    right: 160px
+    cursor: pointer
+    transition: 0.35s all ease 
+    &:hover 
+      color: coral
   #store-items
     width: 800px
     margin: 0 auto
     height: 1200px
     overflow: auto
     padding-top: 35px
+    .item-type 
+        display: block 
+        height: 40px 
+        padding-top: 20px
+        p 
+          width: 40% 
+          height: 0px
+          margin: 0 6.75% 4px 0
+          text-align: center
+          border: 1px solid rgba(128,128,128,0.25)
+          color: gray 
+          display: inline-block
+          &.active
+            color: green 
+            width: 6%  
+            border: none
+          &:last-of-type
+            margin: 0 0 4px 0
+        &:last-of-type
+          p.active 
+            color: gray
   #add-new-item
       width: 50px
       height: 50px

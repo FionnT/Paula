@@ -40,10 +40,28 @@ class AdminStoreItem extends Component {
 
   render() {
     return (
-      <div className="admin-store-item">
+      <div className={"admin-store-item " + this.props.className}>
         <div className="item-image" style={this.state.backgroundImage} alt="Item"></div>
         <p>{this.state.name}</p>
         <div className="controls">
+          {this.props.isPublished ? (
+            <div className={"order " + this.props.moveEnabled}>
+              {this.props.index !== 0 ? (
+                <button>
+                  <i className="las la-arrow-up"></i>
+                </button>
+              ) : null}
+              {/* 
+                Shitty Hack? Yes
+                Works? Yes
+              */}
+              {this.props.index !== document.getElementsByClassName("length").length - 1 ? (
+                <button>
+                  <i className="las la-arrow-down"></i>
+                </button>
+              ) : null}
+            </div>
+          ) : null}
           <button onClick={() => this.props.togglePublishState(this.state.UUID, !this.state.isPublished)}>
             <i className={this.state.isPublished ? "lar la-eye" : "lar la-eye-slash"}></i>
           </button>
