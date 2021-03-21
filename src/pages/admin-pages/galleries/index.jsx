@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { uuid } from "uuidv4"
+import { v4 as uuid } from "uuid"
 import Async from "react-async"
 
 import { GallerySelection } from "../../../components/atoms"

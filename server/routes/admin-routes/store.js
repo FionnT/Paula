@@ -169,21 +169,23 @@ server.post("/store/delete-item", authenticated, privileged(2), jsonParser, asyn
     } else res.sendStatus(404)
   })
 })
-
 server.get("/store/items/all", (req, res) => {
-  StoreItems.find({}, (err, results) => {
-    if (err) res.sendStatus(502)
-    else if (results) {
-      const response = {
-        published: [],
-        private: []
-      }
-      results.forEach(item => {
-        item.isPublished ? response.published.push(item) : response.private.push(item)
-      })
-      res.json(response)
-    } else res.sendStatus(404)
-  })
+  StoreItems.find({})
+    .sort("isInPosition")
+    .lean()
+    .exec((err, results) => {
+      if (err) res.sendStatus(502)
+      else if (results) {
+        const response = {
+          published: [],
+          private: []
+        }
+        results.forEach(item => {
+          item.isPublished ? response.published.push(item) : response.private.push(item)
+        })
+        res.json(response)
+      } else res.sendStatus(404)
+    })
 })
 
 server.get("/store/items/fix", (req, res) => {
@@ -203,12 +205,35 @@ server.post("/store/toggle-publish", jsonParser, (req, res) => {
   let isPublished = req.body.isPublished
   StoreItems.findOne({ UUID }, (err, result) => {
     if (err) {
-      console.log(err)
       res.sendStatus(502)
     } else if (result) {
       result.isPublished = isPublished
       result.save().then(res.sendStatus(200))
     } else res.sendStatus(404)
+  })
+})
+
+server.post("/store/update-positions", authenticated, privileged(0), jsonParser, async (req, res) => {
+  StoreItems.find({}, (err, data) => {
+    if (err) res.sendStatus(500)
+    else {
+      const existingItems = data
+      const newItems = req.body
+      existingItems.forEach(Item => {
+        newItems.forEach(newItem => {
+          // Sometimes React/We send null in the array \__0__/
+          if (newItem) {
+            let existingID = Item._id.toString()
+            let submittedID = newItem._id.toString()
+            if (existingID === submittedID && Item.isInPosition !== newItem.isInPosition) {
+              Item.isInPosition = newItem.isInPosition
+              Item.save()
+            }
+          }
+        })
+      })
+      res.sendStatus(200)
+    }
   })
 })
 

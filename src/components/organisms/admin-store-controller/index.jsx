@@ -19,9 +19,7 @@ class AdminStoreController extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      visibleItems: props.availableItems,
-      availableItems: props.availableItems,
-      privateItems: props.privateItems,
+      visibleItems: [...props.availableItems, ...props.privateItems],
       selectedItem: undefined,
       editorEnabled: false,
       moveEnabled: false,
@@ -35,11 +33,10 @@ class AdminStoreController extends Component {
   }
 
   componentDidUpdate() {
-    let boolean = false
-    this.state.availableItems.forEach((item, index) => {
-      if (JSON.stringify(item) !== JSON.stringify(this.props.availableItems[index])) boolean = true
-    })
-    if (boolean) this.setState({ availableItems: this.props.availableItems, visibleItems: this.props.availableItems })
+    if (JSON.stringify(this.state.visibleItems) !== JSON.stringify([...this.props.availableItems, ...this.props.privateItems]))
+      this.setState({
+        visibleItems: [...this.props.availableItems, ...this.props.privateItems]
+      })
   }
 
   textController = e => {
@@ -51,6 +48,38 @@ class AdminStoreController extends Component {
 
   enableEditor = data => {
     this.setState({ selectedItem: data, editorEnabled: !this.state.editorEnabled })
+  }
+
+  togglePositionChanges = () => {
+    let stablePositions = this.props.availableItems.filter(item => item.isPublished)
+
+    if (!this.state.moveEnabled) {
+      // An issue is introduced by moving items from Published <-> Private
+      // wherein an items position is set to the length of the available items
+      // meaning that at all times, if a single item is swapped between places, two items will always have the same isInPosition
+      // Here we reset this, when enabling changing positions of items by changing all isInPosition to be the index of the item in the array
+      stablePositions.forEach((item, index) => {
+        item.isInPosition = index
+        this.modifyAvailableItem(item)
+      })
+    } else {
+      let server = process.env.REACT_APP_API_URL + "/store/update-positions"
+      fetch(server, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        mode: "cors",
+        body: JSON.stringify(this.props.availableItems)
+      }).then(res => {
+        if (res.ok) {
+          pageNotification([true, "Positions Saved"])
+        } else pageNotification([false, "Something went wrong, refresh and try again!"])
+      })
+      // TODO: Send POST request to store positions
+    }
+    this.setState({ availableItems: stablePositions, moveEnabled: !this.state.moveEnabled })
   }
 
   propagateChanges = data => {
@@ -117,7 +146,7 @@ class AdminStoreController extends Component {
   }
 
   togglePublishState = (UUID, isPublished) => {
-    this.modifyAvailableItem({ UUID, isPublished })
+    this.modifyAvailableItem({ UUID, isPublished, isInPosition: isPublished ? this.props.availableItems.length : 0 })
 
     let server = process.env.REACT_APP_API_URL + "/store/toggle-publish"
     fetch(server, {
@@ -137,7 +166,7 @@ class AdminStoreController extends Component {
         <Navigation />
         <div id="store-container" className="admin">
           <Input type="search" name="search" value={this.state.search} className="searchbar" textController={e => this.textController(e)}></Input>
-          <div className="lock" onClick={() => this.setState({ moveEnabled: !this.state.moveEnabled })}>
+          <div className="lock" onClick={this.togglePositionChanges}>
             {this.state.moveEnabled ? <i className="las la-lock-open"></i> : <i className="las la-lock"></i>}
           </div>
           <div id="store-items">
@@ -165,7 +194,7 @@ class AdminStoreController extends Component {
               <p className="active">Hidden</p>
               <p></p>
             </span>
-            {this.state.privateItems.map((item, index) =>
+            {this.state.visibleItems.map((item, index) =>
               !item.isPublished ? (
                 <AdminStoreItem {...item} enableEditor={this.enableEditor} toggleDeleteDialog={this.toggleDeleteDialog} togglePublishState={this.togglePublishState} key={index} />
               ) : null

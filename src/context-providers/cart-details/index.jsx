@@ -133,13 +133,33 @@ export class CartProvider extends React.Component {
   }
 
   modifyAvailableItem = data => {
-    let newArray = [].concat(this.state.availableItems)
-    newArray.forEach((item, index) => {
+    let availableItems = [].concat(this.state.availableItems)
+    let privateItems = [].concat(this.state.privateItems)
+
+    privateItems.forEach((item, index) => {
       if (item.UUID === data.UUID) {
-        Object.assign(newArray[index], data)
-        this.setState({ availableItems: newArray })
+        if (data.isPublished) {
+          item.isPublished = true
+          privateItems.splice(index, 1)
+          availableItems.push(item)
+        } else {
+          Object.assign(privateItems[index], data)
+        }
       }
     })
+
+    availableItems.forEach((item, index) => {
+      if (item.UUID === data.UUID) {
+        if (!data.isPublished) {
+          item.isPublished = false
+          availableItems.splice(index, 1)
+          privateItems.push(item)
+        } else {
+          Object.assign(availableItems[index], data)
+        }
+      }
+    })
+    this.setState({ privateItems, availableItems })
   }
 
   addItem = data => {

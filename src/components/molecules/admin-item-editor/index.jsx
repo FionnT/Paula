@@ -5,7 +5,9 @@ import "./styles.sass"
 class AdminItemEditor extends Component {
   constructor(props) {
     super(props)
-    this.state = this.props.data
+    this.state = {}
+    Object.assign(this.state, this.props.data)
+
     // Check if it's a data image, or if we already fixed the URL
     let newUrl = this.props.data.image.match("data:") || this.props.data.image.match("/store/") ? this.props.data.image : "/store/" + this.props.data.image
     this.state.image = newUrl
@@ -38,10 +40,11 @@ class AdminItemEditor extends Component {
         // No limiters on the name
         this.setState({ name: value })
     }
-
-    let newArray = [].concat(this.state.sizes)
-    newArray[index][field] = value
-    this.setState({ sizes: newArray })
+    if (field !== "name") {
+      let newArray = [].concat(this.state.sizes)
+      newArray[index][field] = value
+      this.setState({ sizes: newArray })
+    }
   }
 
   addSize = () => {
