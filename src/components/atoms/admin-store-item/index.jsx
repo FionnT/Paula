@@ -7,6 +7,7 @@ class AdminStoreItem extends Component {
     super(props)
     this.state = {}
     this.enableEditor = this.props.enableEditor.bind(this)
+    this.movePosition = this.props.movePosition.bind(this)
     // Store props in State
     Object.keys(this.props).forEach(key => (this.state[key] = this.props[key]))
 
@@ -47,16 +48,13 @@ class AdminStoreItem extends Component {
           {this.props.isPublished ? (
             <div className={"order " + this.props.moveEnabled}>
               {this.props.index !== 0 ? (
-                <button>
+                <button onClick={() => this.movePosition({ upwards: true, index: this.props.index })}>
                   <i className="las la-arrow-up"></i>
                 </button>
               ) : null}
-              {/* 
-                Shitty Hack? Yes
-                Works? Yes
-              */}
+
               {this.props.index !== document.getElementsByClassName("length").length - 1 ? (
-                <button>
+                <button onClick={() => this.movePosition({ upwards: false, index: this.props.index })}>
                   <i className="las la-arrow-down"></i>
                 </button>
               ) : null}

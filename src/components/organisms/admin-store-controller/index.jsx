@@ -30,6 +30,7 @@ class AdminStoreController extends Component {
     this.addItem = this.props.addItem.bind(this)
     this.modifyAvailableItem = this.props.modifyAvailableItem.bind(this)
     this.removeAvailableItem = this.props.removeAvailableItem.bind(this)
+    this.repositionItems = this.props.repositionItems.bind(this)
   }
 
   componentDidUpdate() {
@@ -53,16 +54,12 @@ class AdminStoreController extends Component {
   togglePositionChanges = () => {
     let stablePositions = this.props.availableItems.filter(item => item.isPublished)
 
-    if (!this.state.moveEnabled) {
-      // An issue is introduced by moving items from Published <-> Private
-      // wherein an items position is set to the length of the available items
-      // meaning that at all times, if a single item is swapped between places, two items will always have the same isInPosition
-      // Here we reset this, when enabling changing positions of items by changing all isInPosition to be the index of the item in the array
-      stablePositions.forEach((item, index) => {
-        item.isInPosition = index
-        this.modifyAvailableItem(item)
-      })
-    } else {
+    stablePositions.forEach((item, index) => {
+      item.isInPosition = index
+      this.modifyAvailableItem(item)
+    })
+
+    if (this.state.moveEnabled) {
       let server = process.env.REACT_APP_API_URL + "/store/update-positions"
       fetch(server, {
         credentials: "include",
@@ -77,9 +74,28 @@ class AdminStoreController extends Component {
           pageNotification([true, "Positions Saved"])
         } else pageNotification([false, "Something went wrong, refresh and try again!"])
       })
-      // TODO: Send POST request to store positions
     }
-    this.setState({ availableItems: stablePositions, moveEnabled: !this.state.moveEnabled })
+    this.setState({ moveEnabled: !this.state.moveEnabled })
+  }
+
+  movePosition = data => {
+    if (!this.state.moveEnabled) return
+    else {
+      let items = [...this.props.availableItems]
+      let modifiableArray = [...this.props.availableItems]
+      let selectedItem = items[data.index]
+      let prevItem = items[data.index - 1]
+      let nextItem = items[data.index + 1]
+      console.log(data)
+      if (data.upwards && data.index) {
+        modifiableArray[data.index] = prevItem
+        modifiableArray[data.index - 1] = selectedItem
+      } else if (data.index + 1 !== items.length) {
+        modifiableArray[data.index] = nextItem
+        modifiableArray[data.index + 1] = selectedItem
+      }
+      this.repositionItems(modifiableArray)
+    }
   }
 
   propagateChanges = data => {
@@ -182,6 +198,7 @@ class AdminStoreController extends Component {
                   {...item}
                   enableEditor={this.enableEditor}
                   moveEnabled={this.state.moveEnabled}
+                  movePosition={this.movePosition}
                   index={index}
                   toggleDeleteDialog={this.toggleDeleteDialog}
                   togglePublishState={this.togglePublishState}

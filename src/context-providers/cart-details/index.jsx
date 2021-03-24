@@ -19,6 +19,7 @@ export class CartProvider extends React.Component {
       addItem: this.addItem,
       modifyAvailableItem: this.modifyAvailableItem,
       removeAvailableItem: this.removeAvailableItem,
+      repositionItems: this.repositionItems,
       privateItems: []
     }
   }
@@ -131,6 +132,8 @@ export class CartProvider extends React.Component {
         })
     })
   }
+
+  repositionItems = newArray => this.setState({ availableItems: newArray })
 
   modifyAvailableItem = data => {
     let availableItems = [].concat(this.state.availableItems)
