@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import { validateText, pageNotification } from "../../../utilities"
 import { Navigation } from "../../../components/organisms"
 import { AdminItemEditor } from "../../../components/molecules"
-import { AdminStoreItem, Button, Input } from "../../../components/atoms"
+import { AdminStoreItem, Button } from "../../../components/atoms"
 
 import "./styles.sass"
 
