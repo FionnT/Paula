@@ -185,7 +185,7 @@ class AdminStoreController extends Component {
           <div className="lock" onClick={this.togglePositionChanges}>
             {this.state.moveEnabled ? <i className="las la-lock-open"></i> : <i className="las la-lock"></i>}
           </div>
-          <div id="store-items">
+          <div id="store-items" style={{ overflowY: "hidden" }}>
             <span className="item-type">
               <p></p>
               <p className="active">Active</p>

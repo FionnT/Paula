@@ -7,7 +7,7 @@ class AdminStoreItem extends Component {
     super(props)
     this.state = {}
     this.enableEditor = this.props.enableEditor.bind(this)
-    this.movePosition = this.props.movePosition.bind(this)
+    this.movePosition = this.props.movePosition?.bind(this)
     // Store props in State
     Object.keys(this.props).forEach(key => (this.state[key] = this.props[key]))
 
