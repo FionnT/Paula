@@ -26,7 +26,7 @@
     "mongoose": "^5.10.5",
     "nodemailer": "^6.4.11",
     "nodemailer-ses-transport": "^1.5.1",
-    "pug": "^3.0.0",
+    "pug": "^3.0.1",
     "sharp": "^0.25.4",
     "stripe": "^8.96.0",
     "uuid": "^7.0.3"
