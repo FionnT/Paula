@@ -181,7 +181,6 @@ class AdminStoreController extends Component {
       <>
         <Navigation />
         <div id="store-container" className="admin">
-          <Input type="search" name="search" value={this.state.search} className="searchbar" textController={e => this.textController(e)}></Input>
           <div className="lock" onClick={this.togglePositionChanges}>
             {this.state.moveEnabled ? <i className="las la-lock-open"></i> : <i className="las la-lock"></i>}
           </div>
