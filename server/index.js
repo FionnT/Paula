@@ -51,6 +51,8 @@ server.use(
   })
 )
 
+server.use(express.bodyParser({ limit: "250mb" }))
+
 // Express CORS sessions
 
 server.use("/", require("./routes/admin-routes/authenticate"))
